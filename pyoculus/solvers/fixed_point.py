@@ -1,553 +1,750 @@
-## @file fixed_point.py
-#  @brief class for finding fixed points
-#  @author Zhisong Qu (zhisong.qu@anu.edu.au)
-#
+"""
+fixed_point.py
+==================
+
+Contains the class for finding fixed points of a map.
+
+:authors:
+    - Zhisong Qu (zhisong.qu@anu.edu.au)
+    - Ludovic Rais (ludovic.rais@epfl.ch)
+"""
 
 from .base_solver import BaseSolver
-from pyoculus.problems.cylindrical_problem import CylindricalProblem
-from pyoculus.problems.toroidal_problem import ToroidalProblem
+import pyoculus.maps as maps
+from ..utils.plot import create_canvas
+from scipy.optimize import root, root_scalar
 import numpy as np
+from numpy.typing import ArrayLike
+from typing import Union
+import logging
 
-## Class that used to setup the fixed point finder.
+logger = logging.getLogger(__name__)
+
+
 class FixedPoint(BaseSolver):
-    def __init__(
-        self, problem, params=dict(), integrator=None, integrator_params=dict()
-    ):
-        """! Set up the class of the fixed point finder
-        @param problem must inherit pyoculus.problems.BaseProblem, the problem to solve
-        @param params dict, the parameters for the solver
-        @param integrator the integrator to use, must inherit \pyoculus.integrators.BaseIntegrator, if set to None by default using RKIntegrator
-        @param integrator_params dict, the parmaters passed to the integrator
+    """
+    Class to find fixed points of a map, i.e. points that satisfy :math:`f^t(x) = x`.
+    """
 
-        <code> params['niter']=100 </code> -- the maximum number of Newton iterations
+    def __init__(self, map):  #,  t : Union[float,  int]=1, guess : ArrayLike = None, nrestart : int = 0, method : str = "newton",):
+        # if constraints is None:
+        #     constraints = np.NaN * np.ones(map.dimension)
+        # elif len(constraints) != map.dimension:
+        #     raise ValueError("The constraints should have the same dimension as the map domain.")
+        # elif all([c is not np.NaN for c in constraints]):
+        #     raise ValueError("Their must be at least one unconstrained dimension.")
+        # self._constraints = constraints
+    
+        self._found_by_iota = False
+#        self.t = t
+#        self._guess = guess
+#        self._nrestart = nrestart
+#        self._method = method
+        self._n = None
+        self._m = None
+        super().__init__(map)
+        
 
-        <code> params['theta']=None </code>-- if we look for fixed point on some symmetry line
-                        =None : theta is also a free variable to look for
-                        =somenumber : only look for theta with this number
+    ## Properties
 
-        <code> params['zeta']=0.0 </code>-- the toroidal plane we are after
+    @property
+    def iotaslash(self):
+        if not self.successful:
+            raise ValueError("Fixed point not found.")
+        elif not self._found_by_iota:
+            raise ValueError("Fixed point not found with winding number.")
+        else:
+            return self._n / self._m
+        
+    @property
+    def n(self):
+        if not self.successful:
+            raise ValueError("Fixed point not found.")
+        elif not self._found_by_iota:
+            raise ValueError("Fixed point not found with winding number.")
+        else:
+            return self._n
+    
+    @property
+    def m(self):
+        if not self.successful:
+            raise ValueError("Fixed point not found.")
+        else:
+            return self._m
+    
+    @m.setter
+    def m(self, m):
+        """
+        set m to use maps that cannot be found with winding number
+        """
+        if not self.successful:
+            raise ValueError("Fixed point not found.")
+        self._found_by_iota = True
+        self._m = m
 
-        <code> params['nrestart']=1 </code>-- if search failed, the number of time to restart (randomly within the domain)
+    
+
+    ## Findings fixed points methods
+
+    def find(self, t : Union[float,  int], guess : ArrayLike = None, nrestart : int = 0, method : str = "scipy.root", **kwargs):
+        """
+        Tries to find a fixed point of the map applied :math:`t` times.
+
+        Args:
+            t: the number of iterations of the map
+            guess: the initial guess of the fixed point
+            nrestarts: the maximum number of restart with different random initial conditions
+            method: the method to use to find the fixed point, default is 'newton'. 
+            **kwargs: additional arguments for the method
+
+        Returns:
+            FixedPoint.OutputData: the output data of the fixed point search
+                - coords: the coordinates of the fixed point
+                - Jacobian: the Jacobian of the fixed point
+                - GreenesResidue: the Greene's Residue of the fixed point
+        
+        Notes:
+            There are several methods implemented, 
+            *newton* is a simple Newton's method implemented in this class. it evaluates the full map.  
+            *scipy.root* uses the scipy root method to find the fixed point without derivative evaluation, it also finds the point using only a half-map forwards and backwards, which should help with convergence to very unstable fixed points
+            *scipy.derivs* is the same as root, but also uses the calculated derivatives.
+            *scipy.1D* is a 1D solver that finds the fixed point on a symmetry plane using a 1D bisection method and looking a zero in the difference in Z in the half-maps (defalut solver is brentq, specified by the keyword scipy_method="..")
+            
+            For IntegratedMaps, often best results are obtained with 'scipy.root', which does not use derivatives. This is because 
+            the derivative evaluation is often more expensive than several map evaluations and most scipy solvers internally construct a jacobian from the evaluations.
+            For s 
+
         """
 
-        if "niter" not in params.keys():
-            params["niter"] = 100
+        # Check the iteration number is correct
+        if self._map.is_discrete and not isinstance(t, int):
+            raise ValueError("The iteration number should be an integer for a discrete map.")
 
-        if "theta" not in params.keys():
-            params["theta"] = None
-
-        if "zeta" not in params.keys():
-            params["zeta"] = 0.0
-
-        if "nrestart" not in params.keys():
-            params["nrestart"] = 1
-
-        # detect the type of the problem
-        if isinstance(problem, ToroidalProblem):
-            self._is_cylindrical_problem = False
-            if "theta" not in params.keys():
-                params["theta"] = None
-
-            if params["theta"] is None:
-                self.is_theta_fixed = False
-            else:
-                self.is_theta_fixed = True
-
-        elif isinstance(problem, CylindricalProblem):
-            self._is_cylindrical_problem = True
-            if "Z" not in params.keys():
-                params["Z"] = None
-
-            if params["Z"] is None:
-                self.is_Z_fixed = False
-            else:
-                self.is_Z_fixed = True
-
-        else:
-            raise TypeError(
-                "problem should inherit either ToroidalProblem or CylindricalProblem"
-            )
-        integrator_params["ode"] = problem.f_tangent
-
-        super().__init__(
-            problem=problem,
-            params=params,
-            integrator=integrator,
-            integrator_params=integrator_params,
-        )
-
-        self.Nfp = problem.Nfp
-        self.niter = params["niter"]
-        self.nrestart = params["nrestart"]
-
-    def compute(self, guess, pp, qq, sbegin=-1.0, send=1.0, tol=None):
-        """! Looks for the fixed point with rotation number pp/qq
-        @param guess the initial guess, `[s, theta]`, if `params['theta'] == None`, `[s]`, if `params['theta'] ==` somevalue
-        @param pp integer, the numerator of the rotation number
-        @param qq integer, the denominator of the rotation number
-        @param sbegin=-1.0 the allowed minimum s or R
-        @param send=1.0    the allowed maximum s or R
-        @param tol=self._integrator_params['rtol']*qq -- the tolerance of the fixed point
-
-        @returns rdata a class that contains the results that contains
-        `rdata.x,rdata.y,rdata,z` -- the fixed points in xyz coordinates
-
-        `rdata.s,rdata,theta,rdata,zeta` -- the fixed points in s,theta,zeta coordinates
-
-        `rdata.jacobian` -- the Jacobian of the fixed point constructed by following the tangent map
-
-        `rdata.GreenesResidue` -- the Greene's Residue of the fixed point
-
-        `rdata.MeanResidue` -- the 'Average Residue' f as defined by Greene
-        """
-
-        if not isinstance(pp, int) or not isinstance(qq, int):
-            raise ValueError("pp and qq should be integers")
-
-        if tol is None:
-            tol = self._integrator_params["rtol"] * qq
-
-        if pp * qq >= 0:
-            pp = int(np.abs(pp))
-            qq = int(np.abs(qq))
-        else:
-            pp = -int(np.abs(pp))
-            qq = int(np.abs(qq))
-
-        self.pp = pp
-        self.qq = qq
-        self.dzeta = 2 * np.pi / self.Nfp
-
-        # arrays that save the data
-        self.s = np.zeros([qq + 1], dtype=np.float64)
-        self.theta = np.zeros([qq + 1], dtype=np.float64)
-        self.zeta = np.zeros([qq + 1], dtype=np.float64)
-        self.x = np.zeros([qq + 1], dtype=np.float64)
-        self.y = np.zeros([qq + 1], dtype=np.float64)
-        self.z = np.zeros([qq + 1], dtype=np.float64)
-
+        # Setup the search
+        self.t = t
+        self._m = t
         self.history = []
+        x_fp = None
+        self._successful = False
 
-        # set up the guess
-        if isinstance(guess, float):
-            s_guess = guess
+        # Check the guess is correct
+        if guess is None:
+            guess = self.random_initial_guess()
+        elif len(guess) != self._map.dimension:
+            raise ValueError("The guess should have the same dimension as the map domain.")
+        elif not self._map.in_domain(guess):
+            raise ValueError("The guess is not in the domain of the map.")
+
+        # Setup and check the method
+        if method == "newton":
+            method_fun = self._newton_method
+        elif method == "scipy.root":
+            method_fun = self._scipy_root
+        elif method == "scipy.derivs":
+            method_fun = self._scipy_derivs
+        elif method == "scipy.1D":
+            method_fun = self._scipy_1d_symmetry
+        elif method == "scipy.1D_2D":
+            method_fun = self._scipy_1d_2d
+#        elif method == "scipy.stellsym.2D":
+#            method_fun = self.scipy_stellsym_2d
         else:
-            guess = np.array(guess, dtype=np.float64)
-            s_guess = guess[0]
+            raise ValueError(f"Method {method} is not implemented.")
+        self._method = method
 
-        if not self._is_cylindrical_problem:
-            if self._params["theta"] is None:
-                theta_guess = guess[1]
-            else:
-                theta_guess = self._params["theta"]
-        else:
-            if self._params["Z"] is None:
-                Z_guess = guess[1]
-            else:
-                Z_guess = self._params["Z"]
+        # run the solver, if failed, try a different random initial condition
+        guess0 = guess.copy()
+        for i in range(nrestart + 1):
+            try:
+                x_fp = method_fun(guess, **kwargs)
+            except Exception as e:
+                logger.info(f"Search {i} - failed: {e}")
 
-        # run the Newton's method
-        for ii in range(self._params["nrestart"] + 1):
-            try:  # run the solver, if failed, try a different random initial condition
-                if self._is_cylindrical_problem:
-                    if self.is_Z_fixed:
-                        result = self._newton_method_3(
-                            pp,
-                            qq,
-                            s_guess,
-                            sbegin,
-                            send,
-                            Z_guess,
-                            self._params["zeta"],
-                            self.dzeta,
-                            self.niter,
-                            tol,
-                        )
-                else:
-                    if self.is_theta_fixed:
-                        result = self._newton_method_1(
-                            pp,
-                            qq,
-                            s_guess,
-                            sbegin,
-                            send,
-                            theta_guess,
-                            self._params["zeta"],
-                            self.dzeta,
-                            self.niter,
-                            tol,
-                        )
-                    else:
-                        result = self._newton_method_2(
-                            pp,
-                            qq,
-                            s_guess,
-                            sbegin,
-                            send,
-                            theta_guess,
-                            self._params["zeta"],
-                            self.dzeta,
-                            self.niter,
-                            tol,
-                        )
-            except:
-                result = None
-
-            if result is not None:  # if it is successful:
+            if x_fp is not None:
                 break
-            else:  # not successful, change to a random initial condition
-                print("Search failed: starting from a random initial guesss!")
-                random_guess = np.random.rand(2)
-                s_guess = sbegin + (send - sbegin) * random_guess[0]
-                if self._is_cylindrical_problem:
-                    if self._params["Z"] is None:
-                        Z_guess = random_guess[1] * (send - sbegin)
-                else:
-                    if self._params["theta"] is None:
-                        theta_guess = random_guess[1] * 2 * np.pi
+            elif i < nrestart:
+                logger.info(f"Search {i+1} starting from a random initial guesss.")
+                guess = self.random_initial_guess(prev_guess=guess0)
 
         # now we go and get all the fixed points by iterating the map
-        if result is not None:
-            t = self.zeta[0]
-            dt = 2 * np.pi / self.Nfp
+        if x_fp is not None:
+            logger.info(f"Found fixed point at {x_fp}. Computing additional data...")
+            rdata = self.record_data(x_fp)
 
-            if self._is_cylindrical_problem:
-                self.x[0] = result[0]
-                self.z[0] = result[1]
-                self.zeta[0] = self._params["zeta"]
-
-                R0 = self._problem._R0
-                Z0 = self._problem._Z0
-                theta0 = np.arctan2(result[1]-Z0, result[0]-R0)
-
-                self.theta[0] = theta0
-
-                ic = np.array([result[0], result[1], R0, Z0, theta0, 1.0, 0.0, 0.0, 1.0], dtype=np.float64)
-            else:
-                self.s[0] = result[0]
-                self.theta[0] = result[1]
-                self.zeta[0] = self._params["zeta"]
-
-                ic = np.array([result[0], result[1], 1.0, 0.0, 0.0, 1.0], dtype=np.float64)
-            self._integrator.set_initial_value(t, ic)
-
-            # integrate to get a series of fixed points
-            for jj in range(1, qq + 1):
-
-                # run the integrator
-                st = self._integrator.integrate(t + dt)
-
-                # extract the result to s theta zeta
-                if self._is_cylindrical_problem:
-                    self.x[jj] = st[0]
-                    self.z[jj] = st[1]
-                    self.theta[jj] = st[4]
-                else:
-                    self.s[jj] = st[0]
-                    self.theta[jj] = st[1]
-                self.zeta[jj] = t + dt
-
-                # advance in time
-                t = t + dt
-
-            # convert coordinates
-            if not self._is_cylindrical_problem:
-                for jj in range(0, qq + 1):
-                    stz = np.array(
-                        [self.s[jj], self.theta[jj], self.zeta[jj]], dtype=np.float64
-                    )
-                    xyz = self._problem.convert_coords(stz)
-                    self.x[jj] = xyz[0]
-                    self.y[jj] = xyz[1]
-                    self.z[jj] = xyz[2]
-
-            rdata = FixedPoint.OutputData()
-            rdata.x = self.x.copy()
-            rdata.y = self.y.copy()
-            rdata.z = self.z.copy()
-            rdata.s = self.s.copy()
-            rdata.theta = self.theta.copy()
-            rdata.zeta = self.zeta.copy()
-
-            # the jacobian
-            if self._is_cylindrical_problem:
-                rdata.jacobian = np.array(
-                    [[st[5], st[7]], [st[6], st[8]]], dtype=np.float64
-                )
-            else:
-                rdata.jacobian = np.array(
-                    [[st[2], st[4]], [st[3], st[5]]], dtype=np.float64
-                )
-
-            # Greene's Residue
-            rdata.GreenesResidue = 0.25 * (2.0 - np.trace(rdata.jacobian))
-            rdata.MeanResidue = np.power(
-                np.abs(rdata.GreenesResidue) / 0.25, 1 / float(qq)
-            )
-            self.GreenesResidue = rdata.GreenesResidue
-            self.MeanResidue = rdata.MeanResidue
-
-            # set the successful flag
-            self.successful = True
-
+            # Set the successful flag
+            self._successful = True
         else:
             rdata = None
-            print("Fixed point search unsuccessful for pp/qq=", pp, "/", qq)
+            logger.info(f"Fixed point search unsuccessful for t={self.t}.")
 
         return rdata
 
-    def plot(
-        self, plottype=None, xlabel=None, ylabel=None, xlim=None, ylim=None, **kwargs
-    ):
-        """! Generates the plot for fixed points
-        @param plottype which variables to plot: 'RZ' or 'yx', by default using "poincare_plot_type" in problem
-        @param xlabel,ylabel what to put for the xlabel and ylabel, by default using "poincare_plot_xlabel" in problem
-        @param xlim, ylim the range of plotting, by default plotting the range of all data
-        @param **kwargs passed to the plotting routine "plot"
+    def find_with_iota(self, n : int, m : int, guess : ArrayLike, x_axis : ArrayLike = None, nrestart : int = 0, method : str = "scipy.root", **kwargs):
         """
-        import matplotlib.pyplot as plt
+        Tries to find the fixed point of a map with winding number :math:`\\iota/2\\pi = q^{-1} = n/m` around x_axis.s
 
-        if not self.successful:
-            raise Exception("A successful call of compute() is needed")
+        Args:
+            n (int): the numerator of the winding number
+            m (int): the denominator of the winding number
+            guess (array): the initial guess of the fixed point
+            x_axis (array): the point around which the winding number is calculated
+            nrestarts (int): the maximum number of restart with different random initial conditions
+            method (str): the method to use to find the fixed point, default is 'newton'
+            **kwargs: additional arguments for the method        
 
-        # default setting
-        if plottype is None:
-            plottype = self._problem.poincare_plot_type
-        if xlabel is None:
-            xlabel = self._problem.poincare_plot_xlabel
-        if ylabel is None:
-            ylabel = self._problem.poincare_plot_ylabel
-
-        if plottype == "RZ":
-            xdata = self.x
-            ydata = self.z
-        elif plottype == "yx":
-            xdata = self.y
-            ydata = self.x
-        elif plottype == "st":
-            xdata = np.mod(self.theta, 2 * np.pi)
-            ydata = self.s
-        else:
-            raise ValueError("Choose the correct type for plottype")
-
-        if plt.get_fignums():
-            fig = plt.gcf()
-            ax = plt.gca()
-            newfig = False
-        else:
-            fig, ax = plt.subplots()
-            newfig = True
-
-        # set default plotting parameters
-        # use x
-        if kwargs.get("marker") is None:
-            kwargs.update({"marker": "x"})
-        # use gray color
-        if kwargs.get("c") is None:
-            kwargs.update({"c": "black"})
-
-        xs = ax.plot(xdata, ydata, linestyle="None", **kwargs)
-
-        if not newfig:
-            if plottype == "RZ":
-                plt.axis("equal")
-            if plottype == "yx":
-                pass
-
-            plt.xlabel(xlabel, fontsize=20)
-            plt.ylabel(ylabel, fontsize=20)
-            plt.xticks(fontsize=16)
-            plt.yticks(fontsize=16)
-
-            if xlim is not None:
-                plt.xlim(xlim)
-            if ylim is not None:
-                plt.ylim(ylim)
-
-    def _newton_method_1(
-        self, pp, qq, s_guess, sbegin, send, theta, zeta, dzeta, niter, tol
-    ):
-        """driver to run Newton's method for one variable s
-        pp,qq -- integers, the numerator and denominator of the rotation number
-        s_guess -- the guess of s
-        sbegin -- the allowed minimum s
-        send -- the allowed maximum s
-        theta -- the theta value (fixed)
-        zeta -- the toroidal plain to investigate
-        dzeta -- period in zeta
-        niter -- the maximum number of iterations
-        tol -- the tolerance of finding a fixed point
+        Returns:
+            FixedPoint.OutputData: the output data of the fixed point search
+                - coords: the coordinates of the fixed point
+                - Jacobian: the Jacobian of the fixed point
+                - GreenesResidue: the Greene's Residue of the fixed point
+                - MeanResidue: --
         """
 
-        s = s_guess
+        # Setup the x_axis if not provided
+        if x_axis is None:
+            if isinstance(self._map, maps.ToroidalBfieldSection):
+                x_axis = np.array([-1., 0.])
+            elif isinstance(self._map, maps.CylindricalBfieldSection):
+                x_axis = np.array([self._map.R0, self._map.Z0])
+            else:
+                logger.warning("No x_axis provided, using the zero vector.")
+                x_axis = np.zeros(self._map.dimension)
+        elif len(x_axis) != self._map.dimension:
+            raise ValueError("The x_axis should have the same dimension as the map domain.")
 
-        # set up the initial condition
-        ic = np.array([s, theta, 1.0, 0.0, 0.0, 1.0], dtype=np.float64)
-        self.history.append(ic[0:1].copy())
+        # Setup of the poloidal m and toroidal mode numbers
+        if not isinstance(n, int) or not isinstance(m, int):
+            raise ValueError("n and m should be integers")
 
-        t0 = zeta
-        dt = dzeta
+        n = np.sign(n*m)*np.abs(n)
+        m = int(np.abs(m))
+        self._n = n
+        self._m = m
 
-        succeeded = False
+        # Setup the search
+        self.t = m
+        self.history = []
+        x_fp = None
+        self._successful = False
 
-        for ii in range(niter):
-            t = t0
-            self._integrator.set_initial_value(t0, ic)
+        # Check the guess is right
+        if guess is None:
+            guess = self.random_initial_guess()
+        elif len(guess) != self._map.dimension:
+            raise ValueError("The guess should have the same dimension as the map domain.")
+        elif not self._map.in_domain(guess):
+            raise ValueError("The guess is not in the domain of the map.")
 
-            for jj in range(qq):
-                output = self._integrator.integrate(t + dt)
-                t = t + dt
+        # Setup and check the method
+        if method == "newton":
+            method_fun = self._newton_method_winding
+        elif method == "1D":
+            method_fun = self._scipy_winding_1D
+        elif method == "scipy.root":
+            method_fun = self._scipy_winding
+        else:
+            raise ValueError(f"Method {method} is not implemented.")
+        self._method = method
 
-            dtheta = output[1] - theta - dzeta * pp
-            jacobian = output[3]
+        # run the solver, if failed, try a different random initial condition
+        guess0 = guess.copy()
+        for i in range(nrestart + 1):
+            try:
+                x_fp = method_fun(guess, x_axis, **kwargs)
+            except Exception as e:
+                logger.info(f"Search {i} - failed: {e}")
 
-            # if the resolution is good enough
-            if abs(dtheta) < tol:
-                succeeded = True
+            if x_fp is not None:
                 break
-            s_new = s - dtheta / jacobian
-            s = s_new
+            elif i < nrestart:
+                logger.info(f"Search {i+1} starting from a random initial guesss.")
+                guess = self.random_initial_guess(prev_guess=guess0)
 
-            if s > send or s < sbegin:  # search failed, return None
-                return None
+        # now we go and get all the fixed points by iterating the map
+        if x_fp is not None:
+            logger.info(f"Found fixed point at {x_fp}. Computing additionnal data...")
+            self._found_by_iota = True
+            rdata = self.record_data(x_fp)
 
-            ic = np.array([s, theta, 1.0, 0.0, 0.0, 1.0], dtype=np.float64)
-            self.history.append(ic[0:1].copy())
-
-        if succeeded:
-            return np.array([s, theta, zeta], dtype=np.float64)
+            # Set the successful flag
+            self._successful = True
         else:
-            return None
+            logger.info(f"Fixed point search unsuccessful for iotaslash=n/m={n}/{m}.")
+            rdata = None
 
-    def _newton_method_2(
-        self, pp, qq, s_guess, sbegin, send, theta_guess, zeta, dzeta, niter, tol
-    ):
-        """driver to run Newton's method for two variable (s,theta)
-        pp,qq -- integers, the numerator and denominator of the rotation number
-        s_guess -- the guess of s
-        sbegin -- the allowed minimum s
-        send -- the allowed maximum s
-        theta_guess -- the guess of theta
-        zeta -- the toroidal plain to investigate
-        dzeta -- period in zeta
-        niter -- the maximum number of iterations
-        tol -- the tolerance of finding a fixed point
+        return rdata
+
+    ## Utils methods
+
+    def random_initial_guess(self, prev_guess=None, max_step=0.5):
+        """
+        Returns a random initial point uniformly sampled from the domain of the map.
+
+        If prev_guess is provided and the map is a CylindricalBfieldSection,
+        the sampling region is restricted to prev_guess ± max_step (intersected with the domain).
+
+        Args:
+            prev_guess (np.array): the previous guess to sample around
+            max_step (float): the maximum step size from prev_guess in each dimension
+        """
+        domain = self._map.domain
+        lows = np.array([low for (low, high) in domain])
+        highs = np.array([high for (low, high) in domain])
+
+        if prev_guess is not None and isinstance(self._map, maps.CylindricalBfieldSection):
+            lows = np.maximum(lows, prev_guess - max_step)
+            highs = np.minimum(highs, prev_guess + max_step)
+
+        return np.random.uniform(lows, highs)
+
+    def record_data(self, x_fp):
+        """
+        Record some additional data about the fixed point, such as the Jacobian, the Greene's Residue, and the Mean Residue for each iteration of the map.
+
+        Args:
+            x_fp (array): Fixed point coordinates
+            is_winding (bool)
         """
 
-        self.successful = False
+        self.Jacobian = self._map.df(self.t, x_fp)
+        self.GreenesResidue = 0.25 * (2.0 - np.trace(self.Jacobian))
+        if self._found_by_iota:
+            self.MeanResidue = np.power(
+                np.abs(self.GreenesResidue) / 0.25, 1 / float(self._m)
+            )
+        
+        self.coords = np.array([np.asarray(self._map.f(i, x_fp)) for i in range(self.t + 1)])  # uses cache (cast to np array if analytic map returns other)
 
-        s = s_guess
-        theta = theta_guess
 
-        # set up the initial condition
-        ic = np.array([s, theta, 1.0, 0.0, 0.0, 1.0], dtype=np.float64)
-        self.history.append(ic[0:1].copy())
+        # Create an output
+        rdata = FixedPoint.OutputData()  # dummy holder class (legacy)
+        rdata.coords = self.coords.copy()
+        rdata.Jacobian = self.Jacobian.copy()
+        rdata.GreenesResidue = self.GreenesResidue.copy()
+        if self._found_by_iota:
+            rdata.MeanResidue = self.MeanResidue.copy()
 
-        t0 = zeta
-        dt = dzeta
+        return rdata
+    
+    @property
+    def eigenvalues(self):
+        """
+        Compute the eigenvalues of the Jacobian of the fixed point
+        """
+        if not self.successful:
+            raise ValueError("Fixed point not found.")
+        return np.linalg.eigvals(self.Jacobian)
+    
+    @property
+    def RZcoords(self):
+        """
+        Return the RZ coordinates of the fixed point, applying a transform if the 
+        field is a ToroidalBfield (rho theta)
+        """
+        if not self.successful:
+            raise ValueError("Fixed point not found.")
+        if isinstance(self._map, maps.ToroidalBfieldSection):
+            converted_coords = [self._map._mf.convert_coords(np.append(coord, self._map.phi0)) for coord in self.coords]
+            return np.array(converted_coords)[:, ::2]
+        else: 
+            return self.coords
+        
+    
+    @property
+    def polarcoords(self):
+        """
+        Return the polar coordinates of the fixed point, applying a transform if the 
+        field is a ToroidalBfield (rho theta)
+        """
+        if not self.successful:
+            raise ValueError("Fixed point not found.")
+        if isinstance(self._map, maps.CylindricalBfieldSection):
+            converted_coords = [self._map.to_rhotheta(np.append(coord, self._map.phi0)) for coord in self.coords]
+            return np.array(converted_coords)[:, ::2]
+        else: 
+            return self.coords
 
+    @property
+    def topological_index(self):
+        """
+        return the topological index of the fixed point
+        """
+        if not self.successful:
+            raise ValueError("Fixed point not found.")
+
+        return np.sign(self.GreenesResidue)
+
+    @property
+    def rotational_transform(self):
+        """
+        return the rotational transform if the fixed point is Elliptic
+        """
+        if not self.successful:
+            raise ValueError("Fixed point not found.")
+        if np.abs(np.trace(self.Jacobian)) >= 2:
+            raise ValueError("rotational transform only defined for elliptic fixed point, this point is hyperbolic")
+        return np.arccos(np.trace(self.Jacobian)/2)/(2*np.pi)
+
+    """
+    Solver methods.
+
+    They are private methods that are used to solve the fixed point problem. They should either return the coordinates of the fixed point if the search was successful or None if the search was not. 
+    
+    They can be of two types depending whether they need to be used with the winding number or not.
+    """
+
+    def _newton_method(self, guess, niter=100, tol=1e-10):
+        x = np.array(guess, dtype=np.float64)
+        self.history.append(x.copy())
         succeeded = False
 
-        st = np.array([s, theta], dtype=np.float64)
+        for i in range(niter):
+            logger.info(f"Newton {i} - x : {x}")
+            df = self._map.df(self.t, x)
+            x_evolved = self._map.f(self.t, x)
 
-        for ii in range(niter):
-            t = t0
-            self._integrator.set_initial_value(t0, ic)
-            for jj in range(qq):
-                output = self._integrator.integrate(t + dt)
-                t = t + dt
-
-            dtheta = output[1] - theta - dzeta * pp
-            ds = output[0] - s
-            dst = np.array([ds, dtheta], dtype=np.float64)
-            jacobian = np.array(
-                [[output[2], output[4]], [output[3], output[5]]], dtype=np.float64
-            )
-
-            # if the resolution is good enough
-            if np.sqrt(dtheta ** 2 + ds ** 2) < tol:
+            # Stop if the resolution is good enough
+            logger.info(f"Newton {i} - delta_x : {x_evolved-x}")
+            if np.linalg.norm(x_evolved - x) < tol:
                 succeeded = True
                 break
 
             # Newton's step
-            st_new = st - np.matmul(np.linalg.inv(jacobian - np.eye(2)), dst)
-            s = st_new[0]
-            theta = st_new[1]
-            st = st_new
+            delta_x = x_evolved - x
+            step = np.linalg.solve(df - np.eye(self._map.dimension), -1 * delta_x)
+            x_new = self._map.into_domain(x + step)
 
-            if s > send or s < sbegin:  # search failed, return None
+            # Update the variables
+            logger.info(f"Newton {i} - step : {x_new-x}")
+            x = x_new
+
+            if not self._map.in_domain(x):
+                logger.info(f"Newton {i} - out of domain")
                 return None
 
-            ic = np.array([s, theta, 1.0, 0.0, 0.0, 1.0], dtype=np.float64)
-            self.history.append(ic[0:1].copy())
+            self.history.append(x.copy())
 
         if succeeded:
-            self.successful = True
-            return np.array([s, theta, zeta], dtype=np.float64)
-        else:
-            return None    
-
-    def _newton_method_3(
-        self, pp, qq, R_guess, Rbegin, Rend, Z, zeta, dzeta, niter, tol
-    ):
-        """driver to run Newton's method for one variable R, for cylindrical problem
-        pp,qq -- integers, the numerator and denominator of the rotation number
-        R_guess -- the guess of R
-        Rbegin -- the allowed minimum R
-        Rend -- the allowed maximum R
-        Z -- the Z value (fixed)
-        zeta -- the toroidal plain to investigate
-        dzeta -- period in zeta
-        niter -- the maximum number of iterations
-        tol -- the tolerance of finding a fixed point
-        """
-
-        R = R_guess
-        R0 = self._problem._R0
-        Z0 = self._problem._Z0
-        theta = np.arctan2(Z-Z0, R-R0)
-
-        # set up the initial condition
-        ic = np.array([R, Z, R0, Z0, theta, 1.0, 0.0, 0.0, 1.0], dtype=np.float64)
-        self.history.append(ic[0:1].copy())
-
-        t0 = zeta
-        dt = dzeta
-
-        succeeded = False
-
-        for ii in range(niter):
-            t = t0
-            self._integrator.set_initial_value(t0, ic)
-
-            for jj in range(qq):
-                output = self._integrator.integrate(t + dt)
-                t = t + dt
-
-            dtheta = output[4] - theta - dzeta * pp
-            dR = output[5]
-            dZ = output[6]
-            
-            deltaR = output[0] - R0
-            deltaZ = output[1] - Z0
-
-            jacobian = (deltaR * dZ - deltaZ * dR) / (deltaR**2 + deltaZ**2)
-
-            # if the resolution is good enough
-            if abs(dtheta) < tol:
-                succeeded = True
-                break
-            R_new = R - dtheta / jacobian
-            R = R_new
-            theta = np.arctan2(Z-Z0, R-R0)
-
-            if R > Rend or R < Rbegin:  # search failed, return None
-                return None
-
-            ic = np.array([R, Z, R0, Z0, theta, 1.0, 0.0, 0.0, 1.0], dtype=np.float64)
-            self.history.append(ic[0:1].copy())
-
-        if succeeded:
-            return np.array([R, Z, zeta], dtype=np.float64)
+            return x
         else:
             return None
+
+    def _scipy_root(self, guess, **kwargs):
+        """
+        Use the scipy root method to find the fixed point. 
+        Finds the minimum of :math:f^{t/2}-f^{-t/2} as it should be better behaved. 
+        """
+        scipy_method = kwargs.pop("scipy_method", "hybr")
+
+        def fun(x):
+            x = self._map.into_domain(x) # map back to domain
+            logger.info(f"Newton - xx : {x}")
+            diff = self._map.f(self.t/2, x) - self._map.f(-self.t/2, x)
+            logger.info(f"Newton - diff : {diff}")
+            return diff
+        
+        self._scipy_root_res = root(fun, guess, method=scipy_method, **kwargs)
+        if not self._scipy_root_res.success:
+            logger.info(f"Scipy root failed: {self._scipy_root_res.message}")
+            return None
+
+        return np.copy(self._scipy_root_res.x)
+    
+    def _scipy_derivs(self, guess, **kwargs):
+        """
+        find the fixed point by mapping half the period forward, half the period backwards. 
+        :math:`f^{t/2}(x) = f^{-t/2}(x)`
+        """
+
+        scipy_method = kwargs.pop("scipy_method", "hybr")
+        def fun(x):
+            logger.info(f"Newton - xx : {x}")
+            forwardjac = self._map.df(self.t/2, x)
+            forwardf = self._map.f(self.t/2, x)
+            backwardjac = self._map.df(-self.t/2, x)
+            backwardf = self._map.f(-self.t/2, x)
+
+            return forwardf - backwardf, (forwardjac - backwardjac)
+
+        self._scipy_root_res = root(fun, guess, jac=True, method=scipy_method, **kwargs)
+        
+        if not self._scipy_root_res.success:
+            logger.info(f"Scipy root failed: {self._scipy_root_res.message}")
+            return None
+       
+        return np.copy(self._scipy_root_res.x)
+    
+    def _scipy_1d_symmetry(self, guess, **kwargs):
+        """
+        use a 1d solver to find the fixed point in a symmetry plane. 
+        In stellarator symmetric devices, it is guaranteed there is a fixed point on Z=0.
+        R is varied and a zero of the Z component of the half map difference is found.
+
+        With bracketing functions it is useful to add a bracket_infinity_sign keyword +- 1, to choose 
+        if a failed evaluation should return positive or negative infinity. (sign of the return must be opposite
+        on each limit of the bracket)
+    
+        """
+        if guess[-1] != 0.:
+            raise ValueError("1d finding only works on the Z=0 line")
+        if not (self._map.phi0 == 0. or np.isclose(self._map.phi0 / self._map.dzeta, 0.5)):
+            raise ValueError("1d finding only works on a symmetry plane")
+        scipy_method = kwargs.pop("scipy_method", "brentq")
+        
+        bracket = kwargs.pop("bracket", None)
+        bracket_infinity_sign = np.sign(kwargs.pop("bracket_infinity", -1))  # sign of the infinity to return when the map is not calculated
+        if scipy_method in ["toms748", "ridder", "brentq", "brenth", "bisect"]:
+            if bracket is None:
+                bracket = guess[0] * np.array([0.99, 1.01])
+                logger.info(f"Newton - bracket not given for method that requires it, using 1 percent margin, bracket = {bracket}")
+        
+        def fun(R):
+            logger.info(f"Newton - xx : {R}")
+            try:
+                diff = (self._map.f(self.t/2, np.append(R, 0.)) - self._map.f(-self.t/2, np.append(R, 0.)))
+                zdiff = diff[-1]
+            except Exception as e:
+                logger.info(f"Newton - failed at xx {R}: {e}")
+                zdiff = np.inf*bracket_infinity_sign
+
+            logger.info(f"Newton - zdiff : {zdiff}")
+            return zdiff
+
+        self._scipy_root_res = root_scalar(fun, x0=guess[0], method=scipy_method, bracket=bracket, **kwargs)
+        
+        if not self._scipy_root_res.success:
+            logger.info(f"Scipy root failed: {self._scipy_root_res.message}")
+            return None
+        
+        return np.array([self._scipy_root_res.root, 0])
+
+    def _scipy_1d_2d(self, guess, **kwargs):
+        """
+        use a 1d solver to find the fixed point in a symmetry plane, then refine with a 
+        2d search on the found point. 
+        In stellarator symmetric devices, it is guaranteed there is a fixed point on Z=0.
+        Nevertheless, due to numerical error the fixed point of the integration may be slightly offset. 
+        In this method, first R is varied and a zero of the Z component of the half map difference is found, then that point is used as the starting point of the 2d search. 
+
+
+        With bracketing functions it is useful to add a bracket_infinity_sign keyword +- 1, to choose 
+        if a failed evaluation should return positive or negative infinity. (sign of the return must be opposite
+        on each limit of the bracket)
+    
+        """
+        if not np.isclose(guess[-1], 0., atol=1e-7):
+            raise ValueError("1d finding only works on the Z=0 line")
+        if not (self._map.phi0 == 0. or np.isclose(self._map.phi0 / self._map.dzeta, 0.5)):
+            raise ValueError("1d finding only works on a symmetry plane")
+        scipy_method = kwargs.pop("scipy_method", "brentq")
+        
+        bracket = kwargs.pop("bracket", None)
+        bracket_infinity_sign = np.sign(kwargs.pop("bracket_infinity", -1))  # sign of the infinity to return when the map is not calculated
+        if scipy_method in ["toms748", "ridder", "brentq", "brenth", "bisect"]:
+            if bracket is None:
+                bracket = guess[0] * np.array([0.99, 1.01])
+                logger.info(f"Newton - bracket not given for method that requires it, using 1 percent margin, bracket = {bracket}")
+        
+        def fun_1d(R):
+            logger.info(f"Newton - xx : {R}")
+            try:
+                diff = (self._map.f(self.t/2, np.append(R, 0.)) - self._map.f(-self.t/2, np.append(R, 0.)))
+                zdiff = diff[-1]
+            except Exception as e:
+                logger.info(f"Newton - failed at xx {R}: {e}")
+                zdiff = np.inf*bracket_infinity_sign
+
+            logger.info(f"Newton 1d - zdiff : {zdiff}")
+            return zdiff
+
+        self._scipy_root_res_1d = root_scalar(fun_1d, x0=guess[0], method=scipy_method, bracket=bracket, **kwargs)
+        guess2d = [self._scipy_root_res_1d.root, 0]
+
+        def fun_2d(x):
+            logger.info(f"Newton 2d - xx : {x}")
+            return self._map.f(self.t/2, x) - self._map.f(-self.t/2, x)
+        
+        self._scipy_root_res = root(fun_2d, guess2d)
+        
+        if not self._scipy_root_res.success:
+            logger.info(f"Scipy root failed: {self._scipy_root_res.message}")
+            return None
+
+        return np.copy(self._scipy_root_res.x)
+
+
+    def _newton_method_winding(self, guess, xaxis=None, niter=100, tol=1e-10):
+        """
+        Newton's method to find the fixed point using the change in total
+        winding, based on a toroidal coordinate system located on the
+        axis. 
+        Guess should be provided in the coordinates natural to the map, 
+        and will be converted to toroidal internally.
+        """
+        x = np.array(guess)
+
+        self.history.append(x.copy())
+        succeeded = False
+        target_dtheta = self._n * self._map.dzeta
+
+        for i in range(niter):
+            logger.info(f"Newton {i} - x : {x}")
+
+            dW = self._map.dwinding(self.t, x, xaxis)
+            x_winding = self._map.winding(self.t, x, xaxis)
+            logger.info(
+                f"Newton {i} - x_winding : {x_winding}"
+            )
+
+            if isinstance(self._map, maps.ToroidalBfieldSection):
+                rhotheta = x
+            elif isinstance(self._map, maps.CylindricalBfieldSection):
+                rhotheta = self._map.to_rhotheta(x)
+
+            # Stop if the resolution is good enough
+            delta_x = np.array([x_winding[0] - rhotheta[0], x_winding[-1] - target_dtheta])
+            logger.info(f"Newton {i} - delta_x_rhodtheta : {delta_x}")
+            if abs(delta_x[-1]) < tol:
+                succeeded = True
+                break
+
+            # Newton's step
+            step = np.linalg.solve(dW - np.eye(self._map.dimension), -1 * delta_x)
+            rhotheta_new = self._map.into_domain(rhotheta + step)
+
+            # Update the variables
+            logger.info(f"Newton {i} - step: {step}")
+            
+            if isinstance(self._map, maps.ToroidalBfieldSection):
+                x = rhotheta_new
+            elif isinstance(self._map, maps.CylindricalBfieldSection):
+                x = self._map.to_RZ(rhotheta_new)
+                logger.info(f"Newton {i} coordinate_transform - x_new: {x}")
+
+            if not self._map.in_domain(x):
+                logger.info(f"Newton {i} - out of domain")
+                return None
+
+            self.history.append(x.copy())
+
+        if succeeded:
+            return x
+        else:
+            return None
+    
+        
+    def _scipy_winding(self, guess, xaxis=None, **kwargs):
+        """
+        Use the scipy root method to find the fixed point using the change in total
+        winding, based on a toroidal coordinate system located on the
+        axis. 
+        Guess should be provided in the coordinates natural to the map, 
+        and will be converted to toroidal internally.
+        """
+        scipy_method = kwargs.pop("scipy_method", "hybr")
+        target_dtheta = self._n * self._map.dzeta
+
+        def fun(x):
+            logger.info(f"Newton - xx : {x}")
+            if not self._map.in_domain(x):
+                logger.info(f"Newton - out of domain")
+                return None
+            x_winding = self._map.winding(self.t, x, xaxis)
+            logger.info(f"Newton - x_winding : {x_winding}")
+
+            if isinstance(self._map, maps.ToroidalBfieldSection):
+                rhotheta = x
+            elif isinstance(self._map, maps.CylindricalBfieldSection):
+                rhotheta = self._map.to_rhotheta(x)
+
+            delta_x = np.array([x_winding[0] - rhotheta[0], x_winding[-1] - target_dtheta])
+            logger.info(f"Newton - delta_x_rhodtheta : {delta_x}")
+            return delta_x
+        
+        self._scipy_root_res = root(fun, guess, method=scipy_method, **kwargs)
+        
+        if not self._scipy_root_res.success:
+            logger.info(f"Scipy root failed: {self._scipy_root_res.message}")
+            return None
+
+        return np.copy(self._scipy_root_res.x)
+
+    def _scipy_winding_1D(self, guess, xaxis=None, **kwargs):
+        """
+        Use the scipy root method to find the fixed point using the change in total
+        winding, based on a toroidal coordinate system located on the
+        axis. 
+        Guess should be provided in the coordinates natural to the map, 
+        and will be converted to toroidal internally.
+        """
+        scipy_method = kwargs.pop("scipy_method", "hybr")
+        target_dtheta = self._n * self._map.dzeta
+
+        if guess[-1] != 0.:
+            raise ValueError("1d finding only works on the Z=0 or theta=0 line")
+
+        def fun(x_1d):
+            xx = np.array([x_1d, 0.])
+            logger.info(f"Newton - xx : {xx}")
+            x_winding = self._map.winding(self.t, xx, xaxis)
+            logger.info(f"Newton - x_winding : {x_winding}")
+
+            if isinstance(self._map, maps.ToroidalBfieldSection):
+                s_theta = xx
+            elif isinstance(self._map, maps.CylindricalBfieldSection):
+                s_theta = self._map.to_rhotheta(xx)
+
+            delta_x = np.array([x_winding[0] - s_theta[0], x_winding[-1] - target_dtheta])
+            logger.info(f"Newton - delta_x_rhodtheta : {delta_x}")
+            return delta_x
+        
+        self._scipy_root_res = root(fun, guess, method=scipy_method, **kwargs)
+        
+        if not self._scipy_root_res.success:
+            logger.info(f"Scipy root failed: {self._scipy_root_res.message}")
+            return None
+
+        return np.copy(np.array([self._scipy_root_res.x[0], 0.]))
+
+    def plot(
+        self, plottype='RZ', plot_all = True, **kwargs
+    ):
+        """
+        Plot the fixed point. 
+        Args: 
+            plottype: the type of plot to make, either 'RZ' or 'polar' or None. if None, the natural coordinats of the map will be plotted. 
+            plot_all: if True, all the iterates of the fixed point will be plotted, otherwise only the fixed point itself will be plotted.
+            **kwargs: additional arguments for the scatter plot, such as color, size, etc.
+        """
+
+        if not self.successful:
+            raise Exception("A successful call of compute() is needed")
+        elif self._map.dimension != 2:
+            raise ValueError("I can only plot 2D fixed points.")
+
+        fig, ax, kwargs = create_canvas(**kwargs)
+
+        if kwargs.get("marker", None) is None:
+            if self.GreenesResidue > 1:
+                # Alternating hyperbolic fixed point
+                kwargs["marker"] = "s"
+            elif self.GreenesResidue < 0:
+                # Hyperbolic fixed point
+                kwargs["marker"] = "X"
+            elif self.GreenesResidue < 1:
+                # Elliptic fixed point
+                kwargs["marker"] = "o"
+        
+        if plottype == 'RZ':
+            plotpoints = self.RZcoords
+        elif plottype == 'polar':
+            plotpoints = self.polarcoords
+        elif plottype is None:
+            plotpoints = self.coords
+       
+        if plot_all:
+            ax.scatter(plotpoints[:, 0], plotpoints[:, 1], **kwargs)
+        else:
+            ax.scatter(plotpoints[0, 0], plotpoints[0, 1], **kwargs)
+
+        return fig, ax

@@ -1,63 +1,37 @@
-## @file qfm.py: class for generating the (weighted) Quadratic Flux Minimising (QFM) surfaces
-#  @brief class for generating the QFMs
-#  @author Zhisong Qu (zhisong.qu@anu.edu.au)
-#
+# class for generating the (weighted) Quadratic Flux Minimising (QFM) surfaces
 
-from inspect import ismemberdescriptor
-from matplotlib.pyplot import axis
-from scipy.special.orthogonal import jacobi
-from .base_solver import BaseSolver
-from pyoculus.problems import ToroidalBfield
+import pyoculus.fields as fields
 import numpy as np
 
 nax = np.newaxis
 
 
-class QFM(BaseSolver):
+class QFM:
     def __init__(
         self,
-        problem: ToroidalBfield,
-        params=dict(),
-        integrator=None,
-        integrator_params=dict(),
+        bfield: fields.ToroidalBfield,
+        pqMpol=8,
+        pqNtor=4,
+        nfft_multiplier=2,
+        stell_sym=True,
+        ntheta=100,
     ):
-        """! Set up the class of the fixed point finder
-        @param problem must inherit pyoculus.problems.ToroidalBfield, the problem to solve
-        @param params dict, the parameters for the solver
-        @param integrator the integrator to use, must inherit \pyoculus.integrators.BaseIntegrator, if set to None by default using RKIntegrator (not used here)
-        @param integrator_params dict, the parmaters passed to the integrator (not used here)
-
-        <code> params['pqMpol']=8 </code> -- Fourier resolution multiplier for poloidal direction
-        <code> params['pqNtor']=4 </code> -- Fourier resolution multiplier for toroidal direction
-        <code> params['nfft_multiplier']=4 </code> -- the extended (multiplier) resolution for FFT
-        <code> params['stellar_sym']=True </code> -- stellarator symmetry
         """
+        Set up the QFM solver
 
-        if "ntheta" not in params.keys():
-            params["ntheta"] = 100
-
-        if "nfft_multiplier" not in params.keys():
-            params["nfft_multiplier"] = 2
-
-        if "pqNtor" not in params.keys():
-            params["pqNtor"] = 4
-
-        if "pqMpol" not in params.keys():
-            params["pqMpol"] = 8
-
-        if "stellar_sym" not in params.keys():
-            params["stellar_sym"] = True
-
-        self._MM = params["nfft_multiplier"] * 2
-        self.nfft_multiplier = params["nfft_multiplier"]
-        self._pqNtor = params["pqNtor"]
-        self._pqMpol = params["pqMpol"]
-        self.Nfp = problem.Nfp
-        self.sym = params["stellar_sym"]
-
-        integrator_params["ode"] = problem.f
-
-        super().__init__(problem, params, integrator, integrator_params)
+        Args:
+            bfield (ToroidalBfield): the toroidal bfield object
+            pqMpol (int): the Fourier resolution multiplier for poloidal direction
+            pqNtor (int): the Fourier resolution multiplier for toroidal direction
+            nfft_multiplier (int): the extended (multiplier) resolution for FFT
+            stell_sym (bool): stellarator symmetry
+        """
+        self._bfield = bfield
+        self._MM = nfft_multiplier * 2
+        self.nfft_multiplier = nfft_multiplier
+        self._pqNtor = pqNtor
+        self._pqMpol = pqMpol
+        self.sym = stell_sym
 
     def construct_qfms(
         self,
@@ -83,7 +57,7 @@ class QFM(BaseSolver):
 
         @returns an instance of pyoculus.problems.SurfacesToroidal containing the intepolation coordinates.
         """
-        from pyoculus.problems import SurfacesToroidal, QFMBfield
+        from pyoculus.geo import SurfacesToroidal
 
         surfaces = SurfacesToroidal(
             mpol=self._pqMpol, ntor=self._pqNtor, nsurfaces=2, stellar_sym=self.sym
@@ -198,7 +172,7 @@ class QFM(BaseSolver):
                 + lambda_real
             )
 
-            B = self._problem.B_many(rarr.flatten(), tarr.flatten(), zarr.flatten(), input1D=True)
+            B = self._bfield.B_many(rarr.flatten(), tarr.flatten(), zarr.flatten(), input1D=True)
 
             Bs = np.reshape(B[:, 0], [nfft_theta, nfft_zeta])
             Bt = np.reshape(B[:, 1], [nfft_theta, nfft_zeta])
@@ -278,8 +252,8 @@ class QFM(BaseSolver):
 
         # test if problem.dBdX_many is implemented
         try:
-            zero_coords =np.zeros([1])
-            B, dBdX = self._problem.dBdX_many(zero_coords, zero_coords, zero_coords, input1D=True)
+            zero_coords = np.zeros([1])
+            B, dBdX = self._bfield.dBdX_many(zero_coords, zero_coords, zero_coords, input1D=True)
         except NotImplementedError:
             use_jacobi = False
         else:
@@ -386,25 +360,34 @@ class QFM(BaseSolver):
         return scn_surf, tsn_surf, ssn_surf, tcn_surf
 
     def action_gradient(self, xx, pp, qq, a, qN, Nfft):
-        """! Computes the action gradient, being used in root finding
-        @param xx  the packed degrees of freedom. It should contain rcn, tsn, rsn, tcn, nv.
-        @param pp  the poloidal periodicity of the island, should be an integer
-        @param qq  the toroidal periodicity of the island, should be an integer
-        @param a   the target area
-        @returns ff  the equtions to find zeros, see below.
-        Construct the Fourier transform of \f$B^\vartheta_i / B^\zeta_i\f$ and \f$B^\rho_i / B^\zeta_i + \bar \nu / (J B^\zeta_i)\f$,
-        \f[
-        B^\t / B^\z & = & f^c_0 + \sum_{n=1}^{qN} \left[ f^c_n \cos(n\z/q) + f^s_n \sin(n\z/q) \right], \label{eqn:f}
-        \f] \f[
-        B^\rho / B^\z + \bar \nu / \sqrt g B^\z & = & g^c_0 + \sum_{n=1}^{qN} \left[ g^c_n \cos(n\z/q) + g^s_n \sin(n\z/q) \right], \label{eqn:g} 
-        \f]
-        
-        \item The Fourier harmonics of $\dot\rho$ and $\dot\t$ are given directly by, 
-        \begin{eqnarray}
-        \dot \t(\z) & = & p/q + \sum_{n=1}^{qN} \left[ - \t^c_n \sin(n\z/q) + \t^s_n\cos(n\z/q) \right](n/q), \label{eqn:tdot} \\
-        \dot \rho(\z) & = & \sum_{n=1}^{qN} \left[ - \rho^c_n \sin(n\z/q) + \rho^s_n\cos(n\z/q) \right] (n/q), \label{eqn:rdot}
-        \label{eqn:dtrialcurve}
-        \end{eqnarray}
+        """
+        Compute the action gradient, used in root finding.
+
+        Args:
+            xx (np.array): The packed degrees of freedom. It should contain rcn, tsn, rsn, tcn, nv.
+            pp (int): The poloidal periodicity of the island.
+            qq (int): The toroidal periodicity of the island.
+            a (float): The target area.
+
+        Returns:
+            np.array: The equations to find zeros.
+
+        Notes:
+            Construct the Fourier transform of :math:`B^\\vartheta_i / B^\\zeta_i` and :math:`B^\\rho_i / B^\\zeta_i + \\bar \\nu / (J B^\\zeta_i)`,
+
+            .. math::
+                B^\\vartheta / B^\\zeta = f^c_0 + \\sum_{n=1}^{qN} \\left[ f^c_n \\cos(n\\z/q) + f^s_n \\sin(n\\z/q) \\right]
+
+            .. math::
+                B^\\rho / B^\\zeta + \\bar \\nu / \\sqrt{g} B^\\zeta = g^c_0 + \\sum_{n=1}^{qN} \\left[ g^c_n \\cos(n\\z/q) + g^s_n \\sin(n\\z/q) \\right]
+
+            The Fourier harmonics of :math:`\\dot\\rho` and :math:`\\dot\\vartheta` are given directly by,
+
+            .. math::
+                \\dot \\vartheta(\\z) = p/q + \\sum_{n=1}^{qN} \\left[ - \\vartheta^c_n \\sin(n\\z/q) + \\vartheta^s_n \\cos(n\\z/q) \\right](n/q)
+
+            .. math::
+                \\dot \\rho(\\z) = \\sum_{n=1}^{qN} \\left[ - \\rho^c_n \\sin(n\\z/q) + \\rho^s_n \\cos(n\\z/q) \\right] (n/q)
         """
         # shorthand
         iota = pp / qq
@@ -420,15 +403,15 @@ class QFM(BaseSolver):
         # area = ( np.sum( t ) + np.pi * pp) * self._dz / (qq*2*np.pi) - pp * np.pi
         area = tcn[0]
 
-        B = self._problem.B_many(r, t, z, input1D=True)
+        B = self._bfield.B_many(r, t, z, input1D=True)
 
         Br = B[:, 0]
         Bt = B[:, 1]
         Bz = B[:, 2]
 
-        if not self._problem.has_jacobian:
-            jacobian = self._problem.jacobian_many(r, t, z, input1D=True)
-            Bz = Bz * jacobian
+        # if not self._problem.has_jacobian:
+        #     jacobian = self._problem.jacobian_many(r, t, z, input1D=True)
+        #     Bz = Bz * jacobian
 
         rhs_tdot = Bt / Bz
         rhs_rdot = Br / Bz - nv / Bz
@@ -453,12 +436,19 @@ class QFM(BaseSolver):
         return ff
 
     def action_gradient_jacobi(self, xx, pp, qq, a, qN, Nfft):
-        """! Computes the jacobi matrix of action gradient, being used in root finding
-        @param xx  the packed degrees of freedom. It should contain rcn, tsn, rsn, tcn, nv.
-        @param pp  the poloidal periodicity of the island, should be an integer
-        @param qq  the toroidal periodicity of the island, should be an integer
-        @param a   the target area
-        @returns dff  the jacobian
+        """
+        Compute the Jacobian matrix of the action gradient, used in root finding.
+
+        Args:
+            xx (np.array): The packed degrees of freedom. It should contain rcn, tsn, rsn, tcn, nv.
+            pp (int): The poloidal periodicity of the island.
+            qq (int): The toroidal periodicity of the island.
+            a (float): The target area.
+            qN (int): Fourier resolution.
+            Nfft (int): Number of FFT points.
+
+        Returns:
+            np.array: The Jacobian matrix.
         """
 
         # shorthand
@@ -475,7 +465,7 @@ class QFM(BaseSolver):
         # area = ( np.sum( t ) + np.pi * pp) * self._dz / (qq*2*np.pi) - pp * np.pi
         area = tcn[0]
 
-        B, dBdX = self._problem.dBdX_many(r, t, z, input1D=True)
+        B, dBdX = self._bfield.dBdX_many(r, t, z, input1D=True)
 
         Br = B[:, 0]
         Bt = B[:, 1]
@@ -488,9 +478,9 @@ class QFM(BaseSolver):
         dBzdr = dBdX[:, 0, 2]
         dBzdt = dBdX[:, 1, 2]
 
-        if not self._problem.has_jacobian:
-            jacobian = self._problem.jacobian_many(r, t, z, input1D=True)
-            Bz = Bz * jacobian
+        # if not self._problem.has_jacobian:
+        #     jacobian = self._problem.jacobian_many(r, t, z, input1D=True)
+        #     Bz = Bz * jacobian
 
         oBz = 1 / Bz
 
@@ -553,10 +543,20 @@ class QFM(BaseSolver):
         return ff
 
     def _unpack_dof(self, xx, qN):
-        """! Unpack the degrees of freedom into Fourier harmonics
-        @param xx  the packed degrees of freedom
-        @param qN  Fourier resolution
-        @returns nv, rcn, tsn, rsn, tcn
+        """
+        Unpack the degrees of freedom into Fourier harmonics.
+
+        Args:
+            xx (np.array): The packed degrees of freedom.
+            qN (int): Fourier resolution.
+
+        Returns:
+            tuple: A tuple containing:
+                - nv (int): The first degree of freedom.
+                - rcn (np.array): The cosine components for r.
+                - tsn (np.array): The sine components for t.
+                - rsn (np.array): The sine components for r.
+                - tcn (np.array): The cosine components for t.
         """
         nv = xx[0] - 1
         rcn = xx[1 : qN + 2] - 1
@@ -567,22 +567,36 @@ class QFM(BaseSolver):
         return nv, rcn, tsn, rsn, tcn
 
     def _pack_dof(self, nv, rcn, tsn, rsn, tcn):
-        """! Unpack the degrees of freedom into Fourier harmonics
-        @param nv
-        @param rcn
-        @param tsn
-        @param rsn
-        @param tcn
+        """
+        Pack the degrees of freedom from Fourier harmonics.
+
+        Args:
+            nv (int): The first degree of freedom.
+            rcn (np.array): The cosine components for r.
+            tsn (np.array): The sine components for t.
+            rsn (np.array): The sine components for r.
+            tcn (np.array): The cosine components for t.
+
+        Returns:
+            np.array: The packed degrees of freedom.
         """
         xx = np.concatenate([np.atleast_1d(nv), rcn, tsn[1:], rsn[1:], tcn], axis=0) + 1
 
         return xx
 
+## Fourier transform functions
 
 def rfft1D(f):
-    """! perform 1D Fourier transform from real space to cosine and sine
-    @param f the data in real space. If f is 2D, then the last axis will be the axis along which FFT is computed
-    @returns cosout, sinout the cosine and sine components
+    """
+    Perform 1D Fourier transform from real space to cosine and sine.
+
+    Args:
+        f (np.array): The data in real space. If f is 2D, then the last axis will be the axis along which FFT is computed.
+
+    Returns:
+        tuple: A tuple containing:
+            - np.array: The cosine components.
+            - np.array: The sine components.
     """
     Nfft = f.shape[-1]
     ffft = np.fft.rfft(f)
@@ -594,13 +608,17 @@ def rfft1D(f):
 
     return cosout, sinout
 
-
 def irfft1D(cos_in, sin_in, nfft_multiplier=1):
-    """! perform 1D inverse Fourier transform from cosine and sine to real space
-    @param cos_in The cosine components. If cos_in is 2D, then the last axis will be the axis along which FFT was computed
-    @param sin_in The sine components
-    @param nfft_multiplier The number of output points will be this*(cos_in.shape[-1] - 1)
-    @returns the function value in real space
+    """
+    Perform 1D inverse Fourier transform from cosine and sine to real space.
+
+    Args:
+        cos_in (np.array): The cosine components. If cos_in is 2D, then the last axis will be the axis along which FFT was computed.
+        sin_in (np.array): The sine components.
+        nfft_multiplier (int, optional): The number of output points will be this*(cos_in.shape[-1] - 1). Defaults to 1.
+
+    Returns:
+        np.array: The function value in real space.
     """
     Nfft = nfft_multiplier * (cos_in.shape[-1] - 1)
     ffft = (cos_in - complex(0, 1) * sin_in) * Nfft
@@ -610,10 +628,19 @@ def irfft1D(cos_in, sin_in, nfft_multiplier=1):
 
 
 def rfft2D(f, mpol=None, ntor=None):
-    """! perform 2D Fourier transform from real space to cosine and sine
-    @param f the data in real space. If f is 2D, then the last axis will be the axis along which FFT is computed
-    @returns fftcos, fftsin the cosine and sine components, m from 0 to mpol, n from -ntor to ntor
     """
+    Perform 2D Fourier transform from real space to cosine and sine.
+
+    Args:
+        f (np.array): The data in real space. If f is 2D, then the last axis will be the axis along which FFT is computed.
+        mpol (int, optional): The number of theta points on output. Defaults to f.shape[-2] // 4.
+        ntor (int, optional): The number of phi points on output. Defaults to f.shape[-1] // 4.
+
+    Returns:
+        np.array: Cosine components :math:`n \\in \\{0, ..., m_{pol}\\}`
+        np.array: Sine components :math:`n \\in \\{-n_{tor}, ..., n_{tor}\\}`
+    """
+
     Nfft1 = f.shape[-2]
     Nfft2 = f.shape[-1]
 
@@ -653,24 +680,26 @@ def rfft2D(f, mpol=None, ntor=None):
     return cn, sn
 
 
-def irfft2D(cn, sn, nfft_theta=None, nfft_zeta=None):
-    """! perform 2D Fourier transform from real space to cosine and sine
-    @param cn the cosine components
-    @param sn the sine components
-    @param nfft_theta, the number of theta points on output
-    @param nfft_zeta, the number of zeta points on output
-    @returns fout the function output
+def irfft2D(cn, sn, nfft_theta=None, nfft_phi=None):
+    """
+    Perform 2D Fourier transform from real space to cosine and sine.
+
+    Args:
+        cn (np.array): The cosine components.
+        sn (np.array): The sine components.
+        nfft_theta (int): The number of theta points on output. Defaults to (cn.shape[0] - 1)*4.
+        nfft_phi (int): The number of zeta points on output. Defaults to ((cn.shape[1] - 1) // 2)*4.
     """
     mpol = cn.shape[0] - 1
     ntor = (cn.shape[1] - 1) // 2
 
     if nfft_theta is None:
         nfft_theta = mpol * 4
-    if nfft_zeta is None:
-        nfft_zeta = ntor * 4
+    if nfft_phi is None:
+        nfft_phi = ntor * 4
 
     mpol_new = nfft_theta // 2
-    ntor_new = nfft_zeta // 2
+    ntor_new = nfft_phi // 2
 
     # now we pad cn and sn with zeros
     cn_pad = np.zeros([mpol_new + 1, 2 * ntor_new])
@@ -689,7 +718,7 @@ def irfft2D(cn, sn, nfft_theta=None, nfft_zeta=None):
     fout = (
         np.fft.irfft2(cn_pad - complex(0, 1) * sn_pad, axes=[-1, -2])
         * nfft_theta
-        * nfft_zeta
+        * nfft_phi
         / 2
     )
 

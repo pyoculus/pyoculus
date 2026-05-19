@@ -1,2 +1,2 @@
 from .base_integrator import BaseIntegrator
-from .rk_integrator import RKIntegrator
+from .scipyode_integrator import ScipyODEIntegrator

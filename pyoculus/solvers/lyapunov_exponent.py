@@ -1,153 +1,95 @@
 ## @file lyapunov_exponent.py
 # Containing a class for computing the Lyapunov Exponent
 #  @author Zhisong Qu (zhisong.qu@anu.edu.au)
-#
-from pyoculus.problems import BaseProblem
+
 from .base_solver import BaseSolver
+from ..utils.plot import create_canvas
+import matplotlib.pyplot as plt
 import numpy as np
+import logging
 
-## Class that used to setup the Lyapunov exponent computation
+logger = logging.getLogger(__name__)
+
+
 class LyapunovExponent(BaseSolver):
-    def __init__(
-        self, problem, params=dict(), integrator=None, integrator_params=dict()
-    ):
-        """! Sets up the class that compute the Lyapunov exponent
-        @param problem must inherit pyoculus.problems.BaseProblem, the problem to solve
-        @param params dict, the parameters for the solver
-        @param integrator the integrator to use, must inherit \pyoculus.integrators.BaseIntegrator, if set to None by default using RKIntegrator
-        @param integrator_params dict, the parmaters passed to the integrator
+    """
+    Class for computing the Lyapunov Exponent
+    """
 
-        <code> params['nPpts']=2000 </code> -- the number of iterations
+    def __init__(self, problem, nsave=20, every=100):
+        self.nsave = nsave
+        self.every = every
 
-        <code> params['nsave']=100 </code> -- save the Lyapunov Exponent each nsave iteration
+        super().__init__(problem)
 
-        <code> params['Nfp']=1 </code> -- period in zeta direction
+    def compute(self, x, eps=None, base=np.exp(1)):
         """
-        if "nPpts" not in params.keys():
-            params["nPpts"] = 2000
-
-        if "nsave" not in params.keys():
-            params["nsave"] = 100
-
-        self._params = params
-        self.nPpts = params["nPpts"]
-        self.nsave = params["nsave"]
-        self.Nfp = problem.Nfp
-
-        integrator_params["ode"] = problem.f_tangent
-
-        super().__init__(
-            problem=problem,
-            params=params,
-            integrator=integrator,
-            integrator_params=integrator_params,
-        )
-
-        self.ile = np.arange(0, self.nPpts + 1, self.nsave, dtype=np.int)
-        self.ile = self.ile[2:]
-        self.le = np.zeros(self.ile.shape, dtype=np.float64)
-
-    def compute(self, t0, ic, dic=[1.0, 0.0]):
-        """! Compute the maximal Lyapunov exponents
-        @param t0  the start time (or angle)
-        @param ic  the initial conidition
-        @param dic the initial perturbation direction (non-zero, for most of the cases it doesn't matter)
-
-        @returns a class with results
-
-        `result.le` -- the computed maximal Lyapunov Exponent (as a function of number of map iterations)
-
-        `result.ile` -- the number of iterations
+        Compute the maximal Lyapunov exponents
+        
+        J. C. Sprott, Chaos and Time-Series Analysis (Oxford University Press, 2003), pp.116-117.
+        
+        Args:
+            x: the initial point
+            eps: the perturbation, default is a random direction with norm of the square root of the machine precision
+            base: the base of the logarithm, default is exp(1)
+        
+        Returns:
+            np.array: the maximal Lyapunov exponents
         """
+        self._lyapunov_exp = np.NaN * np.zeros(self.nsave, dtype=np.float64)
+        self._dis = np.NaN * np.zeros((self.nsave + 1)*self.every, dtype=np.float64)
 
-        # short hand for the size of the problem
-        n = self._problem.problem_size
+        if eps is None:
+            random_dir = np.random.rand(self._map.dimension)
+            # Advice to get the square root of the machine precision
+            d0 = np.sqrt(np.finfo(float).eps)
+            eps = d0*random_dir/np.linalg.norm(random_dir)
 
-        # the zeta interval for each integration
-        self.dt = 2 * np.pi / self.Nfp
+        # if isinstance(self._map, pr.integrated_map):
+        #     self.dt = self._map.dt
+        # else:
+        #     self.dt = 1
+        dt = self._map.dzeta
 
-        # normalize dic
-        dic_norm = np.array(dic, dtype=np.float64).flatten()
-        dic_norm = dic_norm / np.sqrt(np.sum(dic_norm ** 2))
+        x_nearby = x + eps
 
-        icnp = np.array(ic, dtype=np.float64).flatten()
-
-        # check the size of the input
-        assert len(icnp) == n
-        assert len(dic_norm) == n
-
-        self.t0 = t0
-        self.ic = icnp.copy()
-        self.dic = dic_norm.copy()
-
-        # put together all the initial conditions
-        ic_all = np.concatenate((icnp, np.tile(dic_norm, n)))
-
-        # initialize di to save the data
-        self.di = np.ones((self.nPpts), dtype=np.float64)
-
-        t = t0
-        dt = self.dt
-
-        for ii in range(self.nPpts):
-
-            # initialize the integrator
-            self._integrator.set_initial_value(t, ic_all)
-
-            # run the integrator
+        for i in range((self.nsave + 1) * self.every):
+            # Map the points
             try:
-                st = self._integrator.integrate(t + dt)
-            except:
-                # integration failed, abort for this orbit
-                print("Integration failed for s=", ic[0])
+                x_new = self._map.f(1, x)
+                x_nearby_new = self._map.f(1, x_nearby)
+            except Exception as e:
+                logger.error(f"Error in mapping the points, stopping the computation after {i+1} iterations : {e}")
                 break
 
-            # extract the result
-            ic_new = st[0:n]
-            dic_new = st[n : 2 * n]
+            # Get their new distance
+            self._dis[i] = np.linalg.norm(x_nearby_new - x_new)
 
-            # normalize and save di
-            self.di[ii] = np.sqrt(np.sum(dic_new ** 2))
-            dic_new = dic_new / self.di[ii]
+            # Update the positions
+            x_nearby = x_new + d0*(x_nearby_new - x_new)/self._dis[i]
+            x = x_new
 
-            # set the new initial condition
-            ic_all = np.concatenate((ic_new, np.tile(dic_new, n)))
+        for i in range(1, self.nsave+1):
+            # Compute the Lyapunov exponent by averaging the logarithm of di/d0
+            self._lyapunov_exp[i-1] = np.mean(np.log(self._dis[: i*self.every]/d0)/np.log(base))/dt
 
-            # advance in time
-            t = t + dt
+        self._successful = True
 
-        for ii in range(len(self.le)):
-            self.le[ii] = np.sum(np.log(self.di[0 : self.ile[ii]])) / self.ile[ii] / dt
-
-        result = LyapunovExponent.OutputData()
-        result.ile = self.ile.copy()
-        result.le = self.le.copy()
-
-        self.successful = True
-
-        return result
+        return self._lyapunov_exp
 
     def plot(self, **kwargs):
-        import matplotlib.pyplot as plt
 
-        """! Generates the plot of maximal Lyapunov exponent vs number of iterations
-        @param **kwargs passed to the plotting routine "plot"
-        """
-
-        if not self.successful:
+        if not self._successful:
             raise Exception("A successful call of compute() is needed")
 
-        if plt.get_fignums():
-            fig = plt.gcf()
-            ax = plt.gca()
-        else:
-            fig, ax = plt.subplots()
+        fig, ax, kwargs = create_canvas(**kwargs)
 
-        leplot = ax.plot(
-            np.log10(self.ile.astype(np.float64)), np.log10(self.le), **kwargs
+        # plotting the points
+        ax.plot(
+            np.log10(self.every*np.arange(1, self.nsave+1)), np.log10(self._lyapunov_exp), **kwargs
         )
 
-        plt.xlabel("Log10 Num of iters", fontsize=20)
-        plt.ylabel("Log10 Maximal LE", fontsize=20)
-        plt.xticks(fontsize=16)
-        plt.yticks(fontsize=16)
+        ax.set_xlabel("Log10 Num of iters")
+        ax.set_ylabel("Log10 Maximal LE")
+
+        return fig, ax
