@@ -1,0 +1,177 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.solvers.flux_surface_gr &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.solvers.lyapunov_exponent" href="pyoculus.solvers.lyapunov_exponent.html" />
+    <link rel="prev" title="pyoculus.solvers.fixed_point" href="pyoculus.solvers.fixed_point.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.base_solver.html">pyoculus.solvers.base_solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.fixed_point.html">pyoculus.solvers.fixed_point</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.solvers.flux_surface_gr</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.solvers.flux_surface_gr.FluxSurfaceGR"><code class="docutils literal notranslate"><span class="pre">FluxSurfaceGR</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.lyapunov_exponent.html">pyoculus.solvers.lyapunov_exponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.manifold.html">pyoculus.solvers.manifold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.poincare_plot.html">pyoculus.solvers.poincare_plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.qfm.html">pyoculus.solvers.qfm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.resonance_zone.html">pyoculus.solvers.resonance_zone</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+      <li class="breadcrumb-item active">pyoculus.solvers.flux_surface_gr</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.solvers.flux_surface_gr.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.solvers.flux_surface_gr">
+<span id="pyoculus-solvers-flux-surface-gr"></span><h1>pyoculus.solvers.flux_surface_gr<a class="headerlink" href="#module-pyoculus.solvers.flux_surface_gr" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.solvers.flux_surface_gr.FluxSurfaceGR">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.solvers.flux_surface_gr.</span></span><span class="sig-name descname"><span class="pre">FluxSurfaceGR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.flux_surface_gr.FluxSurfaceGR" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.flux_surface_gr.FluxSurfaceGR.GreeneMethod">
+<span class="sig-name descname"><span class="pre">GreeneMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iota</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fp_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fp_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nexpand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.flux_surface_gr.FluxSurfaceGR.GreeneMethod" title="Link to this definition"></a></dt>
+<dd><p>Look for the flux surface with a given rotation number using Greene’s residue method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iota</strong> – the irrational! rotation number of the flux surface</p></li>
+<li><p><strong>fixed_point_left</strong> – a sucessfully found FixPoint to mark the left bound of the flux surface,
+its rotation number needs to be in the convergent sequence of iota</p></li>
+<li><p><strong>surface</strong> (<em>fixed_point_right a sucessfully found FixPoint to mark the right bound</em><em> of </em><em>the flux</em>) – its rotation number needs to be in the convergent sequence of iota and next to fixed_point_left</p></li>
+</ul>
+</dd>
+</dl>
+<p>:param : its rotation number needs to be in the convergent sequence of iota and next to fixed_point_left
+:param n_expand=10 the number of terms in the continued fraction expansion of iota:
+:param used to approximate the flux surface:
+:param **kwargs: additional arguments for the fixed point finding method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>fdata.MackayResidue</cite> – the Mackay Residue of the fixed points
+<cite>fdata.fixed_points</cite> – all the fixed point located
+<cite>fdata.rmnc</cite>, fdata.rmns`, <cite>fdata.zmnc</cite>, <cite>fdata.zmns</cite> – the Fourier harmonics</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.solvers.fixed_point.html" class="btn btn-neutral float-left" title="pyoculus.solvers.fixed_point" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.solvers.lyapunov_exponent.html" class="btn btn-neutral float-right" title="pyoculus.solvers.lyapunov_exponent" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

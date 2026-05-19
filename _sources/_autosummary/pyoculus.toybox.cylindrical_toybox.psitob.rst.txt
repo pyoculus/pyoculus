@@ -1,0 +1,6 @@
+pyoculus.toybox.cylindrical\_toybox.psitob
+==========================================
+
+.. currentmodule:: pyoculus.toybox.cylindrical_toybox
+
+.. autofunction:: psitob

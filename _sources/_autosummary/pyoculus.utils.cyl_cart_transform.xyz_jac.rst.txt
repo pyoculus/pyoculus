@@ -1,0 +1,6 @@
+pyoculus.utils.cyl\_cart\_transform.xyz\_jac
+============================================
+
+.. currentmodule:: pyoculus.utils.cyl_cart_transform
+
+.. autofunction:: xyz_jac

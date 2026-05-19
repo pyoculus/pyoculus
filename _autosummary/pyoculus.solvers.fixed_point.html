@@ -1,0 +1,310 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.solvers.fixed_point &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.solvers.flux_surface_gr" href="pyoculus.solvers.flux_surface_gr.html" />
+    <link rel="prev" title="pyoculus.solvers.base_solver" href="pyoculus.solvers.base_solver.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.base_solver.html">pyoculus.solvers.base_solver</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.solvers.fixed_point</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fixed-point-py">fixed_point.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.solvers.fixed_point.FixedPoint"><code class="docutils literal notranslate"><span class="pre">FixedPoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.flux_surface_gr.html">pyoculus.solvers.flux_surface_gr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.lyapunov_exponent.html">pyoculus.solvers.lyapunov_exponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.manifold.html">pyoculus.solvers.manifold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.poincare_plot.html">pyoculus.solvers.poincare_plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.qfm.html">pyoculus.solvers.qfm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.resonance_zone.html">pyoculus.solvers.resonance_zone</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+      <li class="breadcrumb-item active">pyoculus.solvers.fixed_point</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.solvers.fixed_point.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.solvers.fixed_point">
+<span id="pyoculus-solvers-fixed-point"></span><h1>pyoculus.solvers.fixed_point<a class="headerlink" href="#module-pyoculus.solvers.fixed_point" title="Link to this heading"></a></h1>
+<section id="fixed-point-py">
+<h2>fixed_point.py<a class="headerlink" href="#fixed-point-py" title="Link to this heading"></a></h2>
+<p>Contains the class for finding fixed points of a map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">authors<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>Zhisong Qu (<a class="reference external" href="mailto:zhisong&#46;qu&#37;&#52;&#48;anu&#46;edu&#46;au">zhisong<span>&#46;</span>qu<span>&#64;</span>anu<span>&#46;</span>edu<span>&#46;</span>au</a>)</p></li>
+<li><p>Ludovic Rais (<a class="reference external" href="mailto:ludovic&#46;rais&#37;&#52;&#48;epfl&#46;ch">ludovic<span>&#46;</span>rais<span>&#64;</span>epfl<span>&#46;</span>ch</a>)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.solvers.fixed_point.</span></span><span class="sig-name descname"><span class="pre">FixedPoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint" title="Link to this definition"></a></dt>
+<dd><p>Class to find fixed points of a map, i.e. points that satisfy <span class="math notranslate nohighlight">\(f^t(x) = x\)</span>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.find">
+<span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_Buffer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrestart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scipy.root'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.find" title="Link to this definition"></a></dt>
+<dd><p>Tries to find a fixed point of the map applied <span class="math notranslate nohighlight">\(t\)</span> times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> – the number of iterations of the map</p></li>
+<li><p><strong>guess</strong> – the initial guess of the fixed point</p></li>
+<li><p><strong>nrestarts</strong> – the maximum number of restart with different random initial conditions</p></li>
+<li><p><strong>method</strong> – the method to use to find the fixed point, default is ‘newton’.</p></li>
+<li><p><strong>**kwargs</strong> – additional arguments for the method</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>the output data of the fixed point search</dt><dd><ul class="simple">
+<li><p>coords: the coordinates of the fixed point</p></li>
+<li><p>Jacobian: the Jacobian of the fixed point</p></li>
+<li><p>GreenesResidue: the Greene’s Residue of the fixed point</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>FixedPoint.OutputData</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>There are several methods implemented,
+<em>newton</em> is a simple Newton’s method implemented in this class. it evaluates the full map.
+<em>scipy.root</em> uses the scipy root method to find the fixed point without derivative evaluation, it also finds the point using only a half-map forwards and backwards, which should help with convergence to very unstable fixed points
+<em>scipy.derivs</em> is the same as root, but also uses the calculated derivatives.
+<em>scipy.1D</em> is a 1D solver that finds the fixed point on a symmetry plane using a 1D bisection method and looking a zero in the difference in Z in the half-maps (defalut solver is brentq, specified by the keyword scipy_method=”..”)</p>
+<p>For IntegratedMaps, often best results are obtained with ‘scipy.root’, which does not use derivatives. This is because
+the derivative evaluation is often more expensive than several map evaluations and most scipy solvers internally construct a jacobian from the evaluations.
+For s</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.find_with_iota">
+<span class="sig-name descname"><span class="pre">find_with_iota</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_Buffer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_Buffer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">complex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrestart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scipy.root'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.find_with_iota" title="Link to this definition"></a></dt>
+<dd><p>Tries to find the fixed point of a map with winding number <span class="math notranslate nohighlight">\(\iota/2\pi = q^{-1} = n/m\)</span> around x_axis.s</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – the numerator of the winding number</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – the denominator of the winding number</p></li>
+<li><p><strong>guess</strong> (<em>array</em>) – the initial guess of the fixed point</p></li>
+<li><p><strong>x_axis</strong> (<em>array</em>) – the point around which the winding number is calculated</p></li>
+<li><p><strong>nrestarts</strong> (<em>int</em>) – the maximum number of restart with different random initial conditions</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – the method to use to find the fixed point, default is ‘newton’</p></li>
+<li><p><strong>**kwargs</strong> – additional arguments for the method</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>the output data of the fixed point search</dt><dd><ul class="simple">
+<li><p>coords: the coordinates of the fixed point</p></li>
+<li><p>Jacobian: the Jacobian of the fixed point</p></li>
+<li><p>GreenesResidue: the Greene’s Residue of the fixed point</p></li>
+<li><p>MeanResidue: –</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>FixedPoint.OutputData</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.random_initial_guess">
+<span class="sig-name descname"><span class="pre">random_initial_guess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prev_guess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.random_initial_guess" title="Link to this definition"></a></dt>
+<dd><p>Returns a random initial point uniformly sampled from the domain of the map.</p>
+<p>If prev_guess is provided and the map is a CylindricalBfieldSection,
+the sampling region is restricted to prev_guess ± max_step (intersected with the domain).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prev_guess</strong> (<em>np.array</em>) – the previous guess to sample around</p></li>
+<li><p><strong>max_step</strong> (<em>float</em>) – the maximum step size from prev_guess in each dimension</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.record_data">
+<span class="sig-name descname"><span class="pre">record_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_fp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.record_data" title="Link to this definition"></a></dt>
+<dd><p>Record some additional data about the fixed point, such as the Jacobian, the Greene’s Residue, and the Mean Residue for each iteration of the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_fp</strong> (<em>array</em>) – Fixed point coordinates</p></li>
+<li><p><strong>is_winding</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.eigenvalues">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">eigenvalues</span></span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.eigenvalues" title="Link to this definition"></a></dt>
+<dd><p>Compute the eigenvalues of the Jacobian of the fixed point</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.RZcoords">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">RZcoords</span></span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.RZcoords" title="Link to this definition"></a></dt>
+<dd><p>Return the RZ coordinates of the fixed point, applying a transform if the
+field is a ToroidalBfield (rho theta)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.polarcoords">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">polarcoords</span></span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.polarcoords" title="Link to this definition"></a></dt>
+<dd><p>Return the polar coordinates of the fixed point, applying a transform if the
+field is a ToroidalBfield (rho theta)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.topological_index">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">topological_index</span></span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.topological_index" title="Link to this definition"></a></dt>
+<dd><p>return the topological index of the fixed point</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.rotational_transform">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rotational_transform</span></span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.rotational_transform" title="Link to this definition"></a></dt>
+<dd><p>return the rotational transform if the fixed point is Elliptic</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.fixed_point.FixedPoint.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plottype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.fixed_point.FixedPoint.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot the fixed point.
+:param plottype: the type of plot to make, either ‘RZ’ or ‘polar’ or None. if None, the natural coordinats of the map will be plotted.
+:param plot_all: if True, all the iterates of the fixed point will be plotted, otherwise only the fixed point itself will be plotted.
+:param **kwargs: additional arguments for the scatter plot, such as color, size, etc.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.solvers.base_solver.html" class="btn btn-neutral float-left" title="pyoculus.solvers.base_solver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.solvers.flux_surface_gr.html" class="btn btn-neutral float-right" title="pyoculus.solvers.flux_surface_gr" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

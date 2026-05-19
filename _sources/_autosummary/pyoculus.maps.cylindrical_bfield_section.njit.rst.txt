@@ -1,0 +1,6 @@
+pyoculus.maps.cylindrical\_bfield\_section.njit
+===============================================
+
+.. currentmodule:: pyoculus.maps.cylindrical_bfield_section
+
+.. autofunction:: njit

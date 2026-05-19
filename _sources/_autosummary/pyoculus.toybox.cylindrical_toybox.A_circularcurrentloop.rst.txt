@@ -1,0 +1,6 @@
+pyoculus.toybox.cylindrical\_toybox.A\_circularcurrentloop
+==========================================================
+
+.. currentmodule:: pyoculus.toybox.cylindrical_toybox
+
+.. autofunction:: A_circularcurrentloop

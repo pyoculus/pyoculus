@@ -1,0 +1,6 @@
+pyoculus.maps.standard\_map.return\_f\_t\_pure
+==============================================
+
+.. currentmodule:: pyoculus.maps.standard_map
+
+.. autofunction:: return_f_t_pure

@@ -1,0 +1,29 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.utils.plot
+===================
+
+.. automodule:: pyoculus.utils.plot
+   :members:
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      clean_bigsteps
+      create_canvas
+   
+   
+
+   
+   
+   
+
+
+

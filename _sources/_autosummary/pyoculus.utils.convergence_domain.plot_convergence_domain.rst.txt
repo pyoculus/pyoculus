@@ -1,0 +1,6 @@
+pyoculus.utils.convergence\_domain.plot\_convergence\_domain
+============================================================
+
+.. currentmodule:: pyoculus.utils.convergence_domain
+
+.. autofunction:: plot_convergence_domain

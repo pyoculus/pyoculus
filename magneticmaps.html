@@ -1,0 +1,221 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Field Line map &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fields" href="fields.html" />
+    <link rel="prev" title="Maps" href="maps.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maps.html">Maps</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Field Line map</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#flow-of-a-vector-field">Flow of a vector field</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flux-conservation">Flux conservation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jacobian-of-mathcal-p">Jacobian of <span class="math notranslate nohighlight">\(\mathcal{P}\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#determinant-of-the-jacobian">Determinant of the Jacobian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integration-of-a-vector-field-along-a-field-line">Integration of a vector field along a field line</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/pyoculus.html">pyoculus</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Field Line map</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/magneticmaps.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="math notranslate nohighlight">
+\[\newcommand{\dpmap}{\mathcal{D}\mathcal{P}}\]</div>
+<div class="math notranslate nohighlight">
+\[\newcommand{\pmap}{\mathcal{P}}\]</div>
+<section id="field-line-map">
+<h1>Field Line map<a class="headerlink" href="#field-line-map" title="Link to this heading"></a></h1>
+<p>In the study of continuous dynamical systems, it is often convenient to consider a discrete map defined by the intersection of the trajectories with a lower-dimensional subspace and which captures some properties of the continuous case. In the case of magnetically confined plasmas, the particles loop around toroidally and the intersection of their trajectories with a constant <span class="math notranslate nohighlight">\(\phi\)</span> cross-section reveals the distinct region of different field line behaviour : closed surfaces, islands, chaotic regions. This section is known as a <cite>Poincaré</cite> section and to compute it the field lines need to be integrated and record their intersection with the desired cross-section.</p>
+<a class="reference internal image-reference" href="_images/fieldlinemap_illustrated.png"><img alt="_images/fieldlinemap_illustrated.png" class="align-center" src="_images/fieldlinemap_illustrated.png" width="500" />
+</a>
+<section id="flow-of-a-vector-field">
+<h2>Flow of a vector field<a class="headerlink" href="#flow-of-a-vector-field" title="Link to this heading"></a></h2>
+<p>Given a magnetic field <span class="math notranslate nohighlight">\(\textbf{B}\)</span>, or more generally any vector field in 3D, we can define a flow <span class="math notranslate nohighlight">\(\Phi(x,t)\)</span> as the evolution of a point <span class="math notranslate nohighlight">\(x\)</span> when following the field from time <span class="math notranslate nohighlight">\(t_0\)</span> to <span class="math notranslate nohighlight">\(t\)</span>. It means that the tangent vector for fixed <span class="math notranslate nohighlight">\(x\)</span> is equal to <span class="math notranslate nohighlight">\(\partial_t \Phi(x,t) = \mathbf{B}(\Phi(x,t),t)\)</span>. And we can define <span class="math notranslate nohighlight">\(\Phi(x,t)\)</span> as :</p>
+<div class="math notranslate nohighlight">
+\[\Phi(x,t) = \int\limits_{t_0}^{t}\mathbf{B}(\Phi(x,s),s)ds.\]</div>
+<p>This is a system of 3 ordinary differential equations (ODEs) that can be solved numerically. To record the intersection with a <span class="math notranslate nohighlight">\(\phi=\phi_0\)</span> section, the choice of coordinate is relevant. In cartesian coordinates, the current <span class="math notranslate nohighlight">\(\phi(x,y)\)</span> need to be verified at every step and when it crosses the desired value, one need to interpolate or integrate to look for a more precise intersection. In cylindrical <span class="math notranslate nohighlight">\((r,\phi,z)\)</span> and toroidal <span class="math notranslate nohighlight">\((\rho,\phi,\theta)\)</span> coordinates, the problem is much simpler as the <span class="math notranslate nohighlight">\(\phi\)</span> coordinate is already present. In those two cases, we need to consider the <span class="math notranslate nohighlight">\(\phi\)</span> coordinate as the time variable. Therefore the vector field, that can be written :</p>
+<div class="math notranslate nohighlight">
+\[\textbf{B}(\Phi(x,t),t) = B^i\partial_i + B^\phi\partial_\phi \quad \text{with} \quad i \in \{r,z\}/\{\rho,\theta\},\]</div>
+<p>need to have a non-vanishing <span class="math notranslate nohighlight">\(B^\phi\)</span> component. In this case, the map :</p>
+<div class="math notranslate nohighlight">
+\[t(\phi) = \int\limits_{\phi_0}^{\phi_0+\phi} \frac{dt}{d\phi}ds = \int\limits_{\phi_0}^{\phi_0+\phi} \frac{1}{B^\phi}ds\]</div>
+<p>is a well-define change of variable. Indeed <span class="math notranslate nohighlight">\(\Phi(x,t)\)</span> can be reparametrized as <span class="math notranslate nohighlight">\(\Phi(x,\phi) = \Phi(x,t(\phi))\)</span> and :</p>
+<div class="math notranslate nohighlight">
+\[\partial_\phi{\Phi}^i(\phi) = (\frac{dx^1}{d\phi},\,1,\,\frac{dx^3}{d\phi}) = (\frac{dx^1}{dt}\frac{dt}{d\phi},\,1,\,\frac{dx^3}{dt}\frac{dt}{d\phi}) = (B^1/B^\phi,\, 1,\,B^3/B^\phi).\]</div>
+<p>Due to the choice of coordinates the field will have at most a <span class="math notranslate nohighlight">\(\phi\)</span> periodicity of <span class="math notranslate nohighlight">\(2\pi\)</span>, yet in stellarator configurations have azymuthal redundancy. Their period is <span class="math notranslate nohighlight">\(T = 2\pi/n_\text{fp}\)</span> where <span class="math notranslate nohighlight">\(n_\text{fp}\in\mathbb{N}^\star\)</span> is the number of field period in a complete toroidal rotation. For example, W7X and LHD have 5 and 10 field periods respectively. If the field is not periodic then <span class="math notranslate nohighlight">\(n_\text{fp} = 1\)</span>.</p>
+<a class="reference internal image-reference" href="_images/poincare-torus.png"><img alt="_images/poincare-torus.png" class="align-center" src="_images/poincare-torus.png" width="400" />
+</a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>The <cite>Poincaré</cite> section is identical for <span class="math notranslate nohighlight">\(\phi_0\)</span> and <span class="math notranslate nohighlight">\(\phi_i + kT\)</span>, <span class="math notranslate nohighlight">\(k\in\mathbb{Z}\)</span>. Writing <span class="math notranslate nohighlight">\(\Omega\)</span> the set of initial points in the <span class="math notranslate nohighlight">\(\phi_i\)</span> plane for which <span class="math notranslate nohighlight">\(\Phi\)</span> is effectively re-parametrizable between <span class="math notranslate nohighlight">\(\phi_i\)</span> and <span class="math notranslate nohighlight">\(\phi_i + T\)</span>, allows to define the map <span class="math notranslate nohighlight">\(\pmap : \Omega \rightarrow \mathbb{R}_+\times\mathbb{R}\)</span> as :</p>
+<div class="math notranslate nohighlight">
+\[(x^1, x^2) \mapsto \pmap(x^1, x^2) = \int_{\phi_i}^{\phi_i+T}(
+    B^1/B^\phi,\,
+    B^3/B^\phi
+)\,ds + (x^1, x^2)\]</div>
+<p>The point <span class="math notranslate nohighlight">\((x^1, x^2) \in \Omega\)</span> are point in the initial section and should not be confused with the <span class="math notranslate nohighlight">\(\Phi(x,\phi)^1\)</span> and <span class="math notranslate nohighlight">\(\Phi(x,\phi)^3\)</span> components which are the evolution of the initial point after angle <span class="math notranslate nohighlight">\(\phi\)</span>.</p>
+</section>
+<section id="flux-conservation">
+<h2>Flux conservation<a class="headerlink" href="#flux-conservation" title="Link to this heading"></a></h2>
+<p>As the evolution is performed by following <span class="math notranslate nohighlight">\(\mathbf{B}\)</span> and due to the magnetic field been divergence free <span class="math notranslate nohighlight">\(\nabla\cdot\textbf{B} = 0\)</span>, the flux through any surface obtained by mapping a simple path in <span class="math notranslate nohighlight">\(\phi_i\)</span> to <span class="math notranslate nohighlight">\(\phi_i + T\)</span> will be zero. This result in the key property of <span class="math notranslate nohighlight">\(\pmap\)</span> being flux-conserving ; the flux through any closed surface <span class="math notranslate nohighlight">\(\Sigma \subset \Omega\)</span> is equal to the one through <span class="math notranslate nohighlight">\(\pmap(\Sigma)\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[\iint\limits_{\Sigma}\textbf{B}\cdot\textbf{dS} = \iint\limits_{\pmap(\Sigma)}\textbf{B}\cdot\textbf{dS}.\]</div>
+</section>
+<section id="jacobian-of-mathcal-p">
+<h2>Jacobian of <span class="math notranslate nohighlight">\(\mathcal{P}\)</span><a class="headerlink" href="#jacobian-of-mathcal-p" title="Link to this heading"></a></h2>
+<p>The Jacobian of the field line map as a matrix form <span class="math notranslate nohighlight">\(\dpmap := \partial \pmap^{\{R, Z\}}/{\partial \{R, Z\}} \in \mathbb{R}^{2\times2}\)</span>. Here we distinguish between <span class="math notranslate nohighlight">\(R, Z\)</span> in the starting plane and the general evolution around the torus <span class="math notranslate nohighlight">\(r = \Phi^r, z = \Phi^z\)</span>, which is a handy abuse of notation. For instance :</p>
+<div class="math notranslate nohighlight">
+\[\dpmap^{R}_{\,\:R} = \frac{\partial}{\partial R}\left[\int_{\phi_i}^{\phi_i+T}\frac{B^r}{B^\phi}d\phi\right] + 1 = \int_{\phi_i}^{\phi_i+T}\partial_{R}\left[\frac{B^r}{B^\phi}\right]d\phi + 1 =\, ...\]</div>
+<p>with <span class="math notranslate nohighlight">\(B^r\)</span> and <span class="math notranslate nohighlight">\(B^\phi\)</span> being evaluated at :</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}B^r &amp;= B^r(r(R, Z, \phi), \phi, z(R, Z, \phi))\\
+B^\phi &amp;= B^\phi(r(R, Z, \phi), \phi, z(R, Z, \phi)).\end{split}\]</div>
+<p>The integrand can then be developed using the chain rule :</p>
+<div class="math notranslate nohighlight">
+\[\partial_{R}\left[\frac{B^r}{B^\phi}\right] = \partial_{r}\left[\frac{B^r}{B^\phi}\right]\frac{\partial r}{\partial R} + \partial_{z}\left[\frac{B^r}{B^\phi}\right]\frac{\partial z}{\partial R}\]</div>
+<p>and all the components can be written as a matrix multiplication by :</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\dpmap = \int_{\phi_i}^{\phi_i+T}\begin{pmatrix}
+    \partial_{r}\left[B^r/B^\phi\right] &amp; \partial_{z}\left[B^r/B^\phi\right]\\
+    \partial_{r}\left[B^z/B^\phi\right] &amp; \partial_{z}\left[B^z/B^\phi\right]
+\end{pmatrix}\cdot\begin{pmatrix}
+    \partial_{R}r &amp; \partial_{Z}r\\
+    \partial_{R}z &amp; \partial_{Z}z
+\end{pmatrix}d\phi + \mathbb{I}_2.\end{split}\]</div>
+<p>For example :</p>
+<div class="math notranslate nohighlight">
+\[\partial_{r}\left[\frac{B^r}{B^\phi}\right] = \frac{1}{B^\phi}\frac{\partial B^r}{\partial r} - \frac{B^r}{(B^\phi)^2}\frac{\partial B^\phi}{\partial r}.\]</div>
+</section>
+<section id="determinant-of-the-jacobian">
+<h2>Determinant of the Jacobian<a class="headerlink" href="#determinant-of-the-jacobian" title="Link to this heading"></a></h2>
+<p>Using differential forms, it can be shown a relation for the determinant of the Jacobian matrix <span class="math notranslate nohighlight">\(\dpmap\)</span>. If we write the flux in the form formalism, then <span class="math notranslate nohighlight">\(\beta = B^\phi dR \wedge dZ\)</span> and the integral becomes :</p>
+<div class="math notranslate nohighlight">
+\[\iint\limits_{\Sigma}\textbf{B}\cdot\textbf{dS} = \iint\limits_{\pmap(\Sigma)}\textbf{B}\cdot\textbf{dS} \Leftrightarrow \int\limits_{\Sigma}\beta = \int\limits_{\pmap(\Sigma)}\beta = \int\limits_{\Sigma}\pmap^\star\beta\]</div>
+<p>with <span class="math notranslate nohighlight">\(\pmap^\star\beta\)</span> the pullback of <span class="math notranslate nohighlight">\(\beta\)</span> through the field line map <span class="math notranslate nohighlight">\(\pmap\)</span>. Then the flux conservation becomes <span class="math notranslate nohighlight">\(\pmap^\star\beta(\pmap(x)) = \beta(x)\)</span> and using the relation between the differential forms :</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\pmap^\star\beta &amp;= \beta_{i'j'}
+d(\dpmap^{i'}_{\,\:i}x^i)\wedge d(\dpmap^{j'}_{\,\:j}x^j)\\ &amp;= \beta_{i'j'}\left(\dpmap^{i'}_{\,\:i}\dpmap^{j'}_{\,\:j}-\dpmap^{i'}_{\,\:j}\dpmap^{j'}_{\,\:i}\right)dx^i\wedge dx^j = \beta_{ij}\det(\dpmap)dx^i\wedge dx^j\end{split}\]</div>
+<p>and we see that it implies here :</p>
+<div class="math notranslate nohighlight">
+\[\det(\dpmap) = \beta_{R\,Z}(x)/\beta_{R\,Z}(\pmap(x)) = B^\phi(x)/B^\phi(\pmap(x))\]</div>
+<p>and we got the same formula back as a direct calculation.This shows the power of differential forms. This can be generalized to any number of iteration of the map.</p>
+</section>
+<section id="integration-of-a-vector-field-along-a-field-line">
+<h2>Integration of a vector field along a field line<a class="headerlink" href="#integration-of-a-vector-field-along-a-field-line" title="Link to this heading"></a></h2>
+<p>The integral of a vector field, say $textbf{A}$, along a curve is defined by~:</p>
+<div class="math notranslate nohighlight">
+\[\int_\gamma g(\textbf{A},\textbf{dl}) = \int_\gamma g(\textbf{A}(\gamma(s)),\dot{\gamma}(s))\,ds.\]</div>
+<p>To get the integral along a field line curve $dot{gamma}$ should be replaced by the field line curve tangent vector, the same as the one optain above~:</p>
+<div class="math notranslate nohighlight">
+\[\int_\gamma g(\textbf{A},\textbf{dl}) = \int_0^\phi (A^r\dot{\gamma}^r + r^2A^\phi\dot{\gamma}^\phi + A^z\dot{\gamma}^z)\,ds.\]</div>
+<p>The vector field can be the vector potential. Or, to get the arc length of the field line curve for instance, one must choose $A = dot{gamma}/Vertdot{gamma}Vert$, then~:</p>
+<div class="math notranslate nohighlight">
+\[\int_\gamma g(\textbf{A},\textbf{dl}) = \int_\gamma g(\frac{\dot{\gamma}}{\Vert\dot{\gamma}\Vert},\dot{\gamma})\,ds = \int_\gamma \Vert\dot{\gamma}\Vert\,ds = \int_\gamma \sqrt{\pm g_{\mu\nu}\dot{\gamma}^\mu\dot{\gamma}^\nu}\,ds.\]</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="maps.html" class="btn btn-neutral float-left" title="Maps" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fields.html" class="btn btn-neutral float-right" title="Fields" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

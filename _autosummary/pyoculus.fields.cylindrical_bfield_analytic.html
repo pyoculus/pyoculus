@@ -1,0 +1,359 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.fields.cylindrical_bfield_analytic &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.fields.cylindrical_grid_interpolated_field" href="pyoculus.fields.cylindrical_grid_interpolated_field.html" />
+    <link rel="prev" title="pyoculus.fields.cylindrical_bfield" href="pyoculus.fields.cylindrical_bfield.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.cylindrical_bfield.html">pyoculus.fields.cylindrical_bfield</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.fields.cylindrical_bfield_analytic</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield"><code class="docutils literal notranslate"><span class="pre">AnalyticCylindricalBfield</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.cylindrical_grid_interpolated_field.html">pyoculus.fields.cylindrical_grid_interpolated_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.m3dc1_bfield.html">pyoculus.fields.m3dc1_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.magnetic_field.html">pyoculus.fields.magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.qfm_bfield.html">pyoculus.fields.qfm_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.simsopt_bfield.html">pyoculus.fields.simsopt_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.spec_bfield.html">pyoculus.fields.spec_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.spectre_bfield.html">pyoculus.fields.spectre_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.toroidal_bfield.html">pyoculus.fields.toroidal_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.two_waves.html">pyoculus.fields.two_waves</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.fields.html">pyoculus.fields</a></li>
+      <li class="breadcrumb-item active">pyoculus.fields.cylindrical_bfield_analytic</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.fields.cylindrical_bfield_analytic.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.fields.cylindrical_bfield_analytic">
+<span id="pyoculus-fields-cylindrical-bfield-analytic"></span><h1>pyoculus.fields.cylindrical_bfield_analytic<a class="headerlink" href="#module-pyoculus.fields.cylindrical_bfield_analytic" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.fields.cylindrical_bfield_analytic.</span></span><span class="sig-name descname"><span class="pre">AnalyticCylindricalBfield</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perturbations_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield" title="Link to this definition"></a></dt>
+<dd><p>Analytical Bfield problem class that allows adding analytical perturbations to an analytical equilibrium field. The equilibrium field is
+derived from the vector potential <cite>A_squared(R, Z, sf, shear)</cite> (circular quadratic q-profile) and the perturbations can be choosen from the
+type dictionary. The possible types are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“maxwell-boltzmann”: Maxwell-Boltzmann distributed perturbation</p></li>
+<li><p>“gaussian”: Normally distributed perturbation</p></li>
+<li><p>“circular-current-loop”: Field generated by a constant current toroidal loop</p></li>
+<li><p>“squared-circle”: Field generated by a squared circle (in fact from equ_squared)</p></li>
+</ul>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.sf">
+<span class="sig-name descname"><span class="pre">sf</span></span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.sf" title="Link to this definition"></a></dt>
+<dd><p>Safety factor on the magnetic axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.shear">
+<span class="sig-name descname"><span class="pre">shear</span></span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.shear" title="Link to this definition"></a></dt>
+<dd><p>Shear factor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.perturbations_args">
+<span class="sig-name descname"><span class="pre">perturbations_args</span></span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.perturbations_args" title="Link to this definition"></a></dt>
+<dd><p>List of dictionaries with the arguments of each perturbation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.amplitude">
+<span class="sig-name descname"><span class="pre">amplitude</span></span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.amplitude" title="Link to this definition"></a></dt>
+<dd><p>List of amplitudes of the perturbations. One can set the amplitude of all perturbations
+at once by setting this attribute:
+$ myBfield.amplitudes = [1, 2, 3]
+$ myBfield.amplitudes
+&gt;&gt; [1, 2, 3]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.perturbations">
+<span class="sig-name descname"><span class="pre">perturbations</span></span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.perturbations" title="Link to this definition"></a></dt>
+<dd><p>List of perturbations functions. To call a certain (for instance the first) perturbation one can do:
+$ myBfield.perturbations[0](rphiz)
+&gt;&gt; value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.set_amplitude">
+<span class="sig-name descname"><span class="pre">set_amplitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.set_amplitude" title="Link to this definition"></a></dt>
+<dd><p>Set the amplitude of the perturbation at index to value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.set_perturbation">
+<span class="sig-name descname"><span class="pre">set_perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perturbation_args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.set_perturbation" title="Link to this definition"></a></dt>
+<dd><p>Set the perturbation at index to be defined by perturbation_args</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.add_perturbation">
+<span class="sig-name descname"><span class="pre">add_perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perturbation_args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.add_perturbation" title="Link to this definition"></a></dt>
+<dd><p>Add a new perturbation defined by perturbation_args</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.remove_perturbation">
+<span class="sig-name descname"><span class="pre">remove_perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.remove_perturbation" title="Link to this definition"></a></dt>
+<dd><p>Remove the perturbation at index, (default: -1, the last one)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.B_equilibrium">
+<span class="sig-name descname"><span class="pre">B_equilibrium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rphiz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.B_equilibrium" title="Link to this definition"></a></dt>
+<dd><p>Equilibrium field function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.dBdX_equilibrium">
+<span class="sig-name descname"><span class="pre">dBdX_equilibrium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rphiz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.dBdX_equilibrium" title="Link to this definition"></a></dt>
+<dd><p>Gradient of the equilibrium field function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.B_perturbation">
+<span class="sig-name descname"><span class="pre">B_perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rphiz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.B_perturbation" title="Link to this definition"></a></dt>
+<dd><p>Perturbation field function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.dBdX_perturbation">
+<span class="sig-name descname"><span class="pre">dBdX_perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rphiz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.dBdX_perturbation" title="Link to this definition"></a></dt>
+<dd><p>Gradient of the perturbation field function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.with_new_axis">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">with_new_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perturbations_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RZguess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.with_new_axis" title="Link to this definition"></a></dt>
+<dd><p>Create a new AnalyticCylindricalBfield object whose axis location
+is found.
+Perturbations such as circular-current-loop displace the axis.
+This perturbation is first added, then the axis location is found,
+and perturbations such as maxwell-boltzmann and gaussian are added
+on this new axis.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.amplitudes">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">amplitudes</span></span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.amplitudes" title="Link to this definition"></a></dt>
+<dd><p>List of amplitudes of the perturbations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">set_amplitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">find_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Set the amplitude of the perturbation at index to value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">set_perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perturbation_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">find_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>Set the perturbation at index to be defined by perturbation_args</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">add_perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perturbation_args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd><p>Add a new perturbation defined by perturbation_args</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">remove_perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd><p>Remove the perturbation at index or the last one if no index is given.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id4">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">perturbations</span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd><p>List of the perturbations functions (jited using jax). To call a certain (for instance the first) perturbation one can do:
+$ myBfield.perturbations[0](rphiz)
+&gt;&gt; value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.B">
+<span class="sig-name descname"><span class="pre">B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.B" title="Link to this definition"></a></dt>
+<dd><p>Total field function at the point rr. Where B = B_equilibrium + B_perturbation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.dBdX">
+<span class="sig-name descname"><span class="pre">dBdX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.dBdX" title="Link to this definition"></a></dt>
+<dd><p>Gradient of the total field function at the point coords. Where (dBdX)^i_j = dB^i/dX^j with i the row index and j the column index of the matrix.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.A">
+<span class="sig-name descname"><span class="pre">A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.A" title="Link to this definition"></a></dt>
+<dd><p>Total vector potential function at the point rr.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.divB">
+<span class="sig-name descname"><span class="pre">divB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.divB" title="Link to this definition"></a></dt>
+<dd><p>Divergence of the total field function at the point rr.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.plot_perturbation_levels">
+<span class="sig-name descname"><span class="pre">plot_perturbation_levels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[100,</span> <span class="pre">100]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RZ_manifold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.plot_perturbation_levels" title="Link to this definition"></a></dt>
+<dd><p>Plot the perturbation psi flux function and the perturbation B field in the RZ plane at the provided points.
+The perturbation psi is the sum of the perturbations defined in the perturbations_args attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.plot_perturbation_vector">
+<span class="sig-name descname"><span class="pre">plot_perturbation_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_bfield_analytic.AnalyticCylindricalBfield.plot_perturbation_vector" title="Link to this definition"></a></dt>
+<dd><p>Plot the perturbation vector field at the provided locations.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.fields.cylindrical_bfield.html" class="btn btn-neutral float-left" title="pyoculus.fields.cylindrical_bfield" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.fields.cylindrical_grid_interpolated_field.html" class="btn btn-neutral float-right" title="pyoculus.fields.cylindrical_grid_interpolated_field" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

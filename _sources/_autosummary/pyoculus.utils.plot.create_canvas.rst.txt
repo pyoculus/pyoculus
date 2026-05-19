@@ -1,0 +1,6 @@
+pyoculus.utils.plot.create\_canvas
+==================================
+
+.. currentmodule:: pyoculus.utils.plot
+
+.. autofunction:: create_canvas

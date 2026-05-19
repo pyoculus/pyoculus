@@ -1,0 +1,6 @@
+pyoculus.solvers.manifold.eig
+=============================
+
+.. currentmodule:: pyoculus.solvers.manifold
+
+.. autofunction:: eig

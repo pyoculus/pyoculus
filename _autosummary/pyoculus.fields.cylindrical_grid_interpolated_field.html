@@ -1,0 +1,253 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.fields.cylindrical_grid_interpolated_field &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.fields.m3dc1_bfield" href="pyoculus.fields.m3dc1_bfield.html" />
+    <link rel="prev" title="pyoculus.fields.cylindrical_bfield_analytic" href="pyoculus.fields.cylindrical_bfield_analytic.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.cylindrical_bfield.html">pyoculus.fields.cylindrical_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.cylindrical_bfield_analytic.html">pyoculus.fields.cylindrical_bfield_analytic</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.fields.cylindrical_grid_interpolated_field</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField"><code class="docutils literal notranslate"><span class="pre">AxisymmetricCylindricalGridField</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation"><code class="docutils literal notranslate"><span class="pre">AxisymmetricGridPerturbation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.m3dc1_bfield.html">pyoculus.fields.m3dc1_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.magnetic_field.html">pyoculus.fields.magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.qfm_bfield.html">pyoculus.fields.qfm_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.simsopt_bfield.html">pyoculus.fields.simsopt_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.spec_bfield.html">pyoculus.fields.spec_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.spectre_bfield.html">pyoculus.fields.spectre_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.toroidal_bfield.html">pyoculus.fields.toroidal_bfield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.fields.two_waves.html">pyoculus.fields.two_waves</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.fields.html">pyoculus.fields</a></li>
+      <li class="breadcrumb-item active">pyoculus.fields.cylindrical_grid_interpolated_field</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.fields.cylindrical_grid_interpolated_field.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.fields.cylindrical_grid_interpolated_field">
+<span id="pyoculus-fields-cylindrical-grid-interpolated-field"></span><h1>pyoculus.fields.cylindrical_grid_interpolated_field<a class="headerlink" href="#module-pyoculus.fields.cylindrical_grid_interpolated_field" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.fields.cylindrical_grid_interpolated_field.</span></span><span class="sig-name descname"><span class="pre">AxisymmetricCylindricalGridField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_psi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pertfield</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pyoculus.fields.cylindrical_bfield.html#pyoculus.fields.cylindrical_bfield.CylindricalBfield" title="pyoculus.fields.cylindrical_bfield.CylindricalBfield"><span class="pre">CylindricalBfield</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField" title="Link to this definition"></a></dt>
+<dd><p>Axisymmetric magnetic field provided by interpolating a grid of points given in the R-Z plane.</p>
+<p>Tokamak equilibrium solvers often provide the relevant data in a grid of points in the R-Z plane.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.from_matlab_file">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_matlab_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_perturbation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.from_matlab_file" title="Link to this definition"></a></dt>
+<dd><p>filename: string specifying the name of the .mat file containing the grid of points.</p>
+<p>for example, MEQ equilibrium solver calculates the magnetic data in Matlab, the user needs to save the data in a .mat file and provide the filename to this function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.from_matlab_file_with_added_B">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_matlab_file_with_added_B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_R_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_Z_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_psi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_perturbation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.from_matlab_file_with_added_B" title="Link to this definition"></a></dt>
+<dd><p>filename: string specifying the name of the .mat file containing the grid of points.</p>
+<p>for example, MEQ equilibrium solver calculates the magnetic data in Matlab, the user needs to save the data in a .mat file and provide the filename to this function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.B_axi">
+<span class="sig-name descname"><span class="pre">B_axi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.B_axi" title="Link to this definition"></a></dt>
+<dd><p>xx: numpy array of shape (3,) specifying the coordinates at which the magnetic field is to be evaluated</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.B">
+<span class="sig-name descname"><span class="pre">B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.B" title="Link to this definition"></a></dt>
+<dd><p>xx: numpy array of shape (3,) specifying the coordinates at which the magnetic field is to be evaluated</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.B_interpolated">
+<span class="sig-name descname"><span class="pre">B_interpolated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.B_interpolated" title="Link to this definition"></a></dt>
+<dd><p>Evaluate magnetic field directly, for comparison with the derivation of the flux funcitons.
+xx: numpy array of shape (3,) specifying the coordinates at which the magnetic field is to be evaluated</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.A_R">
+<span class="sig-name descname"><span class="pre">A_R</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.A_R" title="Link to this definition"></a></dt>
+<dd><p>xx: numpy array of shape (3,) specifying the coordinates at which the vector potential is to be evaluated
+return value of A_R for this specific point</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.A_unperturbed">
+<span class="sig-name descname"><span class="pre">A_unperturbed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.A_unperturbed" title="Link to this definition"></a></dt>
+<dd><p>xx: numpy array of shape (3,) specifying the coordinates at which the vector potential is to be evaluated</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.A">
+<span class="sig-name descname"><span class="pre">A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.A" title="Link to this definition"></a></dt>
+<dd><p>xx: numpy array of shape (3,) specifying the coordinates at which the vector potential is to be evaluated</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.dBdX">
+<span class="sig-name descname"><span class="pre">dBdX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricCylindricalGridField.dBdX" title="Link to this definition"></a></dt>
+<dd><p>xx: numpy array of shape (3,) specifying the coordinates at which the magnetic field gradient is to be evaluated
+return Bfield, jacobian matrix for a specific point</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.fields.cylindrical_grid_interpolated_field.</span></span><span class="sig-name descname"><span class="pre">AxisymmetricGridPerturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_psi_cosphi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_psi_sinphi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation" title="Link to this definition"></a></dt>
+<dd><p>Axisymmetric magnetic field perturbation provided by interpolating a grid of points given in the R-Z plane.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation.B_R">
+<span class="sig-name descname"><span class="pre">B_R</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation.B_R" title="Link to this definition"></a></dt>
+<dd><p>xx: numpy array of shape (3,) specifying the coordinates at which the magnetic field is to be evaluated</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation.B">
+<span class="sig-name descname"><span class="pre">B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation.B" title="Link to this definition"></a></dt>
+<dd><p>Returns the contravariant magnetic fields at the given coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coords</strong> (<em>array</em>) – The coordinates at which to calculate the magnetic fields.</p></li>
+<li><p><strong>*args</strong> – Additional parameters.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation.A">
+<span class="sig-name descname"><span class="pre">A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation.A" title="Link to this definition"></a></dt>
+<dd><p>xx: numpy array of shape (3,) specifying the coordinates at which the magnetic potential is to be evaluated</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation.dBdX">
+<span class="sig-name descname"><span class="pre">dBdX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.fields.cylindrical_grid_interpolated_field.AxisymmetricGridPerturbation.dBdX" title="Link to this definition"></a></dt>
+<dd><p>Gradient of the total field function at the point coords. Where (dBdX)^i_j = dB^i/dX^j with i the row index and j the column index of the matrix.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.fields.cylindrical_bfield_analytic.html" class="btn btn-neutral float-left" title="pyoculus.fields.cylindrical_bfield_analytic" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.fields.m3dc1_bfield.html" class="btn btn-neutral float-right" title="pyoculus.fields.m3dc1_bfield" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

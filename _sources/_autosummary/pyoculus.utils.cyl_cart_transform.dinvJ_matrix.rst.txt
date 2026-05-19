@@ -1,0 +1,6 @@
+pyoculus.utils.cyl\_cart\_transform.dinvJ\_matrix
+=================================================
+
+.. currentmodule:: pyoculus.utils.cyl_cart_transform
+
+.. autofunction:: dinvJ_matrix

@@ -1,0 +1,6 @@
+pyoculus.toybox.cylindrical\_toybox.ellpk
+=========================================
+
+.. currentmodule:: pyoculus.toybox.cylindrical_toybox
+
+.. autofunction:: ellpk

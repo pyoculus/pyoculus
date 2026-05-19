@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.solvers.poincare_plot &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.solvers.qfm" href="pyoculus.solvers.qfm.html" />
+    <link rel="prev" title="pyoculus.solvers.manifold.eig" href="pyoculus.solvers.manifold.eig.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.base_solver.html">pyoculus.solvers.base_solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.fixed_point.html">pyoculus.solvers.fixed_point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.flux_surface_gr.html">pyoculus.solvers.flux_surface_gr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.lyapunov_exponent.html">pyoculus.solvers.lyapunov_exponent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.manifold.html">pyoculus.solvers.manifold</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.solvers.poincare_plot</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#poincare-plot-py">poincare_plot.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.solvers.poincare_plot.PoincarePlot"><code class="docutils literal notranslate"><span class="pre">PoincarePlot</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.qfm.html">pyoculus.solvers.qfm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.resonance_zone.html">pyoculus.solvers.resonance_zone</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+      <li class="breadcrumb-item active">pyoculus.solvers.poincare_plot</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.solvers.poincare_plot.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.solvers.poincare_plot">
+<span id="pyoculus-solvers-poincare-plot"></span><h1>pyoculus.solvers.poincare_plot<a class="headerlink" href="#module-pyoculus.solvers.poincare_plot" title="Link to this heading"></a></h1>
+<section id="poincare-plot-py">
+<h2>poincare_plot.py<a class="headerlink" href="#poincare-plot-py" title="Link to this heading"></a></h2>
+<p>Contains the class for generating the Poincare Plot and computing the winding number profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">authors<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>Zhisong Qu (<a class="reference external" href="mailto:zhisong&#46;qu&#37;&#52;&#48;anu&#46;edu&#46;au">zhisong<span>&#46;</span>qu<span>&#64;</span>anu<span>&#46;</span>edu<span>&#46;</span>au</a>)</p></li>
+<li><p>Ludovic Rais (<a class="reference external" href="mailto:ludovic&#46;rais&#37;&#52;&#48;epfl&#46;ch">ludovic<span>&#46;</span>rais<span>&#64;</span>epfl<span>&#46;</span>ch</a>)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.solvers.poincare_plot.</span></span><span class="sig-name descname"><span class="pre">PoincarePlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'custom'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot" title="Link to this definition"></a></dt>
+<dd><p>Class for generating the Poincare Plot and computing the winding number profile of a 2D map.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.xs">
+<span class="sig-name descname"><span class="pre">xs</span></span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.xs" title="Link to this definition"></a></dt>
+<dd><p>The initial points, shape (npoints, dimension).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.points_type">
+<span class="sig-name descname"><span class="pre">points_type</span></span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.points_type" title="Link to this definition"></a></dt>
+<dd><p>The type of points generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.with_linspace">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">with_linspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.with_linspace" title="Link to this definition"></a></dt>
+<dd><p>Creates a Poincare plot with points linearly spaced between x0 and x1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>maps.base_map</em>) – The map to use for the computation.</p></li>
+<li><p><strong>x0</strong> (<em>np.array</em>) – The starting point.</p></li>
+<li><p><strong>x1</strong> (<em>np.array</em>) – The ending point.</p></li>
+<li><p><strong>npts</strong> (<em>int</em>) – The number of points.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PoincarePlot object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyoculus.solvers.poincare_plot.PoincarePlot" title="pyoculus.solvers.poincare_plot.PoincarePlot">PoincarePlot</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.with_segments">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">with_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.with_segments" title="Link to this definition"></a></dt>
+<dd><p>Create a Poincare plot specifying the points to be along multiple segments.</p>
+<p>Can be used either to join the points passed as arguments when connected is True. Or, when connected is False, the points are taken to be the two by two extremities of eich segment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>maps.base_map</em>) – The map to use for the computation.</p></li>
+<li><p><strong>xns</strong> (<em>np.ndarray</em>) – The points defining the extremities of the segments.</p></li>
+<li><p><strong>neps</strong> (<em>list</em>) – The number of points per segment. The length of the list should be equal to : the number of segments minus one if connected is True, twice the number of segments otherwise.</p></li>
+<li><p><strong>connected</strong> (<em>bool</em>) – If True, then the segments are connected to each other. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PoincarePlot object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyoculus.solvers.poincare_plot.PoincarePlot" title="pyoculus.solvers.poincare_plot.PoincarePlot">PoincarePlot</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.with_horizontal">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">with_horizontal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ntraj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.with_horizontal" title="Link to this definition"></a></dt>
+<dd><p>Create a Poincare plot with horizontal points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>maps.base_map</em>) – The map to use for the computation.</p></li>
+<li><p><strong>radius</strong> (<em>float</em>) – The radius of the horizontal points.</p></li>
+<li><p><strong>ntraj</strong> (<em>int</em>) – The number of seeds, starting points for your trajectories.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The PoincarePlot object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyoculus.solvers.poincare_plot.PoincarePlot" title="pyoculus.solvers.poincare_plot.PoincarePlot">PoincarePlot</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">npts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_iota</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.compute" title="Link to this definition"></a></dt>
+<dd><p>Computes the evolution of the initial points under the map for npts points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>npts</strong> (<em>int</em>) – The number of points to compute for each initial point.</p></li>
+<li><p><strong>nprocess</strong> (<em>int</em>) – The number of processes to use for the computation. Default is 1.</p></li>
+<li><p><strong>compute_iota</strong> (<em>bool</em>) – If True, then it computes the winding number profile. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The position of the crossings, shape (npoints, npts+1, dimension)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>hits (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.compute_iota">
+<span class="sig-name descname"><span class="pre">compute_iota</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.compute_iota" title="Link to this definition"></a></dt>
+<dd><p>Compute the winding number profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – Parameters for the poincare hits computation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The initial points where to calculate the winding number profile, shape (npoints, dimension).
+winding (np.ndarray): The winding number of the points.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyoculus.solvers.poincare_plot.PoincarePlot.xs" title="pyoculus.solvers.poincare_plot.PoincarePlot.xs">xs</a> (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.rho">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rho</span></span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.rho" title="Link to this definition"></a></dt>
+<dd><p>the rho values, calculated the axis of the map</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.iota">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">iota</span></span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.iota" title="Link to this definition"></a></dt>
+<dd><p>the iota values, calculated from _windings which is calculated with a sucessful compute_iota</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.q">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.q" title="Link to this definition"></a></dt>
+<dd><p>the q values, calculated from _windings which is calculated with a sucessful compute_iota</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plottype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot the Poincare plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plottype</strong> (<em>str</em>) – The type of plot to generate. Can be ‘RZ’ for R-Z coordinates or ‘polar’ (including pyoculus s-theta coordinates)
+or None to directly plot in the coordinates of the map.</p></li>
+<li><p><strong>xlabel</strong> (<em>str</em>) – The label of the x-axis.</p></li>
+<li><p><strong>ylabel</strong> (<em>str</em>) – The label of the y-axis.</p></li>
+<li><p><strong>xlim</strong> (<em>tuple</em>) – The range of the x-axis.</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em>) – The range of the y-axis.</p></li>
+<li><p><strong>**kwargs</strong> – Additional parameters for the plotting routine “scatter”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure and axis of the plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fig, ax</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.plot_iota">
+<span class="sig-name descname"><span class="pre">plot_iota</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.plot_iota" title="Link to this definition"></a></dt>
+<dd><p>Plot the winding number profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xlim</strong> (<em>tuple</em>) – The range of the x-axis.</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em>) – The range of the y-axis.</p></li>
+<li><p><strong>**kwargs</strong> – Additional parameters for the plotting routine “plots”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure and axis of the plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fig, ax</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.plot_q">
+<span class="sig-name descname"><span class="pre">plot_q</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.plot_q" title="Link to this definition"></a></dt>
+<dd><p>Plot the q-profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xlim</strong> (<em>tuple</em>) – The range of the x-axis.</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em>) – The range of the y-axis.</p></li>
+<li><p><strong>**kwargs</strong> – Additional parameters for the plotting routine “plots”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure and axis of the plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fig, ax</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.hits_rz">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">hits_rz</span></span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.hits_rz" title="Link to this definition"></a></dt>
+<dd><p>helper to return the rz coordnates of a call to
+compute.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.hits_polar">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">hits_polar</span></span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.hits_polar" title="Link to this definition"></a></dt>
+<dd><p>helper to return the thetazeta or rho, theta coordnates of a call to compute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'poincare.npy'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.save" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.poincare_plot.PoincarePlot.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">&lt;module</span> <span class="pre">'pyoculus.maps.base_map'</span> <span class="pre">from</span> <span class="pre">'/home/runner/work/pyoculus/pyoculus/pyoculus/maps/base_map.py'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.poincare_plot.PoincarePlot.load" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.solvers.manifold.eig.html" class="btn btn-neutral float-left" title="pyoculus.solvers.manifold.eig" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.solvers.qfm.html" class="btn btn-neutral float-right" title="pyoculus.solvers.qfm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.solvers.poincare\_plot
+===============================
+
+.. automodule:: pyoculus.solvers.poincare_plot
+   :members:
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

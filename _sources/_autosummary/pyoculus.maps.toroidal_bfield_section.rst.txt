@@ -1,0 +1,21 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.maps.toroidal\_bfield\_section
+=======================================
+
+.. automodule:: pyoculus.maps.toroidal_bfield_section
+   :members:
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

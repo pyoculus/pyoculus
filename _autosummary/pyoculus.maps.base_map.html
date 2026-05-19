@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.maps.base_map &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.maps.cylindrical_bfield_section" href="pyoculus.maps.cylindrical_bfield_section.html" />
+    <link rel="prev" title="pyoculus.maps" href="pyoculus.maps.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.maps.base_map</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#base-map-py">base_map.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.maps.base_map.BaseMap"><code class="docutils literal notranslate"><span class="pre">BaseMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.cylindrical_bfield_section.html">pyoculus.maps.cylindrical_bfield_section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.integrated_map.html">pyoculus.maps.integrated_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.standard_map.html">pyoculus.maps.standard_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.tokamap.html">pyoculus.maps.tokamap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.toroidal_bfield_section.html">pyoculus.maps.toroidal_bfield_section</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.maps.html">pyoculus.maps</a></li>
+      <li class="breadcrumb-item active">pyoculus.maps.base_map</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.maps.base_map.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.maps.base_map">
+<span id="pyoculus-maps-base-map"></span><h1>pyoculus.maps.base_map<a class="headerlink" href="#module-pyoculus.maps.base_map" title="Link to this heading"></a></h1>
+<section id="base-map-py">
+<h2>base_map.py<a class="headerlink" href="#base-map-py" title="Link to this heading"></a></h2>
+<p>Contains the abstract base class for maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">authors<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>Ludovic Rais (<a class="reference external" href="mailto:ludovic&#46;rais&#37;&#52;&#48;epfl&#46;ch">ludovic<span>&#46;</span>rais<span>&#64;</span>epfl<span>&#46;</span>ch</a>)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.maps.base_map.</span></span><span class="sig-name descname"><span class="pre">BaseMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_discrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dzeta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap" title="Link to this definition"></a></dt>
+<dd><p>Defines an abstract base class for the map subclasses.</p>
+<p>A map object is a function that takes a point in phase space to another point. The transformation can be either discrete or continuous. A continuous transformation allows the map to be applied for a continuous time (<span class="math notranslate nohighlight">\(f^t\)</span> where <span class="math notranslate nohighlight">\(t\)</span> is a real number), while a discrete transformation allows the map to be applied only for discrete times (<span class="math notranslate nohighlight">\(f^t\)</span> where <span class="math notranslate nohighlight">\(t\)</span> is an integer).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.dimension">
+<span class="sig-name descname"><span class="pre">dimension</span></span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.dimension" title="Link to this definition"></a></dt>
+<dd><p>The dimension of the phase space that the map operates on.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.is_discrete">
+<span class="sig-name descname"><span class="pre">is_discrete</span></span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.is_discrete" title="Link to this definition"></a></dt>
+<dd><p>A flag indicating whether the map is discrete. If True, the map is discrete; if False, the map is continuous.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.domain">
+<span class="sig-name descname"><span class="pre">domain</span></span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.domain" title="Link to this definition"></a></dt>
+<dd><p>The domain of the map. Each tuple should contain the lower and upper bounds for each dimension. If None, the domain is assumed to be <span class="math notranslate nohighlight">\((-\infty, \infty)\)</span> for each dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of tuples, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.f">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.f" title="Link to this definition"></a></dt>
+<dd><p>This method represents the mapping function. It takes a point <span class="math notranslate nohighlight">\(y_0\)</span> in the domain and returns its image under <span class="math notranslate nohighlight">\(t\)</span> application of the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em><em> or </em><em>int</em>) – The number of times the map is applied.</p></li>
+<li><p><strong>y0</strong> (<em>array</em>) – The initial point in the phase space.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.df">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.df" title="Link to this definition"></a></dt>
+<dd><p>Computes the Jacobian matrix of the map at <span class="math notranslate nohighlight">\(y_0\)</span> after <span class="math notranslate nohighlight">\(t\)</span> applications <span class="math notranslate nohighlight">\(df^t = (\frac{\partial f^t}{\partial x})_{i,j}\)</span>.</p>
+<p>The</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}J_f(x) = \begin{bmatrix}
+    \partial_{x^1}f^1 &amp; \cdots &amp; \partial_{x^n}f^1 \\
+    \vdots &amp; \ddots &amp; \vdots \\
+    \partial_{x^1}f^n &amp; \cdots &amp; \partial_{x^n}f^n
+\end{bmatrix}\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em><em> or </em><em>int</em>) – The number of times the map is applied.</p></li>
+<li><p><strong>y0</strong> (<em>array</em>) – The point in phase space where the Jacobian is computed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.lagrangian">
+<span class="sig-name descname"><span class="pre">lagrangian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.lagrangian" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Lagrangian at a given point or the difference in Lagrangian between two points. The Lagrangian is as defined in the paper by Meiss (<a class="reference external" href="https://doi.org/10.1063/1.4915831">https://doi.org/10.1063/1.4915831</a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0</strong> (<em>array</em>) – The point at which to calculate the Lagrangian.</p></li>
+<li><p><strong>t</strong> (<em>int</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – The number of times the map is applied from <span class="math notranslate nohighlight">\(y_0\)</span>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lagrangian at <span class="math notranslate nohighlight">\(y_0\)</span>, or the difference in Lagrangian between <span class="math notranslate nohighlight">\(y_1 = f^t(y_0)\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span>: <span class="math notranslate nohighlight">\((\mathcal{L}(y_1)-\mathcal{L}(y_0))\)</span> if <span class="math notranslate nohighlight">\(t\)</span> is provided.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.winding">
+<span class="sig-name descname"><span class="pre">winding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.winding" title="Link to this definition"></a></dt>
+<dd><p>Calculates how much the point <span class="math notranslate nohighlight">\(y_0\)</span> winds around the point <span class="math notranslate nohighlight">\(y_1\)</span> after applying the map <span class="math notranslate nohighlight">\(t\)</span> times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em><em> or </em><em>int</em>) – The number of times the map is applied.</p></li>
+<li><p><strong>y0</strong> (<em>array</em>) – The initial point in the phase space.</p></li>
+<li><p><strong>y1</strong> (<em>array</em>) – The point around which <span class="math notranslate nohighlight">\(y_0\)</span> winds. If None, the origin should be used.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.dwinding">
+<span class="sig-name descname"><span class="pre">dwinding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.dwinding" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Jacobian of the winding of <span class="math notranslate nohighlight">\(y_0\)</span> around <span class="math notranslate nohighlight">\(y_1\)</span> after applying the map <span class="math notranslate nohighlight">\(t\)</span> times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em><em> or </em><em>int</em>) – The number of times the map is applied.</p></li>
+<li><p><strong>y0</strong> (<em>array</em>) – The initial point in the phase space.</p></li>
+<li><p><strong>y1</strong> (<em>array</em>) – The point around which <span class="math notranslate nohighlight">\(y_0\)</span> winds. If None, the origin should be used.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.into_domain">
+<span class="sig-name descname"><span class="pre">into_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.into_domain" title="Link to this definition"></a></dt>
+<dd><p>Maps the point x into the domain of the map.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.in_domain">
+<span class="sig-name descname"><span class="pre">in_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.in_domain" title="Link to this definition"></a></dt>
+<dd><p>Checks if the point x is within the domain of the map.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.base_map.BaseMap.f_many">
+<span class="sig-name descname"><span class="pre">f_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_many</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.base_map.BaseMap.f_many" title="Link to this definition"></a></dt>
+<dd><p>apply map f t times to all the rows of xx.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.maps.html" class="btn btn-neutral float-left" title="pyoculus.maps" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.maps.cylindrical_bfield_section.html" class="btn btn-neutral float-right" title="pyoculus.maps.cylindrical_bfield_section" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

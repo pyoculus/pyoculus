@@ -1,0 +1,1208 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.solvers.manifold &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.solvers.manifold.eig" href="pyoculus.solvers.manifold.eig.html" />
+    <link rel="prev" title="pyoculus.solvers.lyapunov_exponent" href="pyoculus.solvers.lyapunov_exponent.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.base_solver.html">pyoculus.solvers.base_solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.fixed_point.html">pyoculus.solvers.fixed_point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.flux_surface_gr.html">pyoculus.solvers.flux_surface_gr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.lyapunov_exponent.html">pyoculus.solvers.lyapunov_exponent</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.solvers.manifold</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.solvers.manifold.eig.html">pyoculus.solvers.manifold.eig</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.solvers.manifold.eig"><code class="docutils literal notranslate"><span class="pre">eig()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.solvers.manifold.Clinic"><code class="docutils literal notranslate"><span class="pre">Clinic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.solvers.manifold.ClinicSet"><code class="docutils literal notranslate"><span class="pre">ClinicSet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.solvers.manifold.Manifold"><code class="docutils literal notranslate"><span class="pre">Manifold</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.poincare_plot.html">pyoculus.solvers.poincare_plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.qfm.html">pyoculus.solvers.qfm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.solvers.resonance_zone.html">pyoculus.solvers.resonance_zone</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+      <li class="breadcrumb-item active">pyoculus.solvers.manifold</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.solvers.manifold.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.solvers.manifold">
+<span id="pyoculus-solvers-manifold"></span><h1>pyoculus.solvers.manifold<a class="headerlink" href="#module-pyoculus.solvers.manifold" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="pyoculus.solvers.manifold.eig.html#pyoculus.solvers.manifold.eig" title="pyoculus.solvers.manifold.eig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eig</span></code></a>(jacobian)</p></td>
+<td><p>Compute stable and unstable eigenvalues/eigenvectors of a fixed point.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.eig">
+<span class="sig-prename descclassname"><span class="pre">pyoculus.solvers.manifold.</span></span><span class="sig-name descname"><span class="pre">eig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jacobian</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.eig" title="Link to this definition"></a></dt>
+<dd><p>Compute stable and unstable eigenvalues/eigenvectors of a fixed point.</p>
+<p>This function calculates the eigenvalues and eigenvectors of a given Jacobian matrix
+and separates them into stable and unstable components based on their magnitudes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>jacobian</strong> (<em>np.ndarray</em>) – A 2x2 Jacobian matrix at the fixed point.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>lambda_s (float): The stable eigenvalue (<span class="math notranslate nohighlight">\(\vert\lambda\vert &lt; 1\)</span>)
+vector_s (np.ndarray): The corresponding stable eigenvector
+lambda_u (float): The unstable eigenvalue (<span class="math notranslate nohighlight">\(\vert\lambda\vert &gt; 1\)</span>)
+vector_u (np.ndarray): The corresponding unstable eigenvector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambda_s</span><span class="p">,</span> <span class="n">v_s</span><span class="p">,</span> <span class="n">lambda_u</span><span class="p">,</span> <span class="n">v_u</span> <span class="o">=</span> <span class="n">eig</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.solvers.manifold.</span></span><span class="sig-name descname"><span class="pre">Clinic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyoculus.solvers.manifold.Manifold" title="pyoculus.solvers.manifold.Manifold"><span class="pre">Manifold</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_u</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_u</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic" title="Link to this definition"></a></dt>
+<dd><p>A class representing the trajectory of a homoclinic/heteroclinic point.</p>
+<p>This class handles the computation and storage of a heteroclinic/homoclinic trajectory, which represent intersections between stable and unstable manifolds of fixed points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>manifold</strong> – The <a class="reference internal" href="#pyoculus.solvers.manifold.Manifold" title="pyoculus.solvers.manifold.Manifold"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manifold</span></code></a> object associated to the fixed points and map analyzed.</p></li>
+<li><p><strong>eps_s</strong> (<em>float</em>) – Initial distance in the linear regime along stable manifold direction.</p></li>
+<li><p><strong>eps_u</strong> (<em>float</em>) – Initial distance in the linear regime along unstable manifold direction.</p></li>
+<li><p><strong>n_s</strong> (<em>int</em>) – Number of iterations to apply to the intersection closest to the stable fixed point.</p></li>
+<li><p><strong>n_u</strong> (<em>int</em>) – Number of iterations to apply to the intersection closest to the unstable fixed point.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.eps_s">
+<span class="sig-name descname"><span class="pre">eps_s</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.eps_s" title="Link to this definition"></a></dt>
+<dd><p>Distance parameter along stable manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.eps_u">
+<span class="sig-name descname"><span class="pre">eps_u</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.eps_u" title="Link to this definition"></a></dt>
+<dd><p>Distance parameter along unstable manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.nint_s">
+<span class="sig-name descname"><span class="pre">nint_s</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.nint_s" title="Link to this definition"></a></dt>
+<dd><p>Number of stable iterations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.nint_u">
+<span class="sig-name descname"><span class="pre">nint_u</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.nint_u" title="Link to this definition"></a></dt>
+<dd><p>Number of unstable iterations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic._fundamental_segments">
+<span class="sig-name descname"><span class="pre">_fundamental_segments</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic._fundamental_segments" title="Link to this definition"></a></dt>
+<dd><p>Fundamental domain bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic._trajectory">
+<span class="sig-name descname"><span class="pre">_trajectory</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic._trajectory" title="Link to this definition"></a></dt>
+<dd><p>Computed clinic orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic._path_s">
+<span class="sig-name descname"><span class="pre">_path_s</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic._path_s" title="Link to this definition"></a></dt>
+<dd><p>Stable manifold path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic._path_u">
+<span class="sig-name descname"><span class="pre">_path_u</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic._path_u" title="Link to this definition"></a></dt>
+<dd><p>Unstable manifold path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic._xend_s">
+<span class="sig-name descname"><span class="pre">_xend_s</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic._xend_s" title="Link to this definition"></a></dt>
+<dd><p>End point on stable manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic._xend_u">
+<span class="sig-name descname"><span class="pre">_xend_u</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic._xend_u" title="Link to this definition"></a></dt>
+<dd><p>End point on unstable manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.from_guess">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_guess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyoculus.solvers.manifold.Manifold" title="pyoculus.solvers.manifold.Manifold"><span class="pre">Manifold</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_u</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_u</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ERR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.from_guess" title="Link to this definition"></a></dt>
+<dd><p>Search a homo/hetero-clinic point.</p>
+<p>This function attempts to find the intersection point of the stable and unstable manifolds by iteratively adjusting the provided epsilon guesses using scipy root-finding algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guess_eps_s</strong> (<em>float</em>) – Initial guess for the stable manifold epsilon.</p></li>
+<li><p><strong>guess_eps_u</strong> (<em>float</em>) – Initial guess for the unstable manifold epsilon.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments.
+- root_args (dict): Arguments to pass to the root-finding function.
+- ERR (float): Error tolerance for verifying the linear regime (default: 1e-3).
+- n_s (int): Number of times the map needs to be applied for the stable manifold.
+- n_u (int): Number of times the map needs to be applied for the unstable manifold.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the found epsilon values for the stable and unstable manifolds (eps_s, eps_u).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.with_deflation">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">with_deflation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyoculus.solvers.manifold.Manifold" title="pyoculus.solvers.manifold.Manifold"><span class="pre">Manifold</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_u</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_u</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.with_deflation" title="Link to this definition"></a></dt>
+<dd><p>find a clinic point using a deflation method and bounds to remove previously found
+clinic points.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.trajectory">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">trajectory</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.trajectory" title="Link to this definition"></a></dt>
+<dd><p>Get the complete trajectory of the clinic point.</p>
+<p>Computes the trajectory by integrating along stable and unstable
+manifolds if not already calculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array containing the orbit from unstable to stable fixed point.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.x_end_s">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">x_end_s</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.x_end_s" title="Link to this definition"></a></dt>
+<dd><p>Get the endpoint on the stable manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Coordinates of the end point on stable manifold.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.x_end_u">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">x_end_u</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.x_end_u" title="Link to this definition"></a></dt>
+<dd><p>Get the endpoint on the unstable manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Coordinates of the end point on unstable manifold.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Clinic.fundamental_segments">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fundamental_segments</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Clinic.fundamental_segments" title="Link to this definition"></a></dt>
+<dd><p>Get the fundamental domain boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Contains ‘stable’ and ‘unstable’ segment bounds.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.solvers.manifold.</span></span><span class="sig-name descname"><span class="pre">ClinicSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyoculus.solvers.manifold.Manifold" title="pyoculus.solvers.manifold.Manifold"><span class="pre">Manifold</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet" title="Link to this definition"></a></dt>
+<dd><p>A collection of homoclinics/heteroclinics with unstable (<span class="math notranslate nohighlight">\(&gt;_u\)</span>) ordering.</p>
+<p>This class manages multiple <a class="reference internal" href="#pyoculus.solvers.manifold.Clinic" title="pyoculus.solvers.manifold.Clinic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Clinic</span></code></a> objects, maintaining their ordering and ensuring
+proper fundamental domain representation. It uses the first clinic added to manage the fundamental domain boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>manifold</strong> – The <a class="reference internal" href="#pyoculus.solvers.manifold.Manifold" title="pyoculus.solvers.manifold.Manifold"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manifold</span></code></a> object associated to the fixed points and the map analyzed.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet._clinics_list">
+<span class="sig-name descname"><span class="pre">_clinics_list</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet._clinics_list" title="Link to this definition"></a></dt>
+<dd><p>List of Clinic objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.fundamental_segments">
+<span class="sig-name descname"><span class="pre">fundamental_segments</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.fundamental_segments" title="Link to this definition"></a></dt>
+<dd><p>Fundamental domain boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.nint_pair">
+<span class="sig-name descname"><span class="pre">nint_pair</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.nint_pair" title="Link to this definition"></a></dt>
+<dd><p>Default iteration numbers (n_s, n_u).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.total_number_of_points">
+<span class="sig-name descname"><span class="pre">total_number_of_points</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.total_number_of_points" title="Link to this definition"></a></dt>
+<dd><p>Return the total number of points in the fundamental clinic trajectory.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.stable_segment">
+<span class="sig-name descname"><span class="pre">stable_segment</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.stable_segment" title="Link to this definition"></a></dt>
+<dd><p>Return the stable segment of the fundamental domain.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.unstable_segment">
+<span class="sig-name descname"><span class="pre">unstable_segment</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.unstable_segment" title="Link to this definition"></a></dt>
+<dd><p>Return the unstable segment of the fundamental domain.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.record_clinic">
+<span class="sig-name descname"><span class="pre">record_clinic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.record_clinic" title="Link to this definition"></a></dt>
+<dd><p>Add a new clinic point to the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.reset" title="Link to this definition"></a></dt>
+<dd><p>Clear all stored clinics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.is_empty">
+<span class="sig-name descname"><span class="pre">is_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.is_empty" title="Link to this definition"></a></dt>
+<dd><p>Check if the clinic set is empty.</p>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a_manifold</span> <span class="o">=</span> <span class="n">Manifold</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clinic_set</span> <span class="o">=</span> <span class="n">ClinicSet</span><span class="p">(</span><span class="n">a_manifold</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clinic_set</span><span class="o">.</span><span class="n">record_clinic</span><span class="p">(</span><span class="n">myclinic</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.size">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">size</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.size" title="Link to this definition"></a></dt>
+<dd><p>Number of clinic points in the set.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_empty</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Check if the clinic set is empty.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id1">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_number_of_points</span></span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>the number of elements in the fundamental clinic trajectory</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id2">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stable_segment</span></span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd><p>the stable segment of the fundamental domain</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id3">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">unstable_segment</span></span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd><p>the stable segment of the fundamental domain</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.stable_epsilons">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stable_epsilons</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.stable_epsilons" title="Link to this definition"></a></dt>
+<dd><p>return the stable epsilons of the clinics, including the end of the fundamental section</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.unstable_epsilons">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">unstable_epsilons</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.unstable_epsilons" title="Link to this definition"></a></dt>
+<dd><p>return the unstable epsilons of the clinics, including the end of the fundamental section</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.stable_shifts">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stable_shifts</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.stable_shifts" title="Link to this definition"></a></dt>
+<dd><p>return the stable shifts of the clinics</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.unstable_shifts">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">unstable_shifts</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.unstable_shifts" title="Link to this definition"></a></dt>
+<dd><p>return the unstable shifts of the clinics (excluding the clinic defining the fundamental section)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.first_epsilons">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">first_epsilons</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.first_epsilons" title="Link to this definition"></a></dt>
+<dd><p>return the stable and unstable epsilons of the first clinic in the set</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">record_clinic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clinic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyoculus.solvers.manifold.Clinic" title="pyoculus.solvers.manifold.Clinic"><span class="pre">Clinic</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd><p>Record a new clinic point in the fundamental domain.</p>
+<p>Creates and stores a new <a class="reference internal" href="#pyoculus.solvers.manifold.Clinic" title="pyoculus.solvers.manifold.Clinic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Clinic</span></code></a> object after converting the given parameters
+to their fundamental domain representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eps_s</strong> (<em>float</em>) – Initial distance along stable manifold.</p></li>
+<li><p><strong>eps_u</strong> (<em>float</em>) – Initial distance along unstable manifold.</p></li>
+<li><p><strong>n_s</strong> (<em>int</em>) – Number of iterations for stable manifold.</p></li>
+<li><p><strong>n_u</strong> (<em>int</em>) – Number of iterations for unstable manifold.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments:
+tol (float, optional): Tolerance for comparing epsilon values. Defaults to 1e-2.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the clinic was successfully added, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If this is the first clinic point, it establishes the fundamental domain boundaries.
+Otherwise, parameters are converted to their fundamental domain representation.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.ClinicSet.order">
+<span class="sig-name descname"><span class="pre">order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.ClinicSet.order" title="Link to this definition"></a></dt>
+<dd><p>Order the homo/hetero-clinic points with the induced linear ordering of the unstable manifold &gt;_u.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd><p>remove all known clinics and start afresh.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.solvers.manifold.</span></span><span class="sig-name descname"><span class="pre">Manifold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">map:</span> <span class="pre">&lt;module</span> <span class="pre">'pyoculus.maps.base_map'</span> <span class="pre">from</span> <span class="pre">'/home/runner/work/pyoculus/pyoculus/pyoculus/maps/base_map.py'&gt;,</span> <span class="pre">fixedpoint_1:</span> <span class="pre">~pyoculus.solvers.fixed_point.FixedPoint,</span> <span class="pre">fixedpoint_2:</span> <span class="pre">~pyoculus.solvers.fixed_point.FixedPoint</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">dir1:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">~numpy.ndarray[tuple[~typing.Any,</span> <span class="pre">...],</span> <span class="pre">~numpy.dtype[~numpy._typing._array_like._ScalarT]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">dir2:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">first_stable:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold" title="Link to this definition"></a></dt>
+<dd><p>Class for computing and analyzing a tangle composed of one stable and one unstable manifold of fixed points.</p>
+<p>This class handles the computation of stable and unstable manifolds for fixed points, including finding homoclinic/heteroclinic intersections and calculating the turnstile flux of the tangle.</p>
+<p>We need to resolve some duplicity to determine the direction in which to follow the manifolds of each x-point (M*v=e.v. * v =&gt; M*-v = -e.v. * v), this is done with the ‘dir’ keywords.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>maps.base_map</em>) – The map defining the dynamical system.</p></li>
+<li><p><strong>fixedpoint_1</strong> (<a class="reference internal" href="pyoculus.solvers.fixed_point.html#pyoculus.solvers.fixed_point.FixedPoint" title="pyoculus.solvers.fixed_point.FixedPoint"><em>FixedPoint</em></a>) – First fixed point to consider.</p></li>
+<li><p><strong>fixedpoint_2</strong> (<a class="reference internal" href="pyoculus.solvers.fixed_point.html#pyoculus.solvers.fixed_point.FixedPoint" title="pyoculus.solvers.fixed_point.FixedPoint"><em>FixedPoint</em></a><em>, </em><em>optional</em>) – Second fixed point to consider if the manifolds go from one to the other.</p></li>
+<li><p><strong>dir1</strong> (<em>str</em><em>, </em><em>optional</em>) – Direction
+if type == str, can be (‘+’ or ‘-’) to multiply eigenvector of the Jacobian.
+if type == float, approximate angle (with respect of the x-axis) of the manifold to follow
+if type == np.ndarray, the (approximate) vector of the manifold to follow</p></li>
+<li><p><strong>dir2</strong> (<em>str</em><em>, </em><em>optional</em>) – Direction
+if type == str, can be (‘+’ or ‘-’) for the second manifold.
+if type == float, approximate angle (with respect of the x-axis) of the manifold to follow
+if type == np.ndarray, the (approximate) vector of the manifold to follow</p></li>
+<li><p><strong>first_stable</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to follow the stable or unstable manifold departing from the first fixed point. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.fixedpoint_1">
+<span class="sig-name descname"><span class="pre">fixedpoint_1</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.fixedpoint_1" title="Link to this definition"></a></dt>
+<dd><p>First fixed point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pyoculus.solvers.fixed_point.html#pyoculus.solvers.fixed_point.FixedPoint" title="pyoculus.solvers.fixed_point.FixedPoint">FixedPoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.fixedpoint_2">
+<span class="sig-name descname"><span class="pre">fixedpoint_2</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.fixedpoint_2" title="Link to this definition"></a></dt>
+<dd><p>Second fixed point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pyoculus.solvers.fixed_point.html#pyoculus.solvers.fixed_point.FixedPoint" title="pyoculus.solvers.fixed_point.FixedPoint">FixedPoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.rfp_s">
+<span class="sig-name descname"><span class="pre">rfp_s</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.rfp_s" title="Link to this definition"></a></dt>
+<dd><p>Stable fixed point coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.rfp_u">
+<span class="sig-name descname"><span class="pre">rfp_u</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.rfp_u" title="Link to this definition"></a></dt>
+<dd><p>Unstable fixed point coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.vector_s">
+<span class="sig-name descname"><span class="pre">vector_s</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.vector_s" title="Link to this definition"></a></dt>
+<dd><p>Stable eigenvector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.vector_u">
+<span class="sig-name descname"><span class="pre">vector_u</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.vector_u" title="Link to this definition"></a></dt>
+<dd><p>Unstable eigenvector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.lambda_s">
+<span class="sig-name descname"><span class="pre">lambda_s</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.lambda_s" title="Link to this definition"></a></dt>
+<dd><p>Stable eigenvalue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.lambda_u">
+<span class="sig-name descname"><span class="pre">lambda_u</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.lambda_u" title="Link to this definition"></a></dt>
+<dd><p>Unstable eigenvalue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.stable">
+<span class="sig-name descname"><span class="pre">stable</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.stable" title="Link to this definition"></a></dt>
+<dd><p>Stable manifold points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.unstable">
+<span class="sig-name descname"><span class="pre">unstable</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.unstable" title="Link to this definition"></a></dt>
+<dd><p>Unstable manifold points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.clinics">
+<span class="sig-name descname"><span class="pre">clinics</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.clinics" title="Link to this definition"></a></dt>
+<dd><p>Set of homoclinic/heteroclinic intersections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyoculus.solvers.manifold.ClinicSet" title="pyoculus.solvers.manifold.ClinicSet">ClinicSet</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.turnstile_areas">
+<span class="sig-name descname"><span class="pre">turnstile_areas</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.turnstile_areas" title="Link to this definition"></a></dt>
+<dd><p>Turnstile areas of the tangle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.choose">
+<span class="sig-name descname"><span class="pre">choose</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.choose" title="Link to this definition"></a></dt>
+<dd><p>Choose the stable and unstable directions for the manifold.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.show_directions">
+<span class="sig-name descname"><span class="pre">show_directions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.show_directions" title="Link to this definition"></a></dt>
+<dd><p>Plot the fixed points and their stable/unstable directions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.show_current_directions">
+<span class="sig-name descname"><span class="pre">show_current_directions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.show_current_directions" title="Link to this definition"></a></dt>
+<dd><p>Plot the current stable and unstable directions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.error_linear_regime">
+<span class="sig-name descname"><span class="pre">error_linear_regime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.error_linear_regime" title="Link to this definition"></a></dt>
+<dd><p>Metric to evaluate if a point is in the linear regime of a fixed point.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.start_config">
+<span class="sig-name descname"><span class="pre">start_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.start_config" title="Link to this definition"></a></dt>
+<dd><p>Compute a starting configuration for the manifold drawing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.find_epsilon">
+<span class="sig-name descname"><span class="pre">find_epsilon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.find_epsilon" title="Link to this definition"></a></dt>
+<dd><p>Find the epsilon that lies in the linear regime.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.compute_manifold">
+<span class="sig-name descname"><span class="pre">compute_manifold</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.compute_manifold" title="Link to this definition"></a></dt>
+<dd><p>Compute the stable or unstable manifold.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute the stable and unstable manifolds.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot the stable and unstable manifolds.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.find_N">
+<span class="sig-name descname"><span class="pre">find_N</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.find_N" title="Link to this definition"></a></dt>
+<dd><p>Find the number of times the map needs to be applied for the stable and unstable points to cross.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.find_clinic_single">
+<span class="sig-name descname"><span class="pre">find_clinic_single</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.find_clinic_single" title="Link to this definition"></a></dt>
+<dd><p>Find a single homoclinic/heteroclinic intersection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.find_clinic">
+<span class="sig-name descname"><span class="pre">find_clinic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.find_clinic" title="Link to this definition"></a></dt>
+<dd><p>Find all homoclinic/heteroclinic intersections.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.compute_turnstile_areas">
+<span class="sig-name descname"><span class="pre">compute_turnstile_areas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.compute_turnstile_areas" title="Link to this definition"></a></dt>
+<dd><p>Compute the turnstile areas of the tangle.</p>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TypeError</strong> – If fixed points are not FixedPoint instances.</p></li>
+<li><p><strong>ValueError</strong> – If fixed points are not successfully computed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">choose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'+'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'-'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'+'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'-'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_stable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd><p>Choose manifold stable and unstable directions to define your <a class="reference internal" href="#pyoculus.solvers.manifold.Manifold" title="pyoculus.solvers.manifold.Manifold"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manifold</span></code></a> problem.</p>
+<p>You must choose directions away from the fixed point in which the manifolds actually intersect. The good orientation is the one for which you could create the manifold by going away from the fixed point. Be carefull to this point, otherwise other manifold computations such as clinic finding will fail.</p>
+<p>Hint: Use <a class="reference internal" href="#id7" title="pyoculus.solvers.manifold.Manifold.show_directions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Manifold.show_directions()</span></code></a> to help you choose here. This plot shows the fixed points and the stable eigenvector (and its negative) in green, the unstable eigenvector (and it’s negative) in red.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir_1</strong> (<em>str</em>) – ‘+’ or ‘-’ for the stable direction.</p></li>
+<li><p><strong>dir_2</strong> (<em>str</em>) – ‘+’ or ‘-’ for the unstable direction.</p></li>
+<li><p><strong>first_stable</strong> (<em>bool</em>) – Whether to follow the stable or unstable manifold from the first point.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id7">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">show_directions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pyoculus.solvers.fixed_point.html#pyoculus.solvers.fixed_point.FixedPoint" title="pyoculus.solvers.fixed_point.FixedPoint"><span class="pre">FixedPoint</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fp_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pyoculus.solvers.fixed_point.html#pyoculus.solvers.fixed_point.FixedPoint" title="pyoculus.solvers.fixed_point.FixedPoint"><span class="pre">FixedPoint</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd><p>Plot fixed points and their stable/unstable directions.</p>
+<p>Helper function to plot the fixed points and their stable and unstable direction. Usefull to look at which direction need to be considered for the inner and outer manifolds before creating a class and analyzed them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fp_1</strong> (<a class="reference internal" href="pyoculus.solvers.fixed_point.html#pyoculus.solvers.fixed_point.FixedPoint" title="pyoculus.solvers.fixed_point.FixedPoint"><em>FixedPoint</em></a>) – First fixed point.</p></li>
+<li><p><strong>fp_2</strong> (<a class="reference internal" href="pyoculus.solvers.fixed_point.html#pyoculus.solvers.fixed_point.FixedPoint" title="pyoculus.solvers.fixed_point.FixedPoint"><em>FixedPoint</em></a>) – Second fixed point.</p></li>
+<li><p><strong>**kwargs</strong> – Optional visualization parameters:
+pcolors (list): Colors for fixed points.
+vcolors (list): Colors for eigenvectors.
+vscale (int): Scale for eigenvectors.
+dvtext (float): Text distance as fraction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(figure, axis) matplotlib objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">show_current_directions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vcolors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd><p>Plot the current stable and unstable directions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – Optional visualization parameters:
+vcolors (list): Colors for eigenvectors.
+vscale (int): Scale for the eigenvectors.
+dvtext (float): Text distance as fraction.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(figure, axis) matplotlib objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.first_epsilons">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">first_epsilons</span></span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.first_epsilons" title="Link to this definition"></a></dt>
+<dd><p>return the stable and unstable epsilons of the first clinic in the set</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">error_linear_regime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eigenvector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd><p>Calculate error in linear regime approximation.</p>
+<p>Metric to estimate if the point rfp + epsilon * eigenvector is in the linear regime of rfp point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>epsilon</strong> (<em>float</em>) – Distance from fixed point.</p></li>
+<li><p><strong>rfp</strong> (<em>np.ndarray</em>) – Fixed point coordinates.</p></li>
+<li><p><strong>eigenvector</strong> (<em>np.ndarray</em>) – Eigenvector to check.</p></li>
+<li><p><strong>direction</strong> (<em>int</em><em>, </em><em>optional</em>) – Integration direction. Defaults to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Error metric for linear approximation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">start_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eigenvalue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eigenvector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd><p>Compute a starting configuration for the manifold drawing. It takes a point in the linear regime
+and devide the interval from the point to its evolution after one nfp into neps points. The interval
+is computed geometrically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>epsilon</strong> (<em>float</em>) – initial epsilon</p></li>
+<li><p><strong>rfp</strong> (<em>np.array</em>) – fixed point</p></li>
+<li><p><strong>eigenvalue</strong> (<em>float</em>) – eigenvalue of the fixed point</p></li>
+<li><p><strong>eigenvector</strong> (<em>np.array</em>) – eigenvector of the fixed point</p></li>
+<li><p><strong>neps</strong> (<em>int</em>) – number of points</p></li>
+<li><p><strong>direction</strong> (<em>int</em>) – direction of the integration (1 for forward, -1 for backward)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>array of starting points (shape (neps, 2))</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">find_epsilon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">which</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_guess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd><p>Find the epsilon that lies in the linear regime.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">compute_manifold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">which</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dd><p>Compute the stable or unstable manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eps</strong> (<em>float</em>) – epsilon in the stable or unstable direction</p></li>
+<li><p><strong>compute_stable</strong> (<em>bool</em>) – whether to compute the stable or unstable manifold</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>eps_guess</strong> (<em>float</em>) – guess for epsilon (if eps is not given)</p></li>
+<li><p><strong>neps</strong> (<em>int</em>) – number of points in the starting configuration</p></li>
+<li><p><strong>nint</strong> (<em>int</em>) – number of intersections</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array of points on the manifold</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eps_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dd><p>Computation of the stable and unstable manifolds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eps_s</strong> (<em>float</em>) – epsilon in the stable direction.</p></li>
+<li><p><strong>eps_u</strong> (<em>float</em>) – epsilon in the unstable direction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>eps_guess_s</strong> (<em>float</em>) – guess for epsilon in the stable direction (if eps_s is not given)</p></li>
+<li><p><strong>eps_guess_u</strong> (<em>float</em>) – guess for epsilon in the unstable direction (if eps_u is not given)</p></li>
+<li><p><strong>neps_s</strong> (<em>int</em>) – number of points in the starting configuration for the stable part</p></li>
+<li><p><strong>neps_u</strong> (<em>int</em>) – number of points in the starting configuration for the unstable part</p></li>
+<li><p><strong>nint_s</strong> (<em>int</em>) – number of evolutions of the initial segments for the stable part</p></li>
+<li><p><strong>nint_u</strong> (<em>int</em>) – number of evolutions of the initial segments for the unstable part</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing two np.array of points, the first one for the stable manifold and the second one for the unstable manifold.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.get_lobe_boundary">
+<span class="sig-name descname"><span class="pre">get_lobe_boundary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lobe_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which_section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.get_lobe_boundary" title="Link to this definition"></a></dt>
+<dd><p>Compute the boundary of the lobe with the given number (counted from the unstable manifold).</p>
+<p>The Manifold class must have a computed at least one clinic, preferrably all of them.
+The boundary of the lobe is computed by mapping the part of the fundamental section of the unstable
+manifold between two clinic trajecories lobe_number times, and
+mapping the section of the stable manifold between two clinictrajectories in the reverse direction
+(clinic_points-lobe_number) times.</p>
+<p>which_section determines which of the two sections of the fundamental domain to use.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.plot_lobe_boundary">
+<span class="sig-name descname"><span class="pre">plot_lobe_boundary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lobe_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which_section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.plot_lobe_boundary" title="Link to this definition"></a></dt>
+<dd><p>Plot the boundary of the lobe with the given number (counted from the unstable manifold).</p>
+<p>The Manifold class must have a computed at least one clinic, preferrably all of them.
+The boundary of the lobe is computed by mapping the part of the fundamental section of the unstable
+manifold between two clinic trajecories lobe_number times, and
+mapping the section of the stable manifold between two clinictrajectories in the reverse direction
+(clinic_points-lobe_number) times.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.plot_filled_lobe">
+<span class="sig-name descname"><span class="pre">plot_filled_lobe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lobe_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which_section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.plot_filled_lobe" title="Link to this definition"></a></dt>
+<dd><p>Plot the filled lobe with the given number (counted from the unstable manifold).</p>
+<p>The Manifold class must have a computed at least one clinic, preferrably all of them.
+The boundary of the lobe is computed by mapping the part of the fundamental section of the unstable
+manifold between two clinic trajecories lobe_number times, and
+mapping the section of the stable manifold between two clinictrajectories in the reverse direction
+(clinic_points-lobe_number) times.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">which</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dd><p>Plot the stable and/or unstable manifolds.</p>
+<p>kwargs:
+which (str): which manifold to plot. Can be ‘stable’, ‘unstable’ or ‘both’.
+stepsize_limit =</p>
+<p>Other kwargs are givent to the plot.</p>
+<p>Specific extra plots:
+<em>rm_points</em> (int): remove the last <em>rm_points</em> points of the manifold.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.plot_manifold_copies">
+<span class="sig-name descname"><span class="pre">plot_manifold_copies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">which</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.plot_manifold_copies" title="Link to this definition"></a></dt>
+<dd><p>plot the images of the manifolds as they appear arount the other islands
+of the chain, using the periodicity of the fixed points.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">find_N</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eps_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_u</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dd><p>Find the number of times the map needs to be applied for the stable and unstable points to cross.</p>
+<p>This method evolves the initial stable <span class="math notranslate nohighlight">\(x_s = x^\star + \varepsilon_s\textbf{e}_s\)</span> and unstable <span class="math notranslate nohighlight">\(x_u = x^\star + \varepsilon_u\textbf{e}_u\)</span> points until they cross. They are alternatively evolved once and when the initial direction is reversed, the number of iterations is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eps_s</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial <span class="math notranslate nohighlight">\(\varepsilon_s\)</span> along the stable manifold direction. Defaults to 1e-3.</p></li>
+<li><p><strong>eps_u</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial <span class="math notranslate nohighlight">\(\varepsilon_u\)</span> along the unstable manifold direction. Defaults to 1e-3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing two integers:</dt><dd><ul class="simple">
+<li><p>n_s (int): Number of iterations for the stable manifold.</p></li>
+<li><p>n_u (int): Number of iterations for the unstable manifold.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">find_clinic_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guess_eps_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_eps_u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_clinics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nretry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ERR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
+<dd><p>Search a homo/hetero-clinic point.</p>
+<p>This function attempts to find the intersection point of the stable and unstable manifolds by iteratively adjusting the provided epsilon guesses using scipy root-finding algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guess_eps_s</strong> (<em>float</em>) – Initial guess for the stable manifold epsilon.</p></li>
+<li><p><strong>guess_eps_u</strong> (<em>float</em>) – Initial guess for the unstable manifold epsilon.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt><em>kwargs</em>: Additional keyword arguments.</dt><dd><ul class="simple">
+<li><p>n_s (int): Number of times the map needs to be applied for the stable manifold.</p></li>
+<li><p>n_u (int): Number of times the map needs to be applied for the unstable manifold.</p></li>
+<li><p>reset_clinics: replace all clinics and make this clinic the fundamental segment.</p></li>
+<li><p>nretry: retry by jittering the epsilon guesses n times</p></li>
+<li><p>ERR (float): Error tolerance for verifying the linear regime (default: 1e-3).</p></li>
+</ul>
+</dd>
+<dt><a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>root_args (dict): Arguments to pass to the root-finding function.</dt><dd><p>suggested: {‘jac’:True/False} integrated jacobian or FD for step
+{‘options’:{‘factor’:1e-3}} takes smaller steps when jac is ill.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing the found epsilon values for the stable and unstable manifolds (eps_s, eps_u).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.find_other_clinic_test">
+<span class="sig-name descname"><span class="pre">find_other_clinic_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift_in_stable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift_in_unstable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nretry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.find_other_clinic_test" title="Link to this definition"></a></dt>
+<dd><p>bla</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.find_other_clinic">
+<span class="sig-name descname"><span class="pre">find_other_clinic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift_in_stable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift_in_unstable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nretry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.find_other_clinic" title="Link to this definition"></a></dt>
+<dd><p>Find another clinic trajectory if the Manifold already has a fundamental segment.
+Starts the clinic trajectory finding with one less total step by shifting the
+start points
+Args:
+shift_in_stable: point in the stable fundamental segment to start the search from, 0 is from the same point</p>
+<blockquote>
+<div><p>as the first trajectory, 1 is shifted to the end.</p>
+</div></blockquote>
+<p>shift_in_unstable (optional): point in the unstable fundamental segment to start the search from,
+if not given same as shift_in_stable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.find_clinics">
+<span class="sig-name descname"><span class="pre">find_clinics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_guess_eps_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_guess_eps_u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_clinics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.find_clinics" title="Link to this definition"></a></dt>
+<dd><p>Args:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.plot_clinics">
+<span class="sig-name descname"><span class="pre">plot_clinics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.plot_clinics" title="Link to this definition"></a></dt>
+<dd><p>Plot the clinic trajectories.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.integrate">
+<span class="sig-name descname"><span class="pre">integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_many</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nintersect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.integrate" title="Link to this definition"></a></dt>
+<dd><p>Integrate a set of points x_many for nintersect times in the direction specified.
+Robust to integration failures and has fixed return shape.</p>
+<p>Returns an array of shape (nintersect, len(x_many), _map.dimension).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.save" title="Link to this definition"></a></dt>
+<dd><p>save the manifold object to a .pkl file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.load">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.load" title="Link to this definition"></a></dt>
+<dd><p>load the manifold object from a .pkl file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.save_mf_quasr">
+<span class="sig-name descname"><span class="pre">save_mf_quasr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.save_mf_quasr" title="Link to this definition"></a></dt>
+<dd><p>save the manifold object for a Stellerator field in a .pkl file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.solvers.manifold.Manifold.load_mf_quasr">
+<span class="sig-name descname"><span class="pre">load_mf_quasr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.solvers.manifold.Manifold.load_mf_quasr" title="Link to this definition"></a></dt>
+<dd><p>load the payload saved by save_mf_quasr into the current instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.solvers.lyapunov_exponent.html" class="btn btn-neutral float-left" title="pyoculus.solvers.lyapunov_exponent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.solvers.manifold.eig.html" class="btn btn-neutral float-right" title="pyoculus.solvers.manifold.eig" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

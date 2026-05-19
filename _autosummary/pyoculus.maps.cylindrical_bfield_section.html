@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.maps.cylindrical_bfield_section &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.maps.cylindrical_bfield_section.njit" href="pyoculus.maps.cylindrical_bfield_section.njit.html" />
+    <link rel="prev" title="pyoculus.maps.base_map" href="pyoculus.maps.base_map.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.base_map.html">pyoculus.maps.base_map</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.maps.cylindrical_bfield_section</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.maps.cylindrical_bfield_section.njit.html">pyoculus.maps.cylindrical_bfield_section.njit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection"><code class="docutils literal notranslate"><span class="pre">CylindricalBfieldSection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.maps.cylindrical_bfield_section.Cache"><code class="docutils literal notranslate"><span class="pre">Cache</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.integrated_map.html">pyoculus.maps.integrated_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.standard_map.html">pyoculus.maps.standard_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.tokamap.html">pyoculus.maps.tokamap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.toroidal_bfield_section.html">pyoculus.maps.toroidal_bfield_section</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.maps.html">pyoculus.maps</a></li>
+      <li class="breadcrumb-item active">pyoculus.maps.cylindrical_bfield_section</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.maps.cylindrical_bfield_section.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.maps.cylindrical_bfield_section">
+<span id="pyoculus-maps-cylindrical-bfield-section"></span><h1>pyoculus.maps.cylindrical_bfield_section<a class="headerlink" href="#module-pyoculus.maps.cylindrical_bfield_section" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="pyoculus.maps.cylindrical_bfield_section.njit.html#pyoculus.maps.cylindrical_bfield_section.njit" title="pyoculus.maps.cylindrical_bfield_section.njit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">njit</span></code></a>(func)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.maps.cylindrical_bfield_section.</span></span><span class="sig-name descname"><span class="pre">CylindricalBfieldSection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cylindricalbfield</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pyoculus.fields.cylindrical_bfield.html#pyoculus.fields.cylindrical_bfield.CylindricalBfield" title="pyoculus.fields.cylindrical_bfield.CylindricalBfield"><span class="pre">CylindricalBfield</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finderargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection" title="Link to this definition"></a></dt>
+<dd><p>Map given by following the a magnetic field in cylindrical system <span class="math notranslate nohighlight">\((R, \phi, Z)\)</span> and recording the intersections with symmetry planes <span class="math notranslate nohighlight">\(\phi = \phi_0, \phi_0 + T, ...\)</span>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.mf">
+<span class="sig-name descname"><span class="pre">mf</span></span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.mf" title="Link to this definition"></a></dt>
+<dd><p>The magnetic field to follow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pyoculus.fields.cylindrical_bfield.html#pyoculus.fields.cylindrical_bfield.CylindricalBfield" title="pyoculus.fields.cylindrical_bfield.CylindricalBfield">CylindricalBfield</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.phi0">
+<span class="sig-name descname"><span class="pre">phi0</span></span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.phi0" title="Link to this definition"></a></dt>
+<dd><p>The cylindrical angle from which to start the field line tracing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.R0">
+<span class="sig-name descname"><span class="pre">R0</span></span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.R0" title="Link to this definition"></a></dt>
+<dd><p>The major radius of the magnetic axis in the <span class="math notranslate nohighlight">\(\phi_0\)</span> plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.Z0">
+<span class="sig-name descname"><span class="pre">Z0</span></span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.Z0" title="Link to this definition"></a></dt>
+<dd><p>The vertical position of the magnetic axis in the <span class="math notranslate nohighlight">\(\phi_0\)</span> plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.find_axis">
+<span class="sig-name descname"><span class="pre">find_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.find_axis" title="Link to this definition"></a></dt>
+<dd><p>Finds the magnetic axis of a magnetic field using a FixedPoint solver.</p>
+<p>This method attempts to locate the magnetic axis by solving a fixed-point problem, where the magnetic axis is a point where the magnetic field lines close on themselves after exactly one mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guess</strong> (<em>tuple</em><em>, </em><em>optional</em>) – An initial guess for the coordinates of the magnetic axis. If not provided, a default guess is used.</p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments passed directly to the FixedPoint solver’s <cite>find</cite> method. This can be used to specify solver options such as tolerance levels, maximum iterations, etc.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.axis">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">axis</span></span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.axis" title="Link to this definition"></a></dt>
+<dd><p>Returns the coordinates of the magnetic axis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.f">
+<span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.f" title="Link to this definition"></a></dt>
+<dd><p>Trace the field line for a number of periods.</p>
+<p>Traces one field period at a time and caches the results if the number of periods is integer.
+Otherwise, it traces the field line for the given number of fractional periods in one go.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.df">
+<span class="sig-name descname"><span class="pre">df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.df" title="Link to this definition"></a></dt>
+<dd><p>Compute the Jacobian of the field line map for a number of periods.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.to_rhotheta">
+<span class="sig-name descname"><span class="pre">to_rhotheta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.to_rhotheta" title="Link to this definition"></a></dt>
+<dd><p>Converts the cylindrical coordinates to polar coordinates centered around the magnetic axis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.to_RZ">
+<span class="sig-name descname"><span class="pre">to_RZ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.to_RZ" title="Link to this definition"></a></dt>
+<dd><p>Converts the polar coordinates centered around the magnetic axis to cylindrical coordinates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.lagrangian">
+<span class="sig-name descname"><span class="pre">lagrangian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.lagrangian" title="Link to this definition"></a></dt>
+<dd><p>Set Meiss’s Lagrangiat for the magnetic field.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.winding">
+<span class="sig-name descname"><span class="pre">winding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.winding" title="Link to this definition"></a></dt>
+<dd><p>Calculates the winding number of the field line starting at <span class="math notranslate nohighlight">\(y_0\)</span> around the one starting at <span class="math notranslate nohighlight">\(y_1\)</span>. By going into the poloidal coordinates centered around the position of the field line given by <span class="math notranslate nohighlight">\(y_0\)</span> and integrating the angle change along the trajectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – The number of periods to integrate.</p></li>
+<li><p><strong>y0</strong> (<em>array</em>) – The starting point of the field line.</p></li>
+<li><p><strong>y1</strong> (<em>array</em><em>, </em><em>optional</em>) – Another field line around which winding is to be calculated. If not provided, the magnetic axis is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The radius difference between initial and final point and winding number between the two field lines.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.dwinding">
+<span class="sig-name descname"><span class="pre">dwinding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.CylindricalBfieldSection.dwinding" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Jacobian of the winding number</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.Cache">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.maps.cylindrical_bfield_section.</span></span><span class="sig-name descname"><span class="pre">Cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.Cache" title="Link to this definition"></a></dt>
+<dd><p>A cache to store the results of integrations.
+Entries are catalogued by the starting point of the field line and the type of result.
+the cache will return a dictionary of {t: result} where t is the time period and result is the result of the integration t times.
+The cache is limited in size and will remove the oldest entry if the limit is reached.
+The keys are a hash of the starting position and a string specifying the type of result. These are not specified in the cache itself, but
+by the functions that use the cache.
+Currently implemented types are:
+(y0, ‘f’) for the field line position at time t
+(y0, ‘df’) for the jacobian of the field line position at time t
+(y0, ‘f_noninteger’) for the field line position at time t for non-integer t
+(y0, ‘df_noninteger’) for the jacobian of the field line position at time t for non-integer t
+(y0, ‘lagrangian’) for the lagrangian form at time t
+(y0, ‘winding’) for the winding number at time t
+(y0, ‘dwinding’) for the jacobian of the winding number at time t
+[Note: the cache entries are based on <em>starting</em> point of a trajectory, so calculations starting at an intermediate point of a previous trajectory will not be retrieved from the cache.]
+non-integer integrations are always computed from phi=0, and do not continue from a previous result.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.Cache.size">
+<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.Cache.size" title="Link to this definition"></a></dt>
+<dd><p>The maximum size of the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.Cache.cache">
+<span class="sig-name descname"><span class="pre">cache</span></span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.Cache.cache" title="Link to this definition"></a></dt>
+<dd><p>The cache storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.Cache.retrieve">
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">what</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.Cache.retrieve" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a cached result if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0</strong> (<em>array</em>) – The starting point of the field line.</p></li>
+<li><p><strong>what</strong> (<em>str</em>) – The type of result to retrieve.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cached result if available, otherwise None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.Cache.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">what</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.Cache.save" title="Link to this definition"></a></dt>
+<dd><p>Saves a result to the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – The time period.</p></li>
+<li><p><strong>y0</strong> (<em>array</em>) – The starting point of the field line.</p></li>
+<li><p><strong>dic</strong> (<em>dict</em>) – The result to cache.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.cylindrical_bfield_section.Cache.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.cylindrical_bfield_section.Cache.clear" title="Link to this definition"></a></dt>
+<dd><p>Clears the cache.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.maps.base_map.html" class="btn btn-neutral float-left" title="pyoculus.maps.base_map" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.maps.cylindrical_bfield_section.njit.html" class="btn btn-neutral float-right" title="pyoculus.maps.cylindrical_bfield_section.njit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

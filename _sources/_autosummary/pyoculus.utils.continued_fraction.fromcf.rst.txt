@@ -1,0 +1,6 @@
+pyoculus.utils.continued\_fraction.fromcf
+=========================================
+
+.. currentmodule:: pyoculus.utils.continued_fraction
+
+.. autofunction:: fromcf

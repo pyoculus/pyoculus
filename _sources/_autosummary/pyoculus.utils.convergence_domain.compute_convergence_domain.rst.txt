@@ -1,0 +1,6 @@
+pyoculus.utils.convergence\_domain.compute\_convergence\_domain
+===============================================================
+
+.. currentmodule:: pyoculus.utils.convergence_domain
+
+.. autofunction:: compute_convergence_domain

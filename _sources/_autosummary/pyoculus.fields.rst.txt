@@ -1,0 +1,40 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.fields
+===============
+
+.. automodule:: pyoculus.fields
+   :members:
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst  
+   :recursive:
+
+   cylindrical_bfield
+   cylindrical_bfield_analytic
+   cylindrical_grid_interpolated_field
+   m3dc1_bfield
+   magnetic_field
+   qfm_bfield
+   simsopt_bfield
+   spec_bfield
+   spectre_bfield
+   toroidal_bfield
+   two_waves
+

@@ -1,0 +1,36 @@
+﻿.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus
+========
+
+.. automodule:: pyoculus
+   :members:
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst  
+   :recursive:
+
+   fields
+   geo
+   integrators
+   maps
+   solvers
+   toybox
+   utils
+

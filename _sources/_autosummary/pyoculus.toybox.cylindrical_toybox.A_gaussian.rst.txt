@@ -1,0 +1,6 @@
+pyoculus.toybox.cylindrical\_toybox.A\_gaussian
+===============================================
+
+.. currentmodule:: pyoculus.toybox.cylindrical_toybox
+
+.. autofunction:: A_gaussian
