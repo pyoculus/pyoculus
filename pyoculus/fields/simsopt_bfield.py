@@ -35,7 +35,7 @@ class SimsoptBfield(CylindricalBfield):
 
         if interpolate:
             self._interpolating = True
-            if type(interpolate)-__name__ == "InterpolatedField":
+            if type(interpolate).__name__ == "InterpolatedField":
                 self._mf_B = interpolate
             else:
                 from simsopt.geo import SurfaceClassifier
