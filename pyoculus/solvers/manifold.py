@@ -2,7 +2,7 @@ import pyoculus.maps as maps
 from .base_solver import BaseSolver
 from .fixed_point import FixedPoint
 from ..utils.plot import create_canvas, clean_bigsteps
-from scipy.optimize import root, minimize
+from scipy.optimize import root, minimize, brentq
 from typing import Iterator, Literal, Union, Iterable
 from numpy.typing import NDArray
 import dill as pickle
@@ -99,7 +99,7 @@ class Clinic:
         self._xend_u = None
 
     @classmethod
-    def from_guess(cls, manifold: "Manifold", eps_s: float, eps_u: float, n_s: int, n_u: int, ERR=1e-3, **kwargs):
+    def from_guess(cls, manifold: "Manifold", eps_s: float, eps_u: float, n_s: int, n_u: int, ERR=1e-3, expensive=True, **kwargs):
         """
         Search a homo/hetero-clinic point.
 
@@ -200,12 +200,48 @@ class Clinic:
             **root_kwargs,
         )
 
+
         # Checking status and logging the result
         logger.info(f"Root search status : {root_obj.message}")
         logger.debug(f"Root search object : {root_obj}")
 
-        if not root_obj.success:
-            raise ValueError("Homo/Heteroclinic search was not successful.")
+        if not root_obj.success and expensive:
+            logger.warning("Root finding did not converge, trying an expensive solve around the initial guess.")
+            # we do an expensive solve: 
+            # build a grid of eps_s and eps_u values around inital guess,
+            # going from 1/lambda_s*eps_s to lambda_s*eps_s, and same for eps_u, and evaluate the residual on this grid
+            # then take minimal residual point as new guess and try again with root finding.
+            # build grid 
+            eps_s_values = np.geomspace(eps_s / manifold.lambda_s, eps_s * manifold.lambda_s, 20)
+            eps_u_values = np.geomspace(eps_u / manifold.lambda_u, eps_u * manifold.lambda_u, 20)
+            # container for residuals
+            residuals = np.zeros((len(eps_s_values), len(eps_u_values)))
+            # loop over grid and evaluate residuals, if error happens, put inf
+            for i, eps_s_val in enumerate(eps_s_values):
+                for j, eps_u_val in enumerate(eps_u_values):
+                    try:
+                        residuals[i, j] = np.linalg.norm(residual(np.log([eps_s_val, eps_u_val]), n_s, n_u))
+                    except:
+                        residuals[i, j] = np.inf
+            # find minimal residual point and use it as new guess
+            min_index = np.unravel_index(np.argmin(residuals), residuals.shape)
+            eps_s_guess, eps_u_guess = eps_s_values[min_index[0]], eps_u_values[min_index[1]]
+            logger.warning(f"Trying solve with new guess (eps_s, eps_u) : {eps_s_guess}, {eps_u_guess}, with residual {residuals[min_index]}")
+            # try root finding again with new guess
+            root_obj = root(
+                residual,
+                np.log([eps_s_guess, eps_u_guess]),
+                args=(n_s, n_u),
+                **root_kwargs,
+            )
+            # Checking status and logging the result
+            logger.warning(f"Root search status after expensive solve : {root_obj.message}")
+            logger.debug(f"Root search object after expensive solve : {root_obj}")
+            if not root_obj.success:
+                raise ValueError("Root finding did not converge even after expensive solve, cannot find clinic point.")
+
+        if not root_obj.success and not expensive:
+            raise ValueError("Root finding did not converge without expensive solve, cannot find clinic point. Consider trying with expensive=True to perform a more global search around the initial guess.")
 
         eps_s, eps_u = np.exp(root_obj.x)
 
