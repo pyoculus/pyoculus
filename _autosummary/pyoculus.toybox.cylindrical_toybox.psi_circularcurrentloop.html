@@ -1,0 +1,186 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.toybox.cylindrical_toybox.psi_circularcurrentloop &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.toybox.cylindrical_toybox.psi_gaussian" href="pyoculus.toybox.cylindrical_toybox.psi_gaussian.html" />
+    <link rel="prev" title="pyoculus.toybox.cylindrical_toybox.ellpk" href="pyoculus.toybox.cylindrical_toybox.ellpk.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html">pyoculus.toybox.cylindrical_toybox</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.A_circularcurrentloop.html">pyoculus.toybox.cylindrical_toybox.A_circularcurrentloop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.A_gaussian.html">pyoculus.toybox.cylindrical_toybox.A_gaussian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.A_maxwellboltzmann.html">pyoculus.toybox.cylindrical_toybox.A_maxwellboltzmann</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.A_r_squared.html">pyoculus.toybox.cylindrical_toybox.A_r_squared</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.A_squared.html">pyoculus.toybox.cylindrical_toybox.A_squared</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.ellpe.html">pyoculus.toybox.cylindrical_toybox.ellpe</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.ellpk.html">pyoculus.toybox.cylindrical_toybox.ellpk</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">pyoculus.toybox.cylindrical_toybox.psi_circularcurrentloop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.psi_gaussian.html">pyoculus.toybox.cylindrical_toybox.psi_gaussian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.psi_maxwellboltzmann.html">pyoculus.toybox.cylindrical_toybox.psi_maxwellboltzmann</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.psi_squared.html">pyoculus.toybox.cylindrical_toybox.psi_squared</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.psitob.html">pyoculus.toybox.cylindrical_toybox.psitob</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.rot.html">pyoculus.toybox.cylindrical_toybox.rot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.psitob"><code class="docutils literal notranslate"><span class="pre">psitob()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.rot"><code class="docutils literal notranslate"><span class="pre">rot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.psi_squared"><code class="docutils literal notranslate"><span class="pre">psi_squared()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.A_r_squared"><code class="docutils literal notranslate"><span class="pre">A_r_squared()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.A_squared"><code class="docutils literal notranslate"><span class="pre">A_squared()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.psi_maxwellboltzmann"><code class="docutils literal notranslate"><span class="pre">psi_maxwellboltzmann()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.A_maxwellboltzmann"><code class="docutils literal notranslate"><span class="pre">A_maxwellboltzmann()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.psi_gaussian"><code class="docutils literal notranslate"><span class="pre">psi_gaussian()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.A_gaussian"><code class="docutils literal notranslate"><span class="pre">A_gaussian()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.ellpe"><code class="docutils literal notranslate"><span class="pre">ellpe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.ellpk"><code class="docutils literal notranslate"><span class="pre">ellpk()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.psi_circularcurrentloop"><code class="docutils literal notranslate"><span class="pre">psi_circularcurrentloop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.toybox.cylindrical_toybox.html#pyoculus.toybox.cylindrical_toybox.A_circularcurrentloop"><code class="docutils literal notranslate"><span class="pre">A_circularcurrentloop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.toybox.cylindrical_toybox.html">pyoculus.toybox.cylindrical_toybox</a></li>
+      <li class="breadcrumb-item active">pyoculus.toybox.cylindrical_toybox.psi_circularcurrentloop</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.toybox.cylindrical_toybox.psi_circularcurrentloop.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pyoculus-toybox-cylindrical-toybox-psi-circularcurrentloop">
+<h1>pyoculus.toybox.cylindrical_toybox.psi_circularcurrentloop<a class="headerlink" href="#pyoculus-toybox-cylindrical-toybox-psi-circularcurrentloop" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyoculus.toybox.cylindrical_toybox.psi_circularcurrentloop">
+<span class="sig-prename descclassname"><span class="pre">pyoculus.toybox.cylindrical_toybox.</span></span><span class="sig-name descname"><span class="pre">psi_circularcurrentloop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span></span></span><a class="headerlink" href="#pyoculus.toybox.cylindrical_toybox.psi_circularcurrentloop" title="Link to this definition"></a></dt>
+<dd><p><span class="math notranslate nohighlight">\(\psi\)</span> flux function generated at <span class="math notranslate nohighlight">\((r, \phi, z)\)</span> by a circular current loop located at position <span class="math notranslate nohighlight">\((R, Z)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rr</strong> (<em>array</em>) – Position vector in cylindrical coordinates.</p></li>
+<li><p><strong>R</strong> (<em>float</em>) – R coordinate of the center of the circular current loop.</p></li>
+<li><p><strong>Z</strong> (<em>float</em>) – Z coordinate of the center of the circular current loop.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(\psi\)</span> flux at position <cite>rr</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.toybox.cylindrical_toybox.ellpk.html" class="btn btn-neutral float-left" title="pyoculus.toybox.cylindrical_toybox.ellpk" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.toybox.cylindrical_toybox.psi_gaussian.html" class="btn btn-neutral float-right" title="pyoculus.toybox.cylindrical_toybox.psi_gaussian" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

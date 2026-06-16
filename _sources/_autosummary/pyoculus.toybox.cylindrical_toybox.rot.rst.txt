@@ -1,0 +1,6 @@
+pyoculus.toybox.cylindrical\_toybox.rot
+=======================================
+
+.. currentmodule:: pyoculus.toybox.cylindrical_toybox
+
+.. autofunction:: rot

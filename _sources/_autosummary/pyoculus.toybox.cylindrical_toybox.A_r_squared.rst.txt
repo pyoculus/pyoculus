@@ -1,0 +1,6 @@
+pyoculus.toybox.cylindrical\_toybox.A\_r\_squared
+=================================================
+
+.. currentmodule:: pyoculus.toybox.cylindrical_toybox
+
+.. autofunction:: A_r_squared

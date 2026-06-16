@@ -1,0 +1,21 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.fields.simsopt\_bfield
+===============================
+
+.. automodule:: pyoculus.fields.simsopt_bfield
+   :members:
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

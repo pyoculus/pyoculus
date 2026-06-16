@@ -1,0 +1,223 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.maps.tokamap &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.maps.tokamap.return_f_t_pure" href="pyoculus.maps.tokamap.return_f_t_pure.html" />
+    <link rel="prev" title="pyoculus.maps.standard_map.standardmap_frev_pure" href="pyoculus.maps.standard_map.standardmap_frev_pure.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.base_map.html">pyoculus.maps.base_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.cylindrical_bfield_section.html">pyoculus.maps.cylindrical_bfield_section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.integrated_map.html">pyoculus.maps.integrated_map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.standard_map.html">pyoculus.maps.standard_map</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.maps.tokamap</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.maps.tokamap.return_f_t_pure.html">pyoculus.maps.tokamap.return_f_t_pure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.maps.tokamap.tokamap_f_pure.html">pyoculus.maps.tokamap.tokamap_f_pure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyoculus.maps.tokamap.tokamap_frev_pure.html">pyoculus.maps.tokamap.tokamap_frev_pure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.maps.tokamap.tokamap_f_pure"><code class="docutils literal notranslate"><span class="pre">tokamap_f_pure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.maps.tokamap.tokamap_frev_pure"><code class="docutils literal notranslate"><span class="pre">tokamap_frev_pure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.maps.tokamap.return_f_t_pure"><code class="docutils literal notranslate"><span class="pre">return_f_t_pure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.maps.tokamap.TokaMap"><code class="docutils literal notranslate"><span class="pre">TokaMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyoculus.maps.toroidal_bfield_section.html">pyoculus.maps.toroidal_bfield_section</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.maps.html">pyoculus.maps</a></li>
+      <li class="breadcrumb-item active">pyoculus.maps.tokamap</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.maps.tokamap.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.maps.tokamap">
+<span id="pyoculus-maps-tokamap"></span><h1>pyoculus.maps.tokamap<a class="headerlink" href="#module-pyoculus.maps.tokamap" title="Link to this heading"></a></h1>
+<p>tokamap.py
+Contains the class Tokamap described in:
+Balescu, Radu, Mǎdǎlina Vlad, and F. Spineanu. “Tokamap: A Hamiltonian twist map for magnetic field lines in a toroidal geometry.” Physical Review E 58.1 (1998): 951.</p>
+<p>This is a map that is slightly more complex than the standard map or the nontwist map, but is a two-dimensional iterated map for which it is easier to define the (monotonic) twist profile or safety factor profile.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="pyoculus.maps.tokamap.return_f_t_pure.html#pyoculus.maps.tokamap.return_f_t_pure" title="pyoculus.maps.tokamap.return_f_t_pure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_f_t_pure</span></code></a>(t)</p></td>
+<td><p>return a pure (jax-transformable) function for the t-times applied map Used to automatically differentiate the map and get the gradients</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="pyoculus.maps.tokamap.tokamap_f_pure.html#pyoculus.maps.tokamap.tokamap_f_pure" title="pyoculus.maps.tokamap.tokamap_f_pure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tokamap_f_pure</span></code></a>(y, K, w)</p></td>
+<td><p>Tokamap as described in: Balescu, Radu, Mǎdǎlina Vlad, and F.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="pyoculus.maps.tokamap.tokamap_frev_pure.html#pyoculus.maps.tokamap.tokamap_frev_pure" title="pyoculus.maps.tokamap.tokamap_frev_pure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tokamap_frev_pure</span></code></a>(y, K, w)</p></td>
+<td><p>Inverse of the Tokamap as described in: Balescu, Radu, Mǎdǎlina Vlad, and F.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyoculus.maps.tokamap.tokamap_f_pure">
+<span class="sig-prename descclassname"><span class="pre">pyoculus.maps.tokamap.</span></span><span class="sig-name descname"><span class="pre">tokamap_f_pure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.tokamap.tokamap_f_pure" title="Link to this definition"></a></dt>
+<dd><p>Tokamap as described in:
+Balescu, Radu, Mǎdǎlina Vlad, and F. Spineanu. “Tokamap: A Hamiltonian twist map for magnetic field lines in a toroidal geometry.” Physical Review E 58.1 (1998): 951.</p>
+<p>with W(psi) the winding function monotonically increasing from w up.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyoculus.maps.tokamap.tokamap_frev_pure">
+<span class="sig-prename descclassname"><span class="pre">pyoculus.maps.tokamap.</span></span><span class="sig-name descname"><span class="pre">tokamap_frev_pure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.tokamap.tokamap_frev_pure" title="Link to this definition"></a></dt>
+<dd><p>Inverse of the Tokamap as described in:
+Balescu, Radu, Mǎdǎlina Vlad, and F. Spineanu. “Tokamap: A Hamiltonian twist map for magnetic field lines in a toroidal geometry.” Physical Review E 58.1 (1998): 951.</p>
+<p>The theta funtion is not directly invertible, so a simple Newtons method with analytical derivatives is used to solve for the inverse.</p>
+<p>with W(psi) the winding function monotonically increasing from w up.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyoculus.maps.tokamap.return_f_t_pure">
+<span class="sig-prename descclassname"><span class="pre">pyoculus.maps.tokamap.</span></span><span class="sig-name descname"><span class="pre">return_f_t_pure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.tokamap.return_f_t_pure" title="Link to this definition"></a></dt>
+<dd><p>return a pure (jax-transformable) function for the t-times applied map
+Used to automatically differentiate the map and get the gradients</p>
+<p>Note that for reverse mappings, we have to differentiate through a
+Newtons iteration, so the accuracy is probably bad.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.maps.tokamap.TokaMap">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.maps.tokamap.</span></span><span class="sig-name descname"><span class="pre">TokaMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.666</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.tokamap.TokaMap" title="Link to this definition"></a></dt>
+<dd><p>two-dimensional iterated map described in:
+Balescu, Radu, Mǎdǎlina Vlad, and F. Spineanu. “Tokamap: A Hamiltonian twist map for magnetic field lines in a toroidal geometry.” Physical Review E 58.1 (1998): 951.</p>
+<p>This is a map that is slightly more complex than the standard map or the nontwist map, but is a two-dimensional iterated map for which it is easier to define the (monotonic) twist profile or safety factor profile.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.tokamap.TokaMap.f">
+<span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.tokamap.TokaMap.f" title="Link to this definition"></a></dt>
+<dd><p>This method represents the mapping function. It takes a point <span class="math notranslate nohighlight">\(y_0\)</span> in the domain and returns its image under <span class="math notranslate nohighlight">\(t\)</span> application of the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em><em> or </em><em>int</em>) – The number of times the map is applied.</p></li>
+<li><p><strong>y0</strong> (<em>array</em>) – The initial point in the phase space.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.maps.tokamap.TokaMap.df">
+<span class="sig-name descname"><span class="pre">df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.maps.tokamap.TokaMap.df" title="Link to this definition"></a></dt>
+<dd><p>Computes the Jacobian matrix of the map at <span class="math notranslate nohighlight">\(y_0\)</span> after <span class="math notranslate nohighlight">\(t\)</span> applications <span class="math notranslate nohighlight">\(df^t = (\frac{\partial f^t}{\partial x})_{i,j}\)</span>.</p>
+<p>Uses a cache to avoid re-creating and re-compiling functions.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.maps.standard_map.standardmap_frev_pure.html" class="btn btn-neutral float-left" title="pyoculus.maps.standard_map.standardmap_frev_pure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.maps.tokamap.return_f_t_pure.html" class="btn btn-neutral float-right" title="pyoculus.maps.tokamap.return_f_t_pure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

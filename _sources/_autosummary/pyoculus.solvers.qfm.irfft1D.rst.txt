@@ -1,0 +1,6 @@
+pyoculus.solvers.qfm.irfft1D
+============================
+
+.. currentmodule:: pyoculus.solvers.qfm
+
+.. autofunction:: irfft1D

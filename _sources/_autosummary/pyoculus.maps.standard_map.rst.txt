@@ -1,0 +1,30 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.maps.standard\_map
+===========================
+
+.. automodule:: pyoculus.maps.standard_map
+   :members:
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      return_f_t_pure
+      standardmap_f_pure
+      standardmap_frev_pure
+   
+   
+
+   
+   
+   
+
+
+

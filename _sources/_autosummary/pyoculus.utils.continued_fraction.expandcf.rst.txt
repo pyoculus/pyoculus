@@ -1,0 +1,6 @@
+pyoculus.utils.continued\_fraction.expandcf
+===========================================
+
+.. currentmodule:: pyoculus.utils.continued_fraction
+
+.. autofunction:: expandcf

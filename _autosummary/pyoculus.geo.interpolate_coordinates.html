@@ -1,0 +1,643 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyoculus.geo.interpolate_coordinates &mdash; pyoculus 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyoculus.integrators" href="pyoculus.integrators.html" />
+    <link rel="prev" title="pyoculus.geo" href="pyoculus.geo.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyoculus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maps.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magneticmaps.html">Field Line map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fields.html">Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toybox.html">Toybox</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyoculus.html">pyoculus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.fields.html">pyoculus.fields</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyoculus.geo.html">pyoculus.geo</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyoculus.geo.interpolate_coordinates</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal"><code class="docutils literal notranslate"><span class="pre">SurfacesToroidal</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.integrators.html">pyoculus.integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.maps.html">pyoculus.maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.solvers.html">pyoculus.solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.toybox.html">pyoculus.toybox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyoculus.utils.html">pyoculus.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyoculus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.html">pyoculus</a></li>
+          <li class="breadcrumb-item"><a href="pyoculus.geo.html">pyoculus.geo</a></li>
+      <li class="breadcrumb-item active">pyoculus.geo.interpolate_coordinates</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/pyoculus.geo.interpolate_coordinates.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyoculus.geo.interpolate_coordinates">
+<span id="pyoculus-geo-interpolate-coordinates"></span><h1>pyoculus.geo.interpolate_coordinates<a class="headerlink" href="#module-pyoculus.geo.interpolate_coordinates" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyoculus.geo.interpolate_coordinates.</span></span><span class="sig-name descname"><span class="pre">SurfacesToroidal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsurfaces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ntor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nfp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stellar_sym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Toroidal Surface respresented as a Fourier Harmonic Serie.</p>
+<p>Define surfaces <span class="math notranslate nohighlight">\(s(\vartheta, \zeta)\)</span> and the angle transformations <span class="math notranslate nohighlight">\(\theta (\vartheta, \zeta)\)</span> written in terms of Fourier harmonics.</p>
+<p>..math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span><span class="p">(</span>\<span class="n">vartheta</span><span class="p">,</span> \<span class="n">zeta</span><span class="p">)</span> <span class="o">&amp;=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">m_</span>\<span class="n">text</span><span class="p">{</span><span class="n">pol</span><span class="p">}}</span>\<span class="n">sum_</span><span class="p">{</span><span class="n">n</span><span class="o">=-</span><span class="n">n_</span>\<span class="n">text</span><span class="p">{</span><span class="n">tor</span><span class="p">}}</span><span class="o">^</span><span class="p">{</span><span class="n">n_</span>\<span class="n">text</span><span class="p">{</span><span class="n">tor</span><span class="p">}}</span>
+<span class="n">s_</span><span class="p">{</span><span class="n">c</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">}</span> \<span class="n">cos</span><span class="p">(</span><span class="n">m</span> \<span class="n">vartheta</span> <span class="o">-</span> <span class="n">n</span> <span class="n">n_</span>\<span class="n">text</span><span class="p">{</span><span class="n">fp</span><span class="p">}</span> \<span class="n">zeta</span><span class="p">)</span> <span class="o">+</span> <span class="n">s_</span><span class="p">{</span><span class="n">s</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">}</span> \<span class="n">sin</span><span class="p">(</span><span class="n">m</span> \<span class="n">vartheta</span> <span class="o">-</span> <span class="n">n</span> <span class="n">n_</span>\<span class="n">text</span><span class="p">{</span><span class="n">fp</span><span class="p">}</span> \<span class="n">zeta</span><span class="p">),</span>
+\<span class="n">theta</span><span class="p">(</span>\<span class="n">vartheta</span><span class="p">,</span> \<span class="n">zeta</span><span class="p">)</span> <span class="o">=</span> \<span class="n">vartheta</span> <span class="o">+</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">m_</span>\<span class="n">text</span><span class="p">{</span><span class="n">pol</span><span class="p">}}</span>\<span class="n">sum_</span><span class="p">{</span><span class="n">n</span><span class="o">=-</span><span class="n">n_</span>\<span class="n">text</span><span class="p">{</span><span class="n">tor</span><span class="p">}}</span><span class="o">^</span><span class="p">{</span><span class="n">n_</span>\<span class="n">text</span><span class="p">{</span><span class="n">tor</span><span class="p">}}</span>
+\<span class="n">theta_</span><span class="p">{</span><span class="n">c</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">}</span> \<span class="n">cos</span><span class="p">(</span><span class="n">m</span> \<span class="n">vartheta</span> <span class="o">-</span> <span class="n">n</span> <span class="n">n_</span>\<span class="n">text</span><span class="p">{</span><span class="n">fp</span><span class="p">}</span> \<span class="n">zeta</span><span class="p">)</span> <span class="o">+</span>        <span class="n">heta_</span><span class="p">{</span><span class="n">s</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">}</span> \<span class="n">sin</span><span class="p">(</span><span class="n">m</span> \<span class="n">vartheta</span> <span class="o">-</span> <span class="n">n</span> <span class="n">n_</span>\<span class="n">text</span><span class="p">{</span><span class="n">fp</span><span class="p">}</span> \<span class="n">zeta</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>If stellarator symmetry is assumed, then <span class="math notranslate nohighlight">\(s\)</span> will only have cosine components and <span class="math notranslate nohighlight">\(\theta\)</span> will only have sine components.</p>
+<p>Each surface is assigned a radial label <span class="math notranslate nohighlight">\(\rho\)</span>.</p>
+<p>Now a new set of coordinates</p>
+</div></blockquote>
+<p>$(
+ho,
+artheta, zeta)
+$ will be constructed</p>
+<blockquote>
+<div><p>given the relationship</p>
+</div></blockquote>
+<p>$s(
+ho,
+artheta, zeta),   heta(
+ho,
+artheta, zeta)
+$.</p>
+<blockquote>
+<div><p>If</p>
+</div></blockquote>
+<p>$
+ho
+$ is not on one of the known surfaces, an interpolation will be performed on all the Fourier harmonics radially using the method of the user’s choice.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.remove_surface">
+<span class="sig-name descname"><span class="pre">remove_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.remove_surface" title="Link to this definition"></a></dt>
+<dd><p>! Remove a surface
+&#64;param i the id of the surface</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.add_surface">
+<span class="sig-name descname"><span class="pre">add_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tcn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.add_surface" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>! Adding a surface into the system with radial label rho</dt><dd><p>&#64;param rho the new coordinate</p>
+</dd>
+</dl>
+<p>$
+ho
+$ for this new surface</p>
+<blockquote>
+<div><p>&#64;param scn the cosine components of</p>
+</div></blockquote>
+<p>$s(
+ho,
+artheta, zeta)
+$</p>
+<blockquote>
+<div><p>&#64;param tsn the sine components of</p>
+</div></blockquote>
+<p>$    heta(
+ho,
+artheta, zeta)
+$</p>
+<blockquote>
+<div><p>&#64;param ssn the sine componets of</p>
+</div></blockquote>
+<p>$s(
+ho,
+artheta, zeta)
+$</p>
+<blockquote>
+<div><p>&#64;param tcn the cosine components of</p>
+</div></blockquote>
+<p>$  heta(
+ho,
+artheta, zeta)
+$</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.replace_surface">
+<span class="sig-name descname"><span class="pre">replace_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tcn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.replace_surface" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>! Replacing a surface by the new one</dt><dd><p>&#64;param idx the index of the surface to be replaced
+&#64;param rho the new coordinate</p>
+</dd>
+</dl>
+<p>$
+ho
+$ for this new surface. If this is None then keep same.</p>
+<blockquote>
+<div><p>&#64;param scn the cosine components of</p>
+</div></blockquote>
+<p>$s(
+ho,
+artheta, zeta)
+$. If this is None then keep same.</p>
+<blockquote>
+<div><p>&#64;param tsn the sine components of</p>
+</div></blockquote>
+<p>$    heta(
+ho,
+artheta, zeta)
+$. If this is None then keep same.</p>
+<blockquote>
+<div><p>&#64;param ssn the sine componets of</p>
+</div></blockquote>
+<p>$s(
+ho,
+artheta, zeta)
+$. If this is None then keep same.</p>
+<blockquote>
+<div><p>&#64;param tcn the cosine components of</p>
+</div></blockquote>
+<p>$  heta(
+ho,
+artheta, zeta)
+$. If this is None then keep same.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.get_coords">
+<span class="sig-name descname"><span class="pre">get_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sarr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tarr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zarr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derivative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input1D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.get_coords" title="Link to this definition"></a></dt>
+<dd><p>! Compute the coordinates and their derivatives given
+$
+ho,
+artheta, zeta
+$</p>
+<blockquote>
+<div><p>&#64;param sarr</p>
+</div></blockquote>
+<p>$
+ho
+$, an array</p>
+<blockquote>
+<div><p>&#64;param tarr</p>
+</div></blockquote>
+<p>$
+artheta
+$, an array</p>
+<blockquote>
+<div><p>&#64;param zarr</p>
+</div></blockquote>
+<p>$zeta
+$, an array</p>
+<blockquote>
+<div><p>&#64;param derivative  0:only return</p>
+</div></blockquote>
+<p>$s,   heta
+$, 1: also return the derivatives, 2: also return the second derivatives</p>
+<blockquote>
+<div><p>&#64;param input1D if False, create a meshgrid with sarr, tarr and zarr, if True, treat them as a list of points
+&#64;returns coords  coords.s, coords.t contains the coordinates</p>
+</div></blockquote>
+<p>$s,       heta
+$. coords.ds and dt contains the first derivatives. coords.dds and ddt contains second derivates. coords.jacobi contains the jacobi matrix
+$J = partial(s,       heta,zeta)/partial(
+ho,
+artheta,zeta)
+$, coords.djacobi contains the derivative.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.jacobi_transform">
+<span class="sig-name descname"><span class="pre">jacobi_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jacobi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CoordsOutput</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.jacobi_transform" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>! Compute the derivatives wrt the new coordinate given the derivatives in the old coordinates</dt><dd><p>&#64;param jacobi the Jacobi matrix</p>
+</dd>
+</dl>
+<p>$partial(f_1, cdots, f_N) / partial (s,     heta,zeta)
+$</p>
+<blockquote>
+<div><p>&#64;param coords  the output of get_coords, should match the dimension of J
+&#64;returns jacobi_output the transformed Jacobi matrix and the derivatives wrt</p>
+</div></blockquote>
+<p>$(
+ho,
+artheta,zeta)
+$</p>
+<blockquote>
+<div><p>Given</p>
+</div></blockquote>
+<p>$N
+$ variables
+$f_1, cdots, f_N
+$, the jacobi matrix (derivatives wrt the new coordinate is given by the chain rule</p>
+<p>[</p>
+<p>rac{partial(f_1, cdots, f_N)}{partial(
+ho,
+artheta, zeta)} =
+rac{partial(f_1, cdots, f_N)}{partial(s,    heta, zeta)}</p>
+<blockquote>
+<div><p>cdot</p>
+</div></blockquote>
+<p>rac{partial(s,      heta, zeta)}{partial(
+ho,
+artheta, zeta)}</p>
+<p>]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.metric_transform">
+<span class="sig-name descname"><span class="pre">metric_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CoordsOutput</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.metric_transform" title="Link to this definition"></a></dt>
+<dd><p>! Compute the coordinate transformation for a metric tensor
+$g_{ij}
+$ (lower!) (derivative computation under construction)</p>
+<blockquote>
+<div><p>&#64;param g  the metric</p>
+</div></blockquote>
+<p>$g_{ij}
+$ of the old coordinate
+$(s,     heta,zeta)
+$ to be transformed, should have the dimension (3,3,…)</p>
+<blockquote>
+<div><p>&#64;param coords  the output of get_coords, should match the dimension of g
+&#64;returns goutput, [dgoutput], the transformed metric and the derivative wrt</p>
+</div></blockquote>
+<p>$(
+ho,
+artheta,zeta)
+$</p>
+<blockquote>
+<div><p>Let the input metric for</p>
+</div></blockquote>
+<p>$(s,  heta, zeta)
+$  being
+$mathbf{g}
+$,</p>
+<blockquote>
+<div><p>the metric for</p>
+</div></blockquote>
+<p>$(
+ho,
+artheta, zeta)
+$ is given by</p>
+<dl class="simple">
+<dt>[</dt><dd><p>mathbf{G} = mathbf{J}^T mathbf{g} mathbf{J},</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>]</dt><dd><p>where</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>[</dt><dd><p>mathbf{J} =</p>
+</dd>
+</dl>
+<p>rac{partial(s,       heta,zeta)}{partial(
+ho,
+artheta,zeta)}</p>
+<dl class="simple">
+<dt>]</dt><dd><p>is the Jacobi matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.contra_vector_transform">
+<span class="sig-name descname"><span class="pre">contra_vector_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CoordsOutput</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">has_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derivative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.contra_vector_transform" title="Link to this definition"></a></dt>
+<dd><p>! Compute the coordinate transformation for a contravariant vector
+$v^i
+$ (upper!)</p>
+<blockquote>
+<div><p>&#64;param v  the vector</p>
+</div></blockquote>
+<p>$v^i
+$ to be transformed, should have the dimension (3,…)</p>
+<blockquote>
+<div><p>&#64;param coords  the output of get_coords, should match the dimension of v
+&#64;param has_jacobian  if the given vector already contains the jacobian
+&#64;param derivative  if the derivatives are needed or not. If True, dv is required.
+&#64;param dv  the derivative of v wrt</p>
+</div></blockquote>
+<p>$(s,        heta,zeta)
+$, have the dimension (3 derivatives, 3 component,…)</p>
+<blockquote>
+<div><p>&#64;returns voutput, dvoutput, the transformed metric and the derivative wrt</p>
+</div></blockquote>
+<p>$(
+ho,
+artheta,zeta)
+$</p>
+<blockquote>
+<div><p>The vector transformation is given by</p>
+</div></blockquote>
+<dl class="simple">
+<dt>[</dt><dd><p>left(egin{array}{c}
+v^{</p>
+</dd>
+</dl>
+<p>ho} v^{
+artheta} v^{zeta}</p>
+<blockquote>
+<div><p>end{array}</p>
+</div></blockquote>
+<dl class="simple">
+<dt>ight)</dt><dd><p>= mathbf{J}^{-1}
+left(egin{array}{c}
+v^{{s}} v^{       heta} v^{zeta}
+end{array}</p>
+</dd>
+</dl>
+<p>ight),</p>
+<dl class="simple">
+<dt>]</dt><dd><p>where</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>[</dt><dd><p>mathbf{J} =</p>
+</dd>
+</dl>
+<p>rac{partial(s,       heta,zeta)}{partial(
+ho,
+artheta,zeta)}</p>
+<dl>
+<dt>]</dt><dd><p>is the Jacobi matrix. For computing the result we use matrix solve instead of matrix inversion.</p>
+<p>When the derivative is needed, we note that</p>
+</dd>
+</dl>
+<p>[</p>
+<p>rac{partial }{partial
+ho}mathbf{J}</p>
+<blockquote>
+<div><p>left(egin{array}{c}
+v^{</p>
+</div></blockquote>
+<p>ho} v^{
+artheta} v^{zeta}</p>
+<blockquote>
+<div><p>end{array}</p>
+</div></blockquote>
+<dl class="simple">
+<dt>ight)</dt><dd><p>+mathbf{J}</p>
+</dd>
+</dl>
+<p>rac{partial }{partial
+ho}left(egin{array}{c}</p>
+<blockquote>
+<div><p>v^{</p>
+</div></blockquote>
+<p>ho} v^{
+artheta} v^{zeta}</p>
+<blockquote>
+<div><p>end{array}</p>
+</div></blockquote>
+<dl class="simple">
+<dt>ight)</dt><dd><p>=</p>
+</dd>
+</dl>
+<p>rac{partial }{partial
+ho}left(egin{array}{c}</p>
+<blockquote>
+<div><p>v^{{s}} v^{       heta} v^{zeta}
+end{array}</p>
+</div></blockquote>
+<p>ight),</p>
+<dl class="simple">
+<dt>]</dt><dd><p>therefore</p>
+</dd>
+</dl>
+<p>[</p>
+<p>rac{partial}{partial
+ho}left(egin{array}{c}</p>
+<blockquote>
+<div><p>v^{</p>
+</div></blockquote>
+<p>ho} v^{
+artheta} v^{zeta}</p>
+<blockquote>
+<div><p>end{array}</p>
+</div></blockquote>
+<dl class="simple">
+<dt>ight)</dt><dd><p>=
+mathbf{J}^{-1}
+left[</p>
+</dd>
+</dl>
+<p>rac{partial }{partial
+ho}left(egin{array}{c}</p>
+<blockquote>
+<div><p>v^{{s}} v^{       heta} v^{zeta}
+end{array}</p>
+</div></blockquote>
+<dl class="simple">
+<dt>ight)</dt><dd><ul class="simple">
+<li></li>
+</ul>
+</dd>
+</dl>
+<p>rac{partial mathbf{J}}{partial
+ho}</p>
+<blockquote>
+<div><p>left(egin{array}{c}
+v^{</p>
+</div></blockquote>
+<p>ho} v^{
+artheta} v^{zeta}</p>
+<blockquote>
+<div><p>end{array}</p>
+</div></blockquote>
+<p>ight)
+ight].</p>
+<p>]</p>
+<blockquote>
+<div><p>Similarly we can compute the</p>
+</div></blockquote>
+<p>$
+artheta
+$ and
+$zeta
+$ derivatives.</p>
+<blockquote>
+<div><p>Now,</p>
+</div></blockquote>
+<p>[</p>
+<p>rac{partial (v^{{s}},  v^{        heta},  v^{zeta})}{partial(
+ho,
+artheta, zeta)} =</p>
+<dl class="simple">
+<dt>rac{partial (v^{{s}},  v^{        heta},  v^{zeta})}{partial(s,         heta, zeta)}</dt><dd><p>imes</p>
+</dd>
+</dl>
+<p>rac{partial(s,    heta, zeta)}{partial(
+ho,
+artheta, zeta)}</p>
+<p>]</p>
+<blockquote>
+<div><p>Summing up</p>
+</div></blockquote>
+<p>[</p>
+<p>rac{partial ( v^{
+ho}, v^{
+artheta}, v^{zeta})}{partial(
+ho,
+artheta, zeta)} =</p>
+<blockquote>
+<div><p>mathbf{J}^{-1} cdot</p>
+</div></blockquote>
+<dl class="simple">
+<dt>rac{partial (v^{{s}},  v^{  heta},  v^{zeta})}{partial(s,         heta, zeta)} cdot mathbf{J}</dt><dd><ul class="simple">
+<li><p>mathbf{J}^{-1} cdot (mathbf{J}_</p></li>
+</ul>
+</dd>
+</dl>
+<p>ho, mathbf{J}_
+artheta, mathbf{J}_zeta) cdot left(egin{array}{c}</p>
+<blockquote>
+<div><p>v^{</p>
+</div></blockquote>
+<p>ho} v^{
+artheta} v^{zeta}</p>
+<blockquote>
+<div><p>end{array}</p>
+</div></blockquote>
+<p>ight)</p>
+<p>]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.construct_interpolant">
+<span class="sig-name descname"><span class="pre">construct_interpolant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rhosurfs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic_spline'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.construct_interpolant" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>! Construct the interpolant between surfaces for the given method</dt><dd><p>&#64;param rhosurfs  The</p>
+</dd>
+</dl>
+<p>$
+ho
+$ coordinates for each surface. If input is None, the default or internally stored will be used.</p>
+<blockquote>
+<div><p>&#64;param method  The method being used, can be one of [‘cubic_spline’, ‘cubic_hermite’, ‘pchip’]. The corresponding scipy class is being used.
+&#64;param <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs Other parameters passing onto the interpolant constructor</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zeta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">129</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.plot" title="Link to this definition"></a></dt>
+<dd><p>!Plot the surfaces
+&#64;param zeta the toroidal plane
+&#64;param npoints the number of points in the plot
+&#64;param <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs all other parameters going into plt.plot</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.read_surfaces_from_file">
+<span class="sig-name descname"><span class="pre">read_surfaces_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data.npz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nfp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.read_surfaces_from_file" title="Link to this definition"></a></dt>
+<dd><p>! Read the surfaces into a numpy array on disk
+&#64;param filename  the filename to load from
+&#64;param Nfp  the toroidal periodicity, if known.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyoculus.geo.interpolate_coordinates.SurfacesToroidal.write_surfaces_to_file">
+<span class="sig-name descname"><span class="pre">write_surfaces_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyoculus.geo.interpolate_coordinates.SurfacesToroidal.write_surfaces_to_file" title="Link to this definition"></a></dt>
+<dd><p>! Save the surfaces into a numpy array on disk
+&#64;param filename  the filename to save to</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyoculus.geo.html" class="btn btn-neutral float-left" title="pyoculus.geo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyoculus.integrators.html" class="btn btn-neutral float-right" title="pyoculus.integrators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zhisong Qu, Ludovic Rais.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.solvers
+================
+
+.. automodule:: pyoculus.solvers
+   :members:
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst  
+   :recursive:
+
+   base_solver
+   fixed_point
+   flux_surface_gr
+   lyapunov_exponent
+   manifold
+   poincare_plot
+   qfm
+   resonance_zone
+

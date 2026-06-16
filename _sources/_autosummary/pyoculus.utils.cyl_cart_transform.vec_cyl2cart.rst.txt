@@ -1,0 +1,6 @@
+pyoculus.utils.cyl\_cart\_transform.vec\_cyl2cart
+=================================================
+
+.. currentmodule:: pyoculus.utils.cyl_cart_transform
+
+.. autofunction:: vec_cyl2cart

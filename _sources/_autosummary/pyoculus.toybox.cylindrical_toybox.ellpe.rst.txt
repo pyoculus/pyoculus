@@ -1,0 +1,6 @@
+pyoculus.toybox.cylindrical\_toybox.ellpe
+=========================================
+
+.. currentmodule:: pyoculus.toybox.cylindrical_toybox
+
+.. autofunction:: ellpe

@@ -1,0 +1,6 @@
+pyoculus.maps.standard\_map.standardmap\_f\_pure
+================================================
+
+.. currentmodule:: pyoculus.maps.standard_map
+
+.. autofunction:: standardmap_f_pure

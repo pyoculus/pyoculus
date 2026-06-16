@@ -1,0 +1,31 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.solvers.qfm
+====================
+
+.. automodule:: pyoculus.solvers.qfm
+   :members:
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      irfft1D
+      irfft2D
+      rfft1D
+      rfft2D
+   
+   
+
+   
+   
+   
+
+
+

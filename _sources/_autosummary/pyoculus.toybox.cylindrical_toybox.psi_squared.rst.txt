@@ -1,0 +1,6 @@
+pyoculus.toybox.cylindrical\_toybox.psi\_squared
+================================================
+
+.. currentmodule:: pyoculus.toybox.cylindrical_toybox
+
+.. autofunction:: psi_squared

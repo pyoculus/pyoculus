@@ -1,0 +1,6 @@
+pyoculus.maps.tokamap.tokamap\_frev\_pure
+=========================================
+
+.. currentmodule:: pyoculus.maps.tokamap
+
+.. autofunction:: tokamap_frev_pure

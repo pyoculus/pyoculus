@@ -1,0 +1,28 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.utils.fortran
+======================
+
+.. automodule:: pyoculus.utils.fortran
+   :members:
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      setup_fortran_module
+   
+   
+
+   
+   
+   
+
+
+

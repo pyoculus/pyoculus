@@ -1,0 +1,6 @@
+pyoculus.utils.cyl\_cart\_transform.rphiz\_inv\_jac
+===================================================
+
+.. currentmodule:: pyoculus.utils.cyl_cart_transform
+
+.. autofunction:: rphiz_inv_jac

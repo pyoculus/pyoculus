@@ -1,0 +1,28 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.maps.cylindrical\_bfield\_section
+==========================================
+
+.. automodule:: pyoculus.maps.cylindrical_bfield_section
+   :members:
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      njit
+   
+   
+
+   
+   
+   
+
+
+

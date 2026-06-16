@@ -1,0 +1,6 @@
+pyoculus.utils.plot.clean\_bigsteps
+===================================
+
+.. currentmodule:: pyoculus.utils.plot
+
+.. autofunction:: clean_bigsteps

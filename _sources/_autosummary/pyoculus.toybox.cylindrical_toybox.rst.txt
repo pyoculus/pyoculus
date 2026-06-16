@@ -1,0 +1,40 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.toybox.cylindrical\_toybox
+===================================
+
+.. automodule:: pyoculus.toybox.cylindrical_toybox
+   :members:
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      A_circularcurrentloop
+      A_gaussian
+      A_maxwellboltzmann
+      A_r_squared
+      A_squared
+      ellpe
+      ellpk
+      psi_circularcurrentloop
+      psi_gaussian
+      psi_maxwellboltzmann
+      psi_squared
+      psitob
+      rot
+   
+   
+
+   
+   
+   
+
+
+

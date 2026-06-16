@@ -1,0 +1,36 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.maps
+=============
+
+.. automodule:: pyoculus.maps
+   :members:
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst  
+   :recursive:
+
+   base_map
+   cylindrical_bfield_section
+   integrated_map
+   spec_pjh
+   standard_map
+   tokamap
+   toroidal_bfield_section
+

@@ -1,0 +1,21 @@
+.. 
+  Thanks to: https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
+pyoculus.solvers.base\_solver
+=============================
+
+.. automodule:: pyoculus.solvers.base_solver
+   :members:
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

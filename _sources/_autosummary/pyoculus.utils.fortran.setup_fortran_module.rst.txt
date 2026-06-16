@@ -1,0 +1,6 @@
+pyoculus.utils.fortran.setup\_fortran\_module
+=============================================
+
+.. currentmodule:: pyoculus.utils.fortran
+
+.. autofunction:: setup_fortran_module

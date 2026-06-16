@@ -1,0 +1,6 @@
+pyoculus.maps.tokamap.tokamap\_f\_pure
+======================================
+
+.. currentmodule:: pyoculus.maps.tokamap
+
+.. autofunction:: tokamap_f_pure

@@ -1,0 +1,6 @@
+pyoculus.solvers.qfm.rfft2D
+===========================
+
+.. currentmodule:: pyoculus.solvers.qfm
+
+.. autofunction:: rfft2D
