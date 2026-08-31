@@ -12,9 +12,125 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.path import Path
 
+# add cubic spline interpolation for the manifolds
+from scipy.interpolate import CubicSpline
+
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def _bilinear_eval(c00, c10, c01, c11, u, v):
+    """Evaluate bilinear interpolant at local coords (u,v) in [0,1]^2."""
+    return c00*(1-u)*(1-v) + c10*u*(1-v) + c01*(1-u)*v + c11*u*v
+
+
+def _cell_index(theta00, theta10, theta11, theta01):
+    """Discrete winding number of F around origin over one cell (CCW loop)."""
+    angles = [theta00, theta10, theta11, theta01]
+    total = 0.0
+    for k in range(4):
+        dtheta = angles[(k+1) % 4] - angles[k]
+        dtheta = (dtheta + np.pi) % (2*np.pi) - np.pi  # wrap to (-pi, pi]
+        total += dtheta
+    return total / (2*np.pi)
+
+
+
+
+
+def _solve_bilinear_zero(Fx00, Fx10, Fx01, Fx11,
+                          Fy00, Fy10, Fy01, Fy11, tol=1e-9):
+    """
+    Solve Fx(u,v) = Fy(u,v) = 0 for (u,v) in [0,1]^2, assuming Fx, Fy are
+    bilinear over the cell (corner values given in (0,0),(1,0),(0,1),(1,1) order).
+    Reduces to a quadratic in u (standard inverse-bilinear-interpolation trick).
+    Returns a list of valid (u,v) solutions (0, 1, or 2 of them).
+    """
+    a0, a1, a2 = Fx00, Fx10 - Fx00, Fx01 - Fx00
+    a3 = Fx11 - Fx10 - Fx01 + Fx00
+    b0, b1, b2 = Fy00, Fy10 - Fy00, Fy01 - Fy00
+    b3 = Fy11 - Fy10 - Fy01 + Fy00
+
+    A = a3*b1 - a1*b3
+    B = a3*b0 + a2*b1 - a1*b2 - a0*b3
+    C = a2*b0 - a0*b2
+
+    us = []
+    if abs(A) < tol:
+        if abs(B) >= tol:
+            us = [-C / B]
+    else:
+        disc = B*B - 4*A*C
+        if disc >= 0:
+            sq = np.sqrt(disc)
+            us = [(-B + sq)/(2*A), (-B - sq)/(2*A)]
+
+    sols = []
+    for u in us:
+        if not np.isfinite(u):
+            continue
+        denom = a2 + a3*u
+        if abs(denom) > tol:
+            v = -(a0 + a1*u) / denom
+        else:
+            denom2 = b2 + b3*u
+            if abs(denom2) <= tol:
+                continue
+            v = -(b0 + b1*u) / denom2
+        if -tol <= u <= 1+tol and -tol <= v <= 1+tol:
+            sols.append((min(max(u, 0.0), 1.0), min(max(v, 0.0), 1.0)))
+    return sols
+
+
+def find_zero_crossings(X, Y, Fx, Fy):
+    """
+    Locate zeros of F = (Fx, Fy) on a grid, using the topological index to
+    certify which cells contain a zero, and a bilinear solve to locate it.
+
+    X, Y, Fx, Fy : 2D arrays, shape (nx, ny). May contain NaN (such cells
+                   are skipped, since the index can't be certified there).
+
+    Returns
+    -------
+    x_cross, y_cross : 1D arrays of found zero locations.
+    """
+    nx, ny = Fx.shape
+    theta = np.arctan2(Fy, Fx)  # NaN propagates through automatically
+
+    x_cross, y_cross = [], []
+
+    for i in range(nx - 1):
+        for j in range(ny - 1):
+            f00, f10 = Fx[i, j],   Fx[i+1, j]
+            f01, f11 = Fx[i, j+1], Fx[i+1, j+1]
+            g00, g10 = Fy[i, j],   Fy[i+1, j]
+            g01, g11 = Fy[i, j+1], Fy[i+1, j+1]
+
+            if any(np.isnan(v) for v in (f00, f10, f01, f11, g00, g10, g01, g11)):
+                continue  # can't certify this cell
+
+            idx = _cell_index(theta[i, j], theta[i+1, j],
+                               theta[i+1, j+1], theta[i, j+1])
+            if round(idx) == 0:
+                continue  # no zero certified in this cell
+
+            for (u, v) in _solve_bilinear_zero(f00, f10, f01, f11,
+                                                g00, g10, g01, g11):
+                xc = _bilinear_eval(X[i, j], X[i+1, j], X[i, j+1], X[i+1, j+1], u, v)
+                yc = _bilinear_eval(Y[i, j], Y[i+1, j], Y[i, j+1], Y[i+1, j+1], u, v)
+                x_cross.append(xc)
+                y_cross.append(yc)
+
+    # finally, find exact zeros if any
+    for i in range(nx):
+        for j in range(ny):
+            if Fx[i, j] == 0 and Fy[i, j] == 0:
+                x_cross.append(X[i, j])
+                y_cross.append(Y[i, j])
+
+    return np.array(x_cross), np.array(y_cross)
+
 
 
 def eig(jacobian):
@@ -99,7 +215,7 @@ class Clinic:
         self._xend_u = None
 
     @classmethod
-    def from_guess(cls, manifold: "Manifold", eps_s: float, eps_u: float, n_s: int, n_u: int, ERR=1e-3, **kwargs):
+    def from_guess(cls, manifold: "Manifold", eps_s: float, eps_u: float, n_s: int, n_u: int, ERR=1e-3, expensive=False, **kwargs):
         """
         Search a homo/hetero-clinic point.
 
@@ -200,12 +316,48 @@ class Clinic:
             **root_kwargs,
         )
 
+
         # Checking status and logging the result
         logger.info(f"Root search status : {root_obj.message}")
         logger.debug(f"Root search object : {root_obj}")
 
-        if not root_obj.success:
-            raise ValueError("Homo/Heteroclinic search was not successful.")
+        if not root_obj.success and expensive:
+            logger.warning("Root finding did not converge, trying an expensive solve around the initial guess.")
+            # we do an expensive solve: 
+            # build a grid of eps_s and eps_u values around inital guess,
+            # going from 1/lambda_s*eps_s to lambda_s*eps_s, and same for eps_u, and evaluate the residual on this grid
+            # then take minimal residual point as new guess and try again with root finding.
+            # build grid 
+            eps_s_values = np.geomspace(eps_s * manifold.lambda_s, eps_s, 10)
+            eps_u_values = np.geomspace(eps_u / manifold.lambda_u, eps_u, 10)
+            # container for residuals
+            residuals = np.zeros((len(eps_s_values), len(eps_u_values)))
+            # loop over grid and evaluate residuals, if error happens, put inf
+            for i, eps_s_val in enumerate(eps_s_values):
+                for j, eps_u_val in enumerate(eps_u_values):
+                    try:
+                        residuals[i, j] = np.linalg.norm(residual(np.log([eps_s_val, eps_u_val]), n_s, n_u))
+                    except:
+                        residuals[i, j] = np.inf
+            # find minimal residual point and use it as new guess
+            min_index = np.unravel_index(np.argmin(residuals), residuals.shape)
+            eps_s_guess, eps_u_guess = eps_s_values[min_index[0]], eps_u_values[min_index[1]]
+            logger.warning(f"Trying solve with new guess (eps_s, eps_u) : {eps_s_guess}, {eps_u_guess}, with residual {residuals[min_index]}")
+            # try root finding again with new guess
+            root_obj = root(
+                residual,
+                np.log([eps_s_guess, eps_u_guess]),
+                args=(n_s, n_u),
+                **root_kwargs,
+            )
+            # Checking status and logging the result
+            logger.warning(f"Root search status after expensive solve : {root_obj.message}")
+            logger.debug(f"Root search object after expensive solve : {root_obj}")
+            if not root_obj.success:
+                raise ValueError("Root finding did not converge even after expensive solve, cannot find clinic point.")
+
+        if not root_obj.success and not expensive:
+            raise ValueError("Root finding did not converge without expensive solve, cannot find clinic point. Consider trying with expensive=True to perform a more global search around the initial guess.")
 
         eps_s, eps_u = np.exp(root_obj.x)
 
@@ -753,10 +905,15 @@ class Manifold(BaseSolver):
                        if type == float, approximate angle (with respect of the x-axis) of the manifold to follow
                        if type == np.ndarray, the (approximate) vector of the manifold to follow
         first_stable (bool, optional): Whether to follow the stable or unstable manifold departing from the first fixed point. Defaults to True.
+        opoint (FixedPoint, optional): Elliptic fixed point of the enclosed island, used to determine default
+                       directions (towards the O-point) when dir1/dir2 are not given. See `use_opoint`.
+        use_opoint (bool, optional): Whether to default dir1/dir2 towards `opoint`. Falls back to the
+                       previous straight-line/'+' heuristic if no successful `opoint` is provided. Defaults to True.
 
     Attributes:
         fixedpoint_1 (FixedPoint): First fixed point.
         fixedpoint_2 (FixedPoint): Second fixed point.
+        opoint (FixedPoint or None): O-point used (given or auto-found) to orient the manifolds, if any.
         rfp_s (np.ndarray): Stable fixed point coordinates.
         rfp_u (np.ndarray): Unstable fixed point coordinates.
         vector_s (np.ndarray): Stable eigenvector.
@@ -796,6 +953,8 @@ class Manifold(BaseSolver):
         dir1: Union[str, float, NDArray] = None,
         dir2: str = None,
         first_stable: bool = None,
+        opoint: FixedPoint = None,
+        use_opoint: bool = True,
     ) -> None:
         """
         Initialize the Manifold class by providing two fixed points and specifying if the first fixedpoint is stable. If only one fixed point is specified, a homoclinic connection is assumed.
@@ -805,6 +964,13 @@ class Manifold(BaseSolver):
             map (maps.base_map): The map to use for the computation.
             fixedpoint_1 (FixedPoint): first fixed point
             fixedpoint_2 (FixedPoint, optional): second fix point if not homoclinic manifold. Defaults to None.
+            opoint (FixedPoint, optional): the elliptic (O-point) fixed point of the island enclosed by the
+                tangle. If given (and successful) and `use_opoint` is True, directions default to pointing
+                from each X-point towards this O-point, so that the resulting tangle wraps around it.
+                If not given and `use_opoint` is True, an O-point is searched for automatically.
+            use_opoint (bool, optional): whether to use `opoint` to determine default directions (only used
+                when `dir1`/`dir2` are not explicitly given). Falls back to the previous straight-line/'+'
+                heuristic if no successful `opoint` is provided/found. Defaults to True.
         """
 
         # Check that the fixed points are correct FixedPoint instances
@@ -826,14 +992,34 @@ class Manifold(BaseSolver):
         else:
             self.fixedpoint_1 = fixedpoint_1
             self.fixedpoint_2 = fixedpoint_1
-            dir1 = '+'
-            dir2 = '+'
 
         # Setting the fast and slow directions
-        if dir1 is None:
-            dir1 = self.fixedpoint_2.coords[0] - self.fixedpoint_1.coords[0]
-        if dir2 is None:
-            dir2 = self.fixedpoint_1.coords[0] - self.fixedpoint_2.coords[0]
+        if dir1 is None and dir2 is None:
+            if use_opoint and opoint is None:
+                opoint = self._auto_find_opoint(map, self.fixedpoint_1, self.fixedpoint_2)
+            self.opoint = opoint
+
+            if use_opoint and isinstance(opoint, FixedPoint) and opoint.successful:
+                dir1 = opoint.coords[0] - self.fixedpoint_1.coords[0]
+                dir2 = opoint.coords[0] - self.fixedpoint_2.coords[0]
+                logger.info("Using O-point to determine manifold directions.")
+            else:
+                if use_opoint:
+                    logger.warning(
+                        "use_opoint=True but no successful 'opoint' FixedPoint was given or found; "
+                        "falling back to the default direction heuristic."
+                    )
+                if fixedpoint_2 is not None:
+                    dir1 = self.fixedpoint_2.coords[0] - self.fixedpoint_1.coords[0]
+                    dir2 = self.fixedpoint_1.coords[0] - self.fixedpoint_2.coords[0]
+                else:
+                    dir1 = '+'
+                    dir2 = '+'
+        else:
+            if dir1 is None:
+                dir1 = self.fixedpoint_2.coords[0] - self.fixedpoint_1.coords[0]
+            if dir2 is None:
+                dir2 = self.fixedpoint_1.coords[0] - self.fixedpoint_2.coords[0]
         if first_stable is None:
             first_stable = True
 
@@ -845,6 +1031,64 @@ class Manifold(BaseSolver):
 
         # Initialize the BaseSolver
         super().__init__(map)
+
+    @staticmethod
+    def _auto_find_opoint(map: maps.base_map, fixedpoint_1: FixedPoint, fixedpoint_2: FixedPoint = None, **kwargs):
+        """
+        Try to automatically locate the elliptic (O-point) fixed point of the island enclosed by
+        fixedpoint_1 (and fixedpoint_2, if given), by searching for a fixed point of the same
+        period `m` starting from a guess in between the two X-points (or, for the homoclinic case,
+        in between fixedpoint_1 and the next point along its own periodic orbit).
+
+        Returns:
+            FixedPoint or None: the found O-point, or None if no guess/search was successful.
+        """
+        if fixedpoint_2 is not None and fixedpoint_2 is not fixedpoint_1:
+            other_coords = fixedpoint_2.coords[0]
+        elif len(fixedpoint_1.coords) > 1 and not np.allclose(fixedpoint_1.coords[1], fixedpoint_1.coords[0]):
+            other_coords = fixedpoint_1.coords[1]
+        else:
+            logger.warning("Cannot guess an O-point location automatically (no distinct reference point).")
+            return None
+
+        # guess at the midpoint between the two X-points, and a line perpendicular to the line connecting them, to find the O-point
+        guess_mid = (fixedpoint_1.coords[0] + other_coords) / 2
+        perp_vector = np.array([- (other_coords[1] - fixedpoint_1.coords[0][1]), other_coords[0] - fixedpoint_1.coords[0][0]])
+        x_points_distance = np.linalg.norm(other_coords - fixedpoint_1.coords[0])
+        scanline = np.linspace(-0.5 * x_points_distance, 0.5 * x_points_distance, 10)
+        guesses = [guess_mid + s * perp_vector / np.linalg.norm(perp_vector) for s in scanline]
+        # order in closeness to the midpoint, so that we try the closest guesses first
+        guesses.sort(key=lambda g: np.linalg.norm(g - guess_mid))
+        nrestart = kwargs.pop("nrestart", 3)
+        method = kwargs.pop("method", "scipy.root")
+        # loop over the guesses and try to find a fixed point
+        for guess in guesses:
+            # return the first successful fixed point found
+            try:
+                opoint = FixedPoint(map)
+                opoint.find(fixedpoint_1.m, guess=guess, nrestart=nrestart, method=method, **kwargs)
+                if opoint.successful and (0 < opoint.GreenesResidue < 1):
+                    logger.info(f"Automatically found O-point at {opoint.coords[0]}.")
+                    return opoint
+            except Exception as e:
+                logger.warning(f"Automatic O-point search failed for guess {guess}: {e}")
+                return None
+            
+        
+
+        # try:
+        #     opoint = FixedPoint(map)
+        #     opoint.find(fixedpoint_1.m, guess=guess, nrestart=nrestart, method=method, **kwargs)
+        # except Exception as e:
+        #     logger.warning(f"Automatic O-point search failed: {e}")
+        #     return None
+
+        # if not opoint.successful or not (0 < opoint.GreenesResidue < 1):
+        #     logger.warning("Automatic O-point search did not converge to a valid elliptic point.")
+        #     return None
+
+        # logger.info(f"Automatically found O-point at {opoint.coords[0]}.")
+        # return opoint
 
     def choose(
         self, dir_1: Union[Literal["+", "-"], float, Iterable], dir_2: Union[Literal["+", "-"], float, Iterable], first_stable: bool
@@ -1261,6 +1505,132 @@ class Manifold(BaseSolver):
 
         return self._stable_trajectory, self._unstable_trajectory
 
+
+    def compute_adaptive(self, n_s_extra=2, n_u_extra=2, tol=1e-3, **kwargs):
+        # compute the stable and unstable manifolds with adaptive algorithms
+        # where refinement is done based on the distance between points and 
+        # the curvature of the manifold. Assumes find_clinics(_exhaustive) 
+        # has been run to find the clinics.
+        if self.clinics.is_empty:
+            raise ValueError("Clinics must be computed before running adaptive manifold computation.")
+        
+        # get n_s and n_u from the clinics
+        nint_pair = self.clinics.nint_pair
+        nint_s, nint_u = nint_pair
+        n_s = nint_s + n_s_extra
+        n_u = nint_u + n_u_extra
+
+        # compute the manifold adaptively
+        # refining based on curvature and distance between points. 
+        # The adaptive algorithm is implemented in the function below.
+
+        def adaptive_algorithm(points, eps, max_iter=50, max_points=2000):
+            # point should be all points on the fundamental
+            # domain: [eps, eps*lambda] (including endpoint).
+            # Curvature and sampling new points is done
+            # using cubic spline interpolation.
+            Rs, Zs = points[:, 0], points[:, 1]
+            # do cubic spline interpolation
+            csR = CubicSpline(eps, Rs)
+            csZ = CubicSpline(eps, Zs)
+            # compute the curvature radius
+            # using R = (x'^2 + y'^2)^(3/2) / |x'y'' - y'x''|
+            R_cur_func = lambda e: (csR(e, 1)**2 + csZ(e, 1)**2)**(3/2) / np.abs(csR(e, 1)*csZ(e, 2) - csZ(e, 1)*csR(e, 2))
+
+            # Check curvature radius at geometric means of eps intervals, refining if D/R_cur < tol
+            # until all intervals satisfy the condition. Use a while loop to refine until no new points are added.
+            # Each iteration can roughly double the point count (worst case: every interval
+            # refines), so max_iter alone doesn't bound the work done - cap the total point
+            # count too, since a genuine curvature singularity (or just a very tight tol) can
+            # otherwise blow this up long before max_iter is reached.
+            eps_refined = list(eps)
+            hit_cap = False
+            for _ in range(max_iter):
+                if len(eps_refined) >= max_points:
+                    hit_cap = True
+                    break
+                new_points = []
+                for i in range(len(eps_refined)-1):
+                    e1, e2 = eps_refined[i], eps_refined[i+1]
+                    e_mid = np.sqrt(e1*e2)
+                    R_cur = R_cur_func(e_mid)
+                    D = np.linalg.norm(np.array([csR(e2)-csR(e1), csZ(e2)-csZ(e1)]))
+                    if D/R_cur > tol:
+                        new_points.append(e_mid)
+                if not new_points:
+                    break
+                if len(eps_refined) + len(new_points) > max_points:
+                    new_points = new_points[:max(0, max_points - len(eps_refined))]
+                    hit_cap = True
+                eps_refined.extend(new_points)
+                eps_refined = sorted(set(eps_refined))
+                if hit_cap:
+                    break
+            else:
+                hit_cap = True
+
+            if hit_cap:
+                logger.warning(
+                    f"Adaptive manifold refinement hit max_iter={max_iter}/max_points={max_points} "
+                    f"without converging to tol={tol}; using the {len(eps_refined)} points found so far."
+                )
+
+            # make into np array
+            eps_refined = np.array(eps_refined)
+
+            # compute the refined points
+            Rs_refined = csR(eps_refined)
+            Zs_refined = csZ(eps_refined)
+
+            return np.column_stack((Rs_refined, Zs_refined)), eps_refined
+        
+
+        # Now evolve the stable and unstable manifolds using the adaptive algorithm
+
+        def evolve_adaptive(rfp, vector, direction, eps0, eps1, n_periods):
+            # Start with three points spanning the fundamental domain
+            # [eps0, eps1] (geometrically spaced, matching the
+            # eigenvalue-driven spacing convention used elsewhere).
+            eps_seed = np.geomspace(eps0, eps1, 8)
+            points_seed = rfp + np.outer(eps_seed, vector)
+
+            points_k, eps_k = adaptive_algorithm(points_seed, eps_seed)
+            periods = [points_k]
+
+            for _ in range(n_periods):
+                # map the already-refined points forward/backward by one period
+                points_mapped = self.integrate(points_k, nintersect=1, direction=direction)[-1]
+                # re-refine: curvature can change a lot after mapping (e.g. near
+                # folds), but eps_k stays a valid monotonic parameter tag since
+                # integrate maps points index-for-index without reordering them
+                points_k, eps_k = adaptive_algorithm(points_mapped, eps_k)
+                periods.append(points_k)
+
+            # each period's first point is the same physical point as the previous
+            # period's last point (the map image of the fundamental domain's boundary).
+            periods = [periods[0]] + [p[1:] for p in periods[1:]]
+
+            return np.concatenate(periods)
+
+        eps_s0 = self.clinics.stable_epsilons[0]
+        eps_u0 = self.clinics.unstable_epsilons[0]
+        # eps grows away from the fixed point at rate lambda_u forward (unstable)
+        # and at rate 1/lambda_s backward (stable, since lambda_s < 1 contracts forward)
+        eps_s1 = eps_s0 / self.lambda_s
+        eps_u1 = eps_u0 * self.lambda_u
+
+        self._stable_trajectory = evolve_adaptive(
+            self.rfp_s, self.vector_s, -1, eps_s0, eps_s1, n_s
+        )
+        self._unstable_trajectory = evolve_adaptive(
+            self.rfp_u, self.vector_u, 1, eps_u0, eps_u1, n_u
+        )
+
+        if kwargs:
+            logger.warning(f"Unused keyword arguments: {kwargs}")
+
+        return self._stable_trajectory, self._unstable_trajectory
+
     def get_lobe_boundary(self, lobe_number, neps=40, which_section: int= 1):
         """
         Compute the boundary of the lobe with the given number (counted from the unstable manifold).
@@ -1268,7 +1638,7 @@ class Manifold(BaseSolver):
         The Manifold class must have a computed at least one clinic, preferrably all of them.
         The boundary of the lobe is computed by mapping the part of the fundamental section of the unstable
         manifold between two clinic trajecories lobe_number times, and
-        mapping the section of the stable manifold between two clinictrajectories in the reverse direction
+        mapping the section of the stable manifold between two clinic trajectories in the reverse direction
         (clinic_points-lobe_number) times.
 
         which_section determines which of the two sections of the fundamental domain to use.
@@ -1318,7 +1688,7 @@ class Manifold(BaseSolver):
         The Manifold class must have a computed at least one clinic, preferrably all of them.
         The boundary of the lobe is computed by mapping the part of the fundamental section of the unstable
         manifold between two clinic trajecories lobe_number times, and
-        mapping the section of the stable manifold between two clinictrajectories in the reverse direction
+        mapping the section of the stable manifold between two clinic trajectories in the reverse direction
         (clinic_points-lobe_number) times.
         """
         stable_part_of_lobe, unstable_part_of_lobe = self.get_lobe_boundary(lobe_number, neps, which_section)
@@ -1336,7 +1706,7 @@ class Manifold(BaseSolver):
         The Manifold class must have a computed at least one clinic, preferrably all of them.
         The boundary of the lobe is computed by mapping the part of the fundamental section of the unstable
         manifold between two clinic trajecories lobe_number times, and
-        mapping the section of the stable manifold between two clinictrajectories in the reverse direction
+        mapping the section of the stable manifold between two clinic trajectories in the reverse direction
         (clinic_points-lobe_number) times.
         """
         stable_part_of_lobe, unstable_part_of_lobe = self.get_lobe_boundary(lobe_number, neps, which_section)
@@ -1429,15 +1799,24 @@ class Manifold(BaseSolver):
 
     ### Homo/Hetero-clinic methods
 
-    def find_N(self, eps_s: float, eps_u: float):
+    def find_N(self, eps_s: float, eps_u: float, adaptive: bool = True):
         """
         Find the number of times the map needs to be applied for the stable and unstable points to cross.
 
-        This method evolves the initial stable :math:`x_s = x^\\star + \\varepsilon_s\\textbf{e}_s` and unstable :math:`x_u = x^\\star + \\varepsilon_u\\textbf{e}_u` points until they cross. They are alternatively evolved once and when the initial direction is reversed, the number of iterations is returned.
+        This method evolves the initial stable :math:`x_s = x^\\star + \\varepsilon_s\\textbf{e}_s` and unstable :math:`x_u = x^\\star + \\varepsilon_u\\textbf{e}_u` points until they cross. When the initial direction is reversed, the number of iterations is returned.
 
         Args:
             eps_s (float, optional): Initial :math:`\\varepsilon_s` along the stable manifold direction. Defaults to 1e-3.
             eps_u (float, optional): Initial :math:`\\varepsilon_u` along the unstable manifold direction. Defaults to 1e-3.
+            adaptive (bool, optional): If True (default), at each step the side (stable or
+                unstable) with the smaller cumulative arclength traced out so far is
+                evolved. If False, the stable and unstable points are evolved strictly
+                alternately (one iteration each, back and forth) instead. In chaotic fields
+                the map can stretch the two sides at very different rates per iterate, so
+                strict alternation can leave one side lagging arbitrarily far behind the
+                other in physical distance; the adaptive rule keeps both sides' traced
+                paths growing at comparable arclength, which is more robust. Defaults to
+                True.
 
         Returns:
             tuple: A tuple containing two integers:
@@ -1450,16 +1829,31 @@ class Manifold(BaseSolver):
         first_dir = r_u - r_s
         last_norm = np.linalg.norm(first_dir)
 
+        # Cumulative arclength traced out so far by each manifold, i.e. the sum
+        # of the point-to-point (L2) distances between consecutive iterates,
+        # starting from the fixed point itself.
+        arclength_s = np.sqrt(np.sum((r_s - self.rfp_s) ** 2))
+        arclength_u = np.sqrt(np.sum((r_u - self.rfp_u) ** 2))
+
         n_s, n_u = 0, 0
         success, stable_evol = False, True
         while not success:
+            if adaptive:
+                stable_evol = arclength_s <= arclength_u
+
             if stable_evol:
-                r_s = self._map.f(-1 * self.fixedpoint_1.m, r_s)
+                r_s_new = self._map.f(-1 * self.fixedpoint_1.m, r_s)
+                arclength_s += np.sqrt(np.sum((r_s_new - r_s) ** 2))
+                r_s = r_s_new
                 n_s += 1
             else:
-                r_u = self._map.f(+1 * self.fixedpoint_1.m, r_u)
+                r_u_new = self._map.f(+1 * self.fixedpoint_1.m, r_u)
+                arclength_u += np.sqrt(np.sum((r_u_new - r_u) ** 2))
+                r_u = r_u_new
                 n_u += 1
-            stable_evol = not stable_evol
+
+            if not adaptive:
+                stable_evol = not stable_evol
 
             norm = np.linalg.norm(r_u - r_s)
             # logger.debug(f"{np.dot(first_dir, r_u - r_s)} / {last_norm} / {norm}")
@@ -1471,16 +1865,17 @@ class Manifold(BaseSolver):
         #     raise ValueError("Could not find N")
         return n_s, n_u
 
-    def find_clinic_single(self, guess_eps_s, guess_eps_u, n_s=None, n_u=None, reset_clinics=False, nretry=1, ERR=1e-3, **kwargs):
+
+    def find_clinic_single(self, alpha=1e-3, guess_eps_s=None, guess_eps_u=None, n_s=None, n_u=None, reset_clinics=False, nretry=1, ERR=1e-3, eps_findiff=1e-8, **kwargs):
         """
         Search a homo/hetero-clinic point.
 
         This function attempts to find the intersection point of the stable and unstable manifolds by iteratively adjusting the provided epsilon guesses using scipy root-finding algorithm.
-
-        Args:
-            guess_eps_s (float): Initial guess for the stable manifold epsilon.
-            guess_eps_u (float): Initial guess for the unstable manifold epsilon.
+        
         *kwargs*: Additional keyword arguments.
+            - alpha (float): Scaling factor for the epsilon guesses.
+            - guess_eps_s (float): Initial guess for the stable manifold epsilon.
+            - guess_eps_u (float): Initial guess for the unstable manifold epsilon.
             - n_s (int): Number of times the map needs to be applied for the stable manifold.
             - n_u (int): Number of times the map needs to be applied for the unstable manifold.
             - reset_clinics: replace all clinics and make this clinic the fundamental segment.
@@ -1494,6 +1889,40 @@ class Manifold(BaseSolver):
         Returns:
             tuple: A tuple containing the found epsilon values for the stable and unstable manifolds (eps_s, eps_u).
         """
+        # if guess_eps_s or guess_eps_u are not provided, use second order:
+        #   f(x+eps*v) = f(x) + eps*J*v + 0.5*eps^2*dJ/dv*v
+        #   eps*|J*v| = 0.5*eps^2*|dJ/dv*v| => eps_lin = 2*|J*v|/|dJ/dv*v|
+        # so we guess at eps = alpha * eps_lin
+        
+        # first check if df exists, otherwise one must the provide guess_eps_s and guess_eps_u.
+        # One could also opt to use finite differences on f to get df
+        # and then we can use the finite difference to get dJ/dv, 
+        # but some preliminary tests show that this is not very accurate, 
+        # so it is better to provide the guess_eps_s and guess_eps_u if df is not available.
+        if not hasattr(self._map, "df"):
+            if guess_eps_s is None or guess_eps_u is None:
+                raise ValueError("Map does not have df method, must provide guess_eps_s and guess_eps_u")
+        if guess_eps_s is None:
+            # Jacobian of the map in the direction the stable manifold is followed
+            # (backward, evaluated at the stable fixed point)
+            J = self._map.df(-1 * self.fixedpoint_1.m, self.rfp_s)
+            J_plus = self._map.df(
+                -1 * self.fixedpoint_1.m, self.rfp_s + eps_findiff * self.vector_s
+            )
+            # finite-diff to get dJ/dv along the stable eigenvector
+            dJdv = (J_plus - J) / eps_findiff
+            guess_eps_s = alpha * 2 * np.linalg.norm(J @ self.vector_s) / np.linalg.norm(dJdv @ self.vector_s)
+        if guess_eps_u is None:
+            # Jacobian of the map in the direction the unstable manifold is followed
+            # (forward, evaluated at the unstable fixed point)
+            J = self._map.df(1 * self.fixedpoint_1.m, self.rfp_u)
+            J_plus = self._map.df(
+                1 * self.fixedpoint_1.m, self.rfp_u + eps_findiff * self.vector_u
+            )
+            # finite-diff to get dJ/dv along the unstable eigenvector
+            dJdv = (J_plus - J) / eps_findiff
+            guess_eps_u = alpha * 2 * np.linalg.norm(J @ self.vector_u) / np.linalg.norm(dJdv @ self.vector_u)
+
         # Set the number of times the map needs to be applied (times the poloidal mode m)
         if n_s is None or n_u is None:
             n_s, n_u = self.find_N(guess_eps_s, guess_eps_u)
@@ -1514,9 +1943,10 @@ class Manifold(BaseSolver):
                 this_eps_u = guess_eps_u * unstable_jitter
                 logger.warning(f"Failed to find clinic: {e}, re-trying with eps_s={this_eps_s}, eps_u={this_eps_u}")
 
-        # if the clinic is not found, raise an error
+        # if the clinic is not found, raise a warning and return None
         if newclinic is None:
-            raise ValueError(f"Failed to find clinic after retrying {nretry} times.")
+            logger.warning(f"Failed to find clinic after retrying {nretry} times.")
+            return None
 
         # Recording the homo/hetero-clinic point
         if reset_clinics:
@@ -1600,8 +2030,7 @@ class Manifold(BaseSolver):
             raise ValueError(f"Failed to find new clinic after retrying {nretry} times.")
 
     def find_clinics(
-        self, first_guess_eps_s, first_guess_eps_u, n_points=None, reset_clinics=True, **kwargs
-    ):
+        self, alpha=1e-3, first_guess_eps_s=None, first_guess_eps_u=None, n_points=None, reset_clinics=True, **kwargs):
         """
         Args:
 
@@ -1618,14 +2047,14 @@ class Manifold(BaseSolver):
         logger.info(
             f"Search {1}/{n_points} - initial guess for epsilon pair (eps_s, eps_u): {first_guess_eps_s, first_guess_eps_u}"
         )
-        self.find_clinic_single(first_guess_eps_s, first_guess_eps_u, **kwargs)
+        self.find_clinic_single(alpha=alpha, guess_eps_s=first_guess_eps_s, guess_eps_u=first_guess_eps_u, **kwargs)
         bounds = self.clinics.fundamental_segments
 
         stable_multiplicators = np.power(
-            self.lambda_s, np.arange(n_points)[1:] / n_points
+            self.lambda_s, np.arange(n_points)[1:] / n_points 
         )
         unstable_multiplicators = np.power(
-            self.lambda_u, np.arange(n_points)[1:] / n_points
+            self.lambda_u, np.arange(n_points)[1:] / n_points 
         )
 
         for i, (mult_s, mult_u) in enumerate(
@@ -1645,10 +2074,110 @@ class Manifold(BaseSolver):
             n_s += shift
             n_u += shift - 1
 
-            self.find_clinic_single(*guess_i, n_s=n_s, n_u=n_u, **kwargs)
+            self.find_clinic_single(alpha=alpha, guess_eps_s=guess_i[0], guess_eps_u=guess_i[1], n_s=n_s, n_u=n_u, **kwargs)
 
         # if len(self.onworking["clinics"]) != n_points:
         #     logger.warning("Number of clinic points is not the expected one.")
+
+    
+    def find_clinics_exhaustive(self, alpha=1e-3, first_guess_eps_s=None, first_guess_eps_u=None, reset_clinics=True, eps_findiff=1e-8, eps_res=10, **kwargs):
+        """
+        This method is a more exhaustive approach to find clinic points. 
+        It scans over a grid of epsilon values for the stable and unstable manifolds, 
+        computes the differences between the final points of the manifolds, and 
+        identifies zero crossings to locate potential clinic points. It then refines 
+        these points using root-finding.
+        """
+        # Here we use a more computationally expensive method to find the clinics,
+        # but should be more robust. We reduce the starting point
+        # by a factor |lambda|, so that after one iteration the point is still in
+        # the (by us defined) linear regime. Then, we scan over eps_u and eps_s from 
+        # around this starting point in both directions (yielding 2 fundamental segments,
+        # thus 4 fundamental domains). We then find the zeros using the winding number 
+        # of each cell in the eps_s-eps_u plane.
+        if reset_clinics == True:
+            self.clinics.reset()
+
+        logger.info("Starting exhaustive clinic search...")
+        # if first_guess_eps_s or first_guess_eps_u are not provided, use second order:
+        #   f(x+eps*v) = f(x) + eps*J*v + 0.5*eps^2*dJ/dv*v
+        #   eps*|J*v| = 0.5*eps^2*|dJ/dv*v| => eps_lin = 2*|J*v|/|dJ/dv*v|
+        if first_guess_eps_s is None:
+            # Jacobian of the map in the direction the stable manifold is followed
+            # (backward, evaluated at the stable fixed point)
+            J = self._map.df(-1 * self.fixedpoint_1.m, self.rfp_s)
+            J_plus = self._map.df(
+                -1 * self.fixedpoint_1.m, self.rfp_s + eps_findiff * self.vector_s
+            )
+            # finite-diff to get dJ/dv along the stable eigenvector
+            dJdv = (J_plus - J) / eps_findiff
+            first_guess_eps_s = alpha * 2 * np.linalg.norm(J @ self.vector_s) / np.linalg.norm(dJdv @ self.vector_s)
+        if first_guess_eps_u is None:
+            # Jacobian of the map in the direction the unstable manifold is followed
+            # (forward, evaluated at the unstable fixed point)
+            J = self._map.df(1 * self.fixedpoint_1.m, self.rfp_u)
+            J_plus = self._map.df(
+                1 * self.fixedpoint_1.m, self.rfp_u + eps_findiff * self.vector_u
+            )
+            # finite-diff to get dJ/dv along the unstable eigenvector
+            dJdv = (J_plus - J) / eps_findiff
+            first_guess_eps_u = alpha * 2 * np.linalg.norm(J @ self.vector_u) / np.linalg.norm(dJdv @ self.vector_u)
+
+        guess_eps_s, guess_eps_u = first_guess_eps_s, first_guess_eps_u
+
+        # Adjust the guesses by the eigenvalues to ensure they are within the linear regime
+        # quickly check lambda_s<1 and lambda_u>1
+        if self.lambda_s >= 1 or self.lambda_u <= 1:
+            raise ValueError("The manifold is not hyperbolic: lambda_s >= 1 or lambda_u <= 1.")
+        guess_eps_s *= self.lambda_s
+        guess_eps_u /= self.lambda_u
+
+        # Now find the n_s and n_u values for the adjusted guesses
+        n_s, n_u = self.find_N(guess_eps_s, guess_eps_u, adaptive=True)
+
+        # Make scan grid in eps_s and eps_u space
+        # This grid resolves the fundamental domain 
+        # 4 times in each direction which will lead to 
+        # multiple similar points, but that way we 
+        # ensure that we do not miss any clinic points.
+        eps_s_scan = np.geomspace(guess_eps_s*self.lambda_s, guess_eps_s / self.lambda_s, eps_res, endpoint=True)
+        eps_u_scan = np.geomspace(guess_eps_u/self.lambda_u, guess_eps_u * self.lambda_u, eps_res, endpoint=True)
+        eps_s_grid, eps_u_grid = np.meshgrid(eps_s_scan, eps_u_scan)
+        F1_grid, F2_grid = np.zeros_like(eps_s_grid), np.zeros_like(eps_u_grid)
+
+        # Fill the F1 and F2 grids with the differences between the stable and unstable manifolds,
+        # fill with NaN if anything goes wrong (e.g. the field line gets caught on a coil)
+        for i,j in np.ndindex(eps_s_grid.shape):
+            eps_s, eps_u = eps_s_grid[i,j], eps_u_grid[i,j]
+            try:
+                r_s = self.rfp_s + eps_s * self.vector_s
+                r_u = self.rfp_u + eps_u * self.vector_u
+                r_s_final = self._map.f(-1 * self.fixedpoint_1.m * n_s, r_s)
+                r_u_final = self._map.f(+1 * self.fixedpoint_1.m * n_u, r_u)
+                F1_grid[i,j] = r_s_final[0] - r_u_final[0]
+                F2_grid[i,j] = r_s_final[1] - r_u_final[1]
+            except Exception as e:
+                logger.warning(f"Error computing manifolds for eps_s={eps_s}, eps_u={eps_u}: {e}")
+                F1_grid[i,j] = np.nan
+                F2_grid[i,j] = np.nan
+
+        # Find the zeros of the function F1 and F2 using the winding number method
+        zeros_eps_s, zeros_eps_u = find_zero_crossings(eps_s_grid, eps_u_grid, F1_grid, F2_grid)
+
+        logger.info(f"Found {len(zeros_eps_s)} clinic points in the scan (can contain duplicates).")
+
+        # refine the found zeros using root-finding
+        for eps_s, eps_u in zip(zeros_eps_s, zeros_eps_u):
+            try:
+                logger.info(f"Refining clinic at eps_s={eps_s}, eps_u={eps_u}")
+                newclinic = Clinic.from_guess(self, eps_s, eps_u, n_s, n_u, expensive=False, **kwargs)
+                self.clinics.record_clinic(newclinic)
+            except Exception as e:
+                logger.warning(f"Failed to refine clinic at eps_s={eps_s}, eps_u={eps_u}: {e}")
+
+        # Print the number of clinics found (removed duplicates, or unconverged clinics)
+        logger.info(f"Number of clinics found ({len(self.clinics)}).")
+
 
     def plot_clinics(self, **kwargs):
         """
@@ -1933,5 +2462,3 @@ class Manifold(BaseSolver):
         self._areas = None
 
         return payload
-
-
