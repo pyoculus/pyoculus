@@ -7,6 +7,11 @@ import os
 from pyoculus.maps.toroidal_bfield_section import ToroidalBfieldSection
 from pyoculus.solvers import FixedPoint
 spectre = pytest.importorskip("spectre")
+if not hasattr(spectre, "SPECTRE_pyoculus_helper"):
+    pytest.skip(
+        "Installed SPECTRE lacks the SPECTRE_pyoculus_helper API required by this adapter",
+        allow_module_level=True,
+    )
 SPECTRE = spectre.SPECTRE
 SPECTRE_pyoculus_helper = spectre.SPECTRE_pyoculus_helper
 import logging
@@ -148,5 +153,4 @@ def test_finding_w7x_island():
     fixed_point = FixedPoint(section)
 
     fixed_point.find_with_iota(n=5, m=5, guess=guess)
-
 
