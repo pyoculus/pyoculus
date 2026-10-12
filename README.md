@@ -66,4 +66,4 @@ To adapt existing routines to the new `pyoculus` workflow, create a `Map` from y
 
 ## Documentation
 
-The documentation of pyoculus is managed by [Sphinx](https://www.sphinx-doc.org/) and can be found on [Github-Pages](https://akitzu.github.io/pyoculus/). This documentation will be updated regularly, however for latest features, you may need to research to the API Reference. You may also generate the documentation from source by following Sphinx's instructions.
+The documentation of pyoculus is managed by [Sphinx](https://www.sphinx-doc.org/) and can be found on [Github-Pages](https://pyoculus.github.io/pyoculus/). This documentation will be updated regularly, however for latest features, you may need to research to the API Reference. You may also generate the documentation from source by following Sphinx's instructions.
