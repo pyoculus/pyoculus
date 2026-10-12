@@ -45,6 +45,11 @@ SIMSOPT = ["simsopt"]
 JAX = ["jax"]
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 addopts = [
     "--import-mode=importlib",
+]
+markers = [
+    "slow: resolved manifold trajectories or transport calculations",
+    "optional_backend: requires an optional equilibrium backend",
 ]
