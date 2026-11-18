@@ -905,15 +905,14 @@ class Manifold(BaseSolver):
                        if type == float, approximate angle (with respect of the x-axis) of the manifold to follow
                        if type == np.ndarray, the (approximate) vector of the manifold to follow
         first_stable (bool, optional): Whether to follow the stable or unstable manifold departing from the first fixed point. Defaults to True.
-        opoint (FixedPoint, optional): Elliptic fixed point of the enclosed island, used to determine default
-                       directions (towards the O-point) when dir1/dir2 are not given. See `use_opoint`.
-        use_opoint (bool, optional): Whether to default dir1/dir2 towards `opoint`. Falls back to the
-                       previous straight-line/'+' heuristic if no successful `opoint` is provided. Defaults to True.
+        opoint (FixedPoint, optional): Elliptic fixed point (O-point) of the island enclosed by the tangle.
+                       If given, dir1/dir2 that are not set explicitly default to pointing from each X-point
+                       towards it. Equivalent to passing ``dir = opoint.coords[0] - xpoint.coords[0]``.
 
     Attributes:
         fixedpoint_1 (FixedPoint): First fixed point.
         fixedpoint_2 (FixedPoint): Second fixed point.
-        opoint (FixedPoint or None): O-point used (given or auto-found) to orient the manifolds, if any.
+        opoint (FixedPoint or None): O-point given to orient the manifolds, if any.
         rfp_s (np.ndarray): Stable fixed point coordinates.
         rfp_u (np.ndarray): Unstable fixed point coordinates.
         vector_s (np.ndarray): Stable eigenvector.
@@ -954,7 +953,6 @@ class Manifold(BaseSolver):
         dir2: str = None,
         first_stable: bool = None,
         opoint: FixedPoint = None,
-        use_opoint: bool = True,
     ) -> None:
         """
         Initialize the Manifold class by providing two fixed points and specifying if the first fixedpoint is stable. If only one fixed point is specified, a homoclinic connection is assumed.
@@ -965,12 +963,12 @@ class Manifold(BaseSolver):
             fixedpoint_1 (FixedPoint): first fixed point
             fixedpoint_2 (FixedPoint, optional): second fix point if not homoclinic manifold. Defaults to None.
             opoint (FixedPoint, optional): the elliptic (O-point) fixed point of the island enclosed by the
-                tangle. If given (and successful) and `use_opoint` is True, directions default to pointing
-                from each X-point towards this O-point, so that the resulting tangle wraps around it.
-                If not given and `use_opoint` is True, an O-point is searched for automatically.
-            use_opoint (bool, optional): whether to use `opoint` to determine default directions (only used
-                when `dir1`/`dir2` are not explicitly given). Falls back to the previous straight-line/'+'
-                heuristic if no successful `opoint` is provided/found. Defaults to True.
+                tangle, found by the user (e.g. ``FixedPoint(map).find(m, guess=...)``). If given, any of
+                `dir1`/`dir2` left unset defaults to pointing from its X-point towards the O-point, so that
+                the tangle wraps around the island. This is the same as passing
+                ``dir1 = opoint.coords[0] - fixedpoint_1.coords[0]`` (and likewise for `dir2`).
+                Without it, unset directions point from one X-point to the other (heteroclinic case)
+                or default to '+' (homoclinic case).
         """
 
         # Check that the fixed points are correct FixedPoint instances
@@ -994,32 +992,20 @@ class Manifold(BaseSolver):
             self.fixedpoint_2 = fixedpoint_1
 
         # Setting the fast and slow directions
-        if dir1 is None and dir2 is None:
-            if use_opoint and opoint is None:
-                opoint = self._auto_find_opoint(map, self.fixedpoint_1, self.fixedpoint_2)
-            self.opoint = opoint
-
-            if use_opoint and isinstance(opoint, FixedPoint) and opoint.successful:
-                dir1 = opoint.coords[0] - self.fixedpoint_1.coords[0]
-                dir2 = opoint.coords[0] - self.fixedpoint_2.coords[0]
-                logger.info("Using O-point to determine manifold directions.")
-            else:
-                if use_opoint:
-                    logger.warning(
-                        "use_opoint=True but no successful 'opoint' FixedPoint was given or found; "
-                        "falling back to the default direction heuristic."
-                    )
-                if fixedpoint_2 is not None:
-                    dir1 = self.fixedpoint_2.coords[0] - self.fixedpoint_1.coords[0]
-                    dir2 = self.fixedpoint_1.coords[0] - self.fixedpoint_2.coords[0]
-                else:
-                    dir1 = '+'
-                    dir2 = '+'
-        else:
+        if opoint is not None:
+            if not isinstance(opoint, FixedPoint) or not opoint.successful:
+                raise ValueError("'opoint' must be a successful FixedPoint")
             if dir1 is None:
-                dir1 = self.fixedpoint_2.coords[0] - self.fixedpoint_1.coords[0]
+                dir1 = opoint.coords[0] - self.fixedpoint_1.coords[0]
             if dir2 is None:
-                dir2 = self.fixedpoint_1.coords[0] - self.fixedpoint_2.coords[0]
+                dir2 = opoint.coords[0] - self.fixedpoint_2.coords[0]
+        self.opoint = opoint
+
+        homoclinic = self.fixedpoint_1 is self.fixedpoint_2
+        if dir1 is None:
+            dir1 = '+' if homoclinic else self.fixedpoint_2.coords[0] - self.fixedpoint_1.coords[0]
+        if dir2 is None:
+            dir2 = '+' if homoclinic else self.fixedpoint_1.coords[0] - self.fixedpoint_2.coords[0]
         if first_stable is None:
             first_stable = True
 
@@ -1031,64 +1017,6 @@ class Manifold(BaseSolver):
 
         # Initialize the BaseSolver
         super().__init__(map)
-
-    @staticmethod
-    def _auto_find_opoint(map: maps.base_map, fixedpoint_1: FixedPoint, fixedpoint_2: FixedPoint = None, **kwargs):
-        """
-        Try to automatically locate the elliptic (O-point) fixed point of the island enclosed by
-        fixedpoint_1 (and fixedpoint_2, if given), by searching for a fixed point of the same
-        period `m` starting from a guess in between the two X-points (or, for the homoclinic case,
-        in between fixedpoint_1 and the next point along its own periodic orbit).
-
-        Returns:
-            FixedPoint or None: the found O-point, or None if no guess/search was successful.
-        """
-        if fixedpoint_2 is not None and fixedpoint_2 is not fixedpoint_1:
-            other_coords = fixedpoint_2.coords[0]
-        elif len(fixedpoint_1.coords) > 1 and not np.allclose(fixedpoint_1.coords[1], fixedpoint_1.coords[0]):
-            other_coords = fixedpoint_1.coords[1]
-        else:
-            logger.warning("Cannot guess an O-point location automatically (no distinct reference point).")
-            return None
-
-        # guess at the midpoint between the two X-points, and a line perpendicular to the line connecting them, to find the O-point
-        guess_mid = (fixedpoint_1.coords[0] + other_coords) / 2
-        perp_vector = np.array([- (other_coords[1] - fixedpoint_1.coords[0][1]), other_coords[0] - fixedpoint_1.coords[0][0]])
-        x_points_distance = np.linalg.norm(other_coords - fixedpoint_1.coords[0])
-        scanline = np.linspace(-0.5 * x_points_distance, 0.5 * x_points_distance, 10)
-        guesses = [guess_mid + s * perp_vector / np.linalg.norm(perp_vector) for s in scanline]
-        # order in closeness to the midpoint, so that we try the closest guesses first
-        guesses.sort(key=lambda g: np.linalg.norm(g - guess_mid))
-        nrestart = kwargs.pop("nrestart", 3)
-        method = kwargs.pop("method", "scipy.root")
-        # loop over the guesses and try to find a fixed point
-        for guess in guesses:
-            # return the first successful fixed point found
-            try:
-                opoint = FixedPoint(map)
-                opoint.find(fixedpoint_1.m, guess=guess, nrestart=nrestart, method=method, **kwargs)
-                if opoint.successful and (0 < opoint.GreenesResidue < 1):
-                    logger.info(f"Automatically found O-point at {opoint.coords[0]}.")
-                    return opoint
-            except Exception as e:
-                logger.warning(f"Automatic O-point search failed for guess {guess}: {e}")
-                return None
-            
-        
-
-        # try:
-        #     opoint = FixedPoint(map)
-        #     opoint.find(fixedpoint_1.m, guess=guess, nrestart=nrestart, method=method, **kwargs)
-        # except Exception as e:
-        #     logger.warning(f"Automatic O-point search failed: {e}")
-        #     return None
-
-        # if not opoint.successful or not (0 < opoint.GreenesResidue < 1):
-        #     logger.warning("Automatic O-point search did not converge to a valid elliptic point.")
-        #     return None
-
-        # logger.info(f"Automatically found O-point at {opoint.coords[0]}.")
-        # return opoint
 
     def choose(
         self, dir_1: Union[Literal["+", "-"], float, Iterable], dir_2: Union[Literal["+", "-"], float, Iterable], first_stable: bool
@@ -1866,7 +1794,7 @@ class Manifold(BaseSolver):
         return n_s, n_u
 
 
-    def find_clinic_single(self, alpha=1e-3, guess_eps_s=None, guess_eps_u=None, n_s=None, n_u=None, reset_clinics=False, nretry=1, ERR=1e-3, eps_findiff=1e-8, **kwargs):
+    def find_clinic_single(self, guess_eps_s=None, guess_eps_u=None, n_s=None, n_u=None, reset_clinics=False, nretry=1, ERR=1e-3, alpha=1e-3, eps_findiff=1e-8, **kwargs):
         """
         Search a homo/hetero-clinic point.
 
@@ -2030,7 +1958,7 @@ class Manifold(BaseSolver):
             raise ValueError(f"Failed to find new clinic after retrying {nretry} times.")
 
     def find_clinics(
-        self, alpha=1e-3, first_guess_eps_s=None, first_guess_eps_u=None, n_points=None, reset_clinics=True, **kwargs):
+        self, first_guess_eps_s=None, first_guess_eps_u=None, n_points=None, reset_clinics=True, alpha=1e-3, **kwargs):
         """
         Args:
 
@@ -2048,6 +1976,8 @@ class Manifold(BaseSolver):
             f"Search {1}/{n_points} - initial guess for epsilon pair (eps_s, eps_u): {first_guess_eps_s, first_guess_eps_u}"
         )
         self.find_clinic_single(alpha=alpha, guess_eps_s=first_guess_eps_s, guess_eps_u=first_guess_eps_u, **kwargs)
+        if self.clinics.is_empty:
+            raise ValueError("Failed to find the first clinic; try other guesses or find_clinics_exhaustive.")
         bounds = self.clinics.fundamental_segments
 
         stable_multiplicators = np.power(
