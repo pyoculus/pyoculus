@@ -105,16 +105,22 @@ def test_opoint_orients_manifolds_into_island(section, xpoint):
 
 
 @pytest.mark.parametrize("adaptive", [True, False])
-def test_find_N_stops_once_stable_and_unstable_points_cross(tangle, adaptive):
-    eps_s, eps_u = 1e-5, 1e-6
-    m = tangle
-    n_s, n_u = m.find_N(eps_s, eps_u, adaptive=adaptive)
-    r_s = m.rfp_s + eps_s * m.vector_s
-    r_u = m.rfp_u + eps_u * m.vector_u
-    end_s = m._map.f(-n_s * m.fixedpoint_1.m, r_s)
-    end_u = m._map.f(n_u * m.fixedpoint_1.m, r_u)
-    assert np.dot(r_u - r_s, end_u - end_s) < 0
+@pytest.mark.parametrize(
+    "eps_s, eps_u",
+    [
+        (1e-5, 1e-6),
+        # eps_s >> eps_u: the unstable point outgrows the stable one while both
+        # are still in the linear regime, which used to fake a crossing (n_s = 0)
+        (9.263661e-06, 2.810464e-07),
+    ],
+)
+def test_find_N_iterations_connect_the_legs(tangle, adaptive, eps_s, eps_u):
+    """The iteration counts must be ones for which the legs actually meet at a clinic."""
+    n_s, n_u = tangle.find_N(eps_s, eps_u, adaptive=adaptive)
     assert n_s >= 1 and n_u >= 1
+    clinic = Clinic.from_guess(tangle, eps_s, eps_u, n_s, n_u, root_args=ROOT_ARGS)
+    gap, _ = _legs_meet(tangle, clinic)
+    assert gap < 1e-6
 
 
 def test_exhaustive_search_finds_both_homoclinic_orbits(tangle, section):

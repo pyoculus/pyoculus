@@ -1754,8 +1754,11 @@ class Manifold(BaseSolver):
         r_s = self.rfp_s + eps_s * self.vector_s
         r_u = self.rfp_u + eps_u * self.vector_u
 
-        first_dir = r_u - r_s
-        last_norm = np.linalg.norm(first_dir)
+        # In adaptive mode the reference separation is taken once both sides have
+        # moved: before that, unequal growth along non-orthogonal eigenvectors near
+        # the X-point can flip the sign of the separation without a real crossing.
+        first_dir = None if adaptive else r_u - r_s
+        last_norm = np.linalg.norm(r_u - r_s)
 
         # Cumulative arclength traced out so far by each manifold, i.e. the sum
         # of the point-to-point (L2) distances between consecutive iterates,
@@ -1782,6 +1785,11 @@ class Manifold(BaseSolver):
 
             if not adaptive:
                 stable_evol = not stable_evol
+
+            if first_dir is None:
+                if n_s > 0 and n_u > 0:
+                    first_dir = r_u - r_s
+                continue
 
             norm = np.linalg.norm(r_u - r_s)
             # logger.debug(f"{np.dot(first_dir, r_u - r_s)} / {last_norm} / {norm}")
