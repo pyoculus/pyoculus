@@ -123,14 +123,9 @@ def test_find_N_iterations_connect_the_legs(tangle, adaptive, eps_s, eps_u):
     assert gap < 1e-6
 
 
-def test_heteroclinic_opoint_tangle_and_find_N(section):
-    """Two X-points of the q=3 chain, oriented by the O-point of the island between them.
-
-    The eigenvectors are nearly perpendicular to the X1->X2 line, so only the
-    O-point reliably selects the branches that bound that island. With
-    eps_s >> eps_u, adaptive find_N must still give iteration counts for which
-    the stable leg of X1 and the unstable leg of X2 meet.
-    """
+@pytest.fixture(scope="module")
+def q3_chain(section):
+    """Two neighbouring X-points of the q=3 chain and the O-point of the island between them."""
     x1 = FixedPoint(section)
     x1.find_with_iota(1, 3, np.array([7.8412, -0.5962]), tol=1e-11)
     x2 = FixedPoint(section)
@@ -138,6 +133,34 @@ def test_heteroclinic_opoint_tangle_and_find_N(section):
     opoint = FixedPoint(section)
     opoint.find_with_iota(1, 3, np.array([6.3644, 1.0906]), tol=1e-11)
     assert x1.GreenesResidue < 0 and 0 < opoint.GreenesResidue < 1
+    return x1, x2, opoint
+
+
+def test_ambiguous_default_direction_warns(section, q3_chain, caplog):
+    """Both eigenvectors are nearly perpendicular to the X1->X2 line (|cos| ~ 0.06, 0.17).
+
+    Defaulting towards the other X-point then picks the branches running to the
+    third X-point of the chain; the user must be told, unless an O-point decides.
+    """
+    x1, x2, opoint = q3_chain
+    with caplog.at_level("WARNING", logger="pyoculus.solvers.manifold"):
+        Manifold(section, x1, x2)
+    assert "ambiguous" in caplog.text
+    caplog.clear()
+    with caplog.at_level("WARNING", logger="pyoculus.solvers.manifold"):
+        Manifold(section, x1, x2, opoint=opoint)
+    assert "ambiguous" not in caplog.text
+
+
+def test_heteroclinic_opoint_tangle_and_find_N(section, q3_chain):
+    """Two X-points of the q=3 chain, oriented by the O-point of the island between them.
+
+    The eigenvectors are nearly perpendicular to the X1->X2 line, so only the
+    O-point reliably selects the branches that bound that island. With
+    eps_s >> eps_u, adaptive find_N must still give iteration counts for which
+    the stable leg of X1 and the unstable leg of X2 meet.
+    """
+    x1, x2, opoint = q3_chain
     m = Manifold(section, x1, x2, opoint=opoint)
     assert m.vector_s @ (opoint.coords[0] - m.rfp_s) > 0
     assert m.vector_u @ (opoint.coords[0] - m.rfp_u) > 0

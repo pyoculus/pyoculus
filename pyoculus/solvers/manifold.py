@@ -1002,6 +1002,7 @@ class Manifold(BaseSolver):
         self.opoint = opoint
 
         homoclinic = self.fixedpoint_1 is self.fixedpoint_2
+        default_1, default_2 = (not homoclinic and dir1 is None), (not homoclinic and dir2 is None)
         if dir1 is None:
             dir1 = '+' if homoclinic else self.fixedpoint_2.coords[0] - self.fixedpoint_1.coords[0]
         if dir2 is None:
@@ -1010,6 +1011,20 @@ class Manifold(BaseSolver):
             first_stable = True
 
         self.choose(dir1, dir2, first_stable)
+
+        # Defaulting towards the other X-point is a near coin flip when an eigenvector is
+        # almost perpendicular to the X1-X2 line; the wrong branch can lead to another X-point.
+        if default_1 or default_2:
+            line = self.fixedpoint_2.coords[0] - self.fixedpoint_1.coords[0]
+            line = line / np.linalg.norm(line)
+            vec_1, vec_2 = (self.vector_s, self.vector_u) if first_stable else (self.vector_u, self.vector_s)
+            cosines = [abs(v @ line) / np.linalg.norm(v) for v, used in ((vec_1, default_1), (vec_2, default_2)) if used]
+            if min(cosines) < 0.25:
+                logger.warning(
+                    f"Manifold direction is ambiguous: an eigenvector is nearly perpendicular to the line "
+                    f"between the fixed points (|cos| = {min(cosines):.2f}), so the default branch may lead "
+                    f"away from the intended island. Pass 'opoint' or 'dir1'/'dir2' to choose it explicitly."
+                )
 
         # Initialize the clinic set
         self.clinics = ClinicSet(self)
