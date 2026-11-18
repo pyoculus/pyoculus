@@ -123,6 +123,34 @@ def test_find_N_iterations_connect_the_legs(tangle, adaptive, eps_s, eps_u):
     assert gap < 1e-6
 
 
+def test_heteroclinic_opoint_tangle_and_find_N(section):
+    """Two X-points of the q=3 chain, oriented by the O-point of the island between them.
+
+    The eigenvectors are nearly perpendicular to the X1->X2 line, so only the
+    O-point reliably selects the branches that bound that island. With
+    eps_s >> eps_u, adaptive find_N must still give iteration counts for which
+    the stable leg of X1 and the unstable leg of X2 meet.
+    """
+    x1 = FixedPoint(section)
+    x1.find_with_iota(1, 3, np.array([7.8412, -0.5962]), tol=1e-11)
+    x2 = FixedPoint(section)
+    x2.find_with_iota(1, 3, x1.coords[1], tol=1e-11)
+    opoint = FixedPoint(section)
+    opoint.find_with_iota(1, 3, np.array([6.3644, 1.0906]), tol=1e-11)
+    assert x1.GreenesResidue < 0 and 0 < opoint.GreenesResidue < 1
+    m = Manifold(section, x1, x2, opoint=opoint)
+    assert m.vector_s @ (opoint.coords[0] - m.rfp_s) > 0
+    assert m.vector_u @ (opoint.coords[0] - m.rfp_u) > 0
+
+    eps_s, eps_u = 1e-3, 1e-6
+    n_s, n_u = m.find_N(eps_s, eps_u, adaptive=True)
+    assert n_s >= 1 and n_u >= 1
+    clinic = Clinic.from_guess(m, eps_s, eps_u, n_s, n_u, root_args=ROOT_ARGS)
+    gap, point = _legs_meet(m, clinic)
+    assert gap < 1e-6
+    assert min(np.linalg.norm(point - m.rfp_s), np.linalg.norm(point - m.rfp_u)) > 0.1
+
+
 def test_exhaustive_search_finds_both_homoclinic_orbits(tangle, section):
     """Two distinct orbits per fundamental domain whose lobes carry opposite flux.
 
