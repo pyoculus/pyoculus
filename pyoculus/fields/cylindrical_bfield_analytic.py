@@ -241,19 +241,19 @@ class AnalyticCylindricalBfield(CylindricalBfield):
         $ myBfield.perturbations[0](rphiz)
         >> value
         """
-        if hasattr(self, "_jited_perturbations") and len(
-            self._jited_perturbations
+        if hasattr(self, "_jitted_perturbations") and len(
+            self._jitted_perturbations
         ) == len(self.perturbations_args):
-            return self._jited_perturbations
+            return self._jitted_perturbations
         else:
-            self._jited_perturbations = []
+            self._jitted_perturbations = []
             for i in range(len(self.perturbations_args)):
-                self._jited_perturbations.append(
+                self._jitted_perturbations.append(
                     jit(
                         lambda rr, i=i: self.perturbations_args[i]["amplitude"]  # NO! LAZY PYTHON NO!
                         * self._perturbations[i](rr)
                     ))
-            return self._jited_perturbations
+            return self._jitted_perturbations
 
     # BfieldProblem methods implementation
 
